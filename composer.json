@@ -1,0 +1,77 @@
+{
+    "name": "dcode-group/xero-integration",
+    "description": "A Package for the integration of Laravel with Xero",
+    "keywords": [
+        "Dcode Group",
+        "laravel",
+        "xero-integration"
+    ],
+    "homepage": "https://github.com/dcode-group/xero-integration",
+    "license": "MIT",
+    "version": "0.1.0",
+    "authors": [
+        {
+            "name": "Dcode Group",
+            "email": "forge@dcodegroup.com",
+            "homepage": "https://dcodegroup.com"
+        }
+    ],
+    "require": {
+        "php": "^8.4",
+        "calcinai/xero-php": "^2.8",
+        "illuminate/contracts": "^11.0||^12.0||^13.0",
+        "league/oauth2-client": "^2.9",
+        "spatie/laravel-package-tools": "^1.16"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.14",
+        "nunomaduro/collision": "^8.8",
+        "larastan/larastan": "^3.0",
+        "orchestra/testbench": "^11.0.0||^10.0.0||^9.0.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-arch": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "phpstan/phpstan-phpunit": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "DcodeGroup\\XeroIntegration\\": "src/",
+            "DcodeGroup\\XeroIntegration\\Database\\Factories\\": "database/factories/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DcodeGroup\\XeroIntegration\\Tests\\": "tests/",
+            "Workbench\\App\\": "workbench/app/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": "@composer run prepare",
+        "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "analyse": "vendor/bin/phpstan analyse",
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
+        "format": "vendor/bin/pint"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "DcodeGroup\\XeroIntegration\\XeroIntegrationServiceProvider"
+            ],
+            "aliases": {
+                "XeroIntegration": "DcodeGroup\\XeroIntegration\\Facades\\XeroIntegration"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
