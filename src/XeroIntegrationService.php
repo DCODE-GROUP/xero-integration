@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
+use League\OAuth2\Client\Token\AccessTokenInterface;
 
 class XeroIntegrationService
 {
@@ -87,7 +88,7 @@ class XeroIntegrationService
      * @throws IdentityProviderException
      * @throws UnauthorizedXero
      */
-    public function getAccessTokenFromCode(string $code): AccessToken
+    public function getAccessTokenFromCode(string $code): AccessTokenInterface
     {
         $token = resolve(Xero::class)->getAccessToken('authorization_code', [
             'code' => $code,
