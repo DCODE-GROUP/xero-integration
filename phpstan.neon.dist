@@ -1,5 +1,4 @@
 includes:
-    - phpstan-baseline.neon
 
 parameters:
     level: 5
@@ -8,3 +7,5 @@ parameters:
         - config
         - database
     tmpDir: build/phpstan
+    configDirectories:
+        - config

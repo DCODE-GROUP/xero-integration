@@ -2,9 +2,9 @@
 
 namespace DcodeGroup\XeroIntegration\Tests;
 
+use DcodeGroup\XeroIntegration\XeroIntegrationServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use DcodeGroup\XeroIntegration\XeroIntegrationServiceProvider;
 
 class TestCase extends Orchestra
 {
