@@ -6,6 +6,7 @@ use DcodeGroup\XeroIntegration\Exceptions\XeroIntegrationException;
 use DcodeGroup\XeroIntegration\Models\XeroToken;
 use DcodeGroup\XeroIntegration\XeroApp;
 use DcodeGroup\XeroIntegration\XeroIntegration;
+use DcodeGroup\XeroIntegration\XeroQuery;
 
 test('can load relationship model', function () {
     XeroToken::factory()->create();
@@ -59,7 +60,7 @@ test('can get available relationships', function () {
     XeroToken::factory()->create();
 
     $app = new XeroApp();
-    
+
     $reflection = new \ReflectionMethod($app, 'getAvailableRelationships');
     $reflection->setAccessible(true);
     $relationships = $reflection->invoke($app);
@@ -67,3 +68,31 @@ test('can get available relationships', function () {
     expect($relationships)->toHaveCount(3)
         ->and($relationships->toArray())->toEqual(['contacts', 'invoices', 'quotes']);
 });
+
+test('__call throws exception for invalid relationship', function () {
+    XeroToken::factory()->create();
+
+    $app = new XeroApp();
+
+    expect(fn () => $app->invalid_model())
+        ->toThrow(XeroIntegrationException::class, "Model 'invalid_model' not found in Xero integration.");
+});
+
+test('__get returns null for invalid relationship', function () {
+    XeroToken::factory()->create();
+
+    $app = new XeroApp();
+
+    expect($app->invalid_relation)->toBeNull();
+});
+
+test('load returns XeroQuery instance', function () {
+    XeroToken::factory()->create();
+
+    $app = new XeroApp();
+
+    $result = $app->load('XeroPHP\Models\Accounting\Invoice');
+
+    expect($result)->toBeInstanceOf(XeroQuery::class);
+});
+
