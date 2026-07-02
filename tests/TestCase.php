@@ -31,10 +31,16 @@ class TestCase extends Orchestra
 
     protected function defineDatabaseMigrations()
     {
-        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $migrationsPath = __DIR__.'/../database/migrations';
+        $this->loadMigrationsFrom($migrationsPath);
 
         // Run the xero_tokens stub migration directly for testing
-        $migration = include __DIR__.'/../database/migrations/create_xero_tokens_table.php.stub';
-        $migration->up();
+        $extensions = ['stub'];
+
+        foreach (\File::allFiles($migrationsPath) as $migration) {
+            if (in_array($migration->getExtension(), $extensions, true)) {
+                (include $migration->getRealPath())->up();
+            }
+        }
     }
 }
