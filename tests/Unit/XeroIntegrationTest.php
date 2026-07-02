@@ -9,7 +9,7 @@ use DcodeGroup\XeroIntegration\XeroIntegration;
 test('xero integration returns self when calling query builder methods', function () {
     XeroToken::factory()->create();
 
-    $app = new XeroApp();
+    $app = new XeroApp;
     $integration = $app->invoices();
 
     expect($integration)->toBeInstanceOf(XeroIntegration::class)
@@ -19,7 +19,7 @@ test('xero integration returns self when calling query builder methods', functio
 test('xero integration limit calls query pageSize', function () {
     XeroToken::factory()->create();
 
-    $app = new XeroApp();
+    $app = new XeroApp;
     $integration = $app->invoices();
 
     $result = $integration->limit(25);
@@ -30,7 +30,7 @@ test('xero integration limit calls query pageSize', function () {
 test('xero integration returns instance for different relationship types', function () {
     XeroToken::factory()->create();
 
-    $app = new XeroApp();
+    $app = new XeroApp;
 
     $invoices = $app->invoices();
     $contacts = $app->contacts();
@@ -44,7 +44,7 @@ test('xero integration returns instance for different relationship types', funct
 test('xero integration methods can be chained in sequence', function () {
     XeroToken::factory()->create();
 
-    $app = new XeroApp();
+    $app = new XeroApp;
 
     $result = $app->contacts()->limit(100);
 

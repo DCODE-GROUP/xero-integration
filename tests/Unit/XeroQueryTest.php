@@ -22,7 +22,7 @@ test('rate limiter key includes tenant when tenancy enabled', function () {
     config()->set('xero-integration.tenancy.current_method', function () {
         return (object) ['getKey' => fn () => 'test-tenant-id'];
     });
-    
+
     session()->put('xero_current_tenant_id', 'test-tenant-id');
 
     $method = config('xero-integration.tenancy.current_method');
@@ -32,7 +32,7 @@ test('rate limiter key includes tenant when tenancy enabled', function () {
 test('xero query can be created from xero app', function () {
     XeroToken::factory()->create();
 
-    $app = new XeroApp();
+    $app = new XeroApp;
     $query = $app->load('XeroPHP\Models\Accounting\Invoice');
 
     expect($query)->toBeInstanceOf(XeroQuery::class);
@@ -41,7 +41,7 @@ test('xero query can be created from xero app', function () {
 test('xero query has correct configuration', function () {
     XeroToken::factory()->create();
 
-    $app = new XeroApp();
+    $app = new XeroApp;
     $query = $app->load('XeroPHP\Models\Accounting\Invoice');
 
     expect($query)->toBeInstanceOf(XeroQuery::class);
@@ -50,7 +50,7 @@ test('xero query has correct configuration', function () {
 test('rate limiter throws exception when limit exceeded', function () {
     XeroToken::factory()->create();
 
-    $app = new XeroApp();
+    $app = new XeroApp;
     $query = $app->load('XeroPHP\Models\Accounting\Invoice');
 
     $key = XeroQuery::getRateLimiterKey();
@@ -66,10 +66,10 @@ test('rate limiter throws exception when limit exceeded', function () {
 
 test('can reset rate limiter', function () {
     $key = XeroQuery::getRateLimiterKey();
-    
+
     RateLimiter::hit($key);
     RateLimiter::hit($key);
-    
+
     $beforeReset = RateLimiter::remaining($key, 60);
     RateLimiter::resetAttempts($key);
     $afterReset = RateLimiter::remaining($key, 60);
@@ -79,7 +79,7 @@ test('can reset rate limiter', function () {
 
 test('rate limiter respects configured limit', function () {
     config()->set('services.xero.rate_limit.no', 60);
-    
+
     $key = XeroQuery::getRateLimiterKey();
     RateLimiter::resetAttempts($key);
 
@@ -106,7 +106,7 @@ test('rate limit decay uses configured seconds', function () {
     RateLimiter::resetAttempts($key);
 
     RateLimiter::hit($key);
-    
+
     $remaining = RateLimiter::remaining($key, 60);
 
     expect($remaining)->toBeLessThan(60)

@@ -12,7 +12,7 @@ use Mockery\MockInterface;
 test('can get token model', function () {
     $token = XeroToken::factory()->create();
 
-    $service = new XeroIntegrationService();
+    $service = new XeroIntegrationService;
     $tokenModel = $service->getTokenModel();
 
     expect($tokenModel)->toBeInstanceOf(XeroToken::class)
@@ -20,7 +20,7 @@ test('can get token model', function () {
 });
 
 test('returns null when no token model exists', function () {
-    $service = new XeroIntegrationService();
+    $service = new XeroIntegrationService;
     $tokenModel = $service->getTokenModel();
 
     expect($tokenModel)->toBeNull();
@@ -29,7 +29,7 @@ test('returns null when no token model exists', function () {
 test('can convert token model to oauth token', function () {
     $token = XeroToken::factory()->create();
 
-    $service = new XeroIntegrationService();
+    $service = new XeroIntegrationService;
     $oauthToken = $service->getToken($token);
 
     expect($oauthToken)->toBeInstanceOf(AccessToken::class)
@@ -39,14 +39,14 @@ test('can convert token model to oauth token', function () {
 test('can get latest oauth token when no token passed', function () {
     XeroToken::factory()->create();
 
-    $service = new XeroIntegrationService();
+    $service = new XeroIntegrationService;
     $oauthToken = $service->getToken();
 
     expect($oauthToken)->toBeInstanceOf(AccessToken::class);
 });
 
 test('returns null when no token exists', function () {
-    $service = new XeroIntegrationService();
+    $service = new XeroIntegrationService;
     $oauthToken = $service->getToken();
 
     expect($oauthToken)->toBeNull();
@@ -57,7 +57,7 @@ test('can handle expired token and refresh it', function () {
         'expires' => now()->subHours(1)->timestamp,
     ]);
 
-    $service = new XeroIntegrationService();
+    $service = new XeroIntegrationService;
 
     $this->mock(Xero::class, function (MockInterface $mock) use ($expiredToken) {
         $mock->shouldReceive('getAccessToken')
@@ -85,7 +85,7 @@ test('throws exception when token format is invalid', function () {
         'expires' => now()->subHours(1)->timestamp,
     ]);
 
-    $service = new XeroIntegrationService();
+    $service = new XeroIntegrationService;
 
     $this->mock(Xero::class, function (MockInterface $mock) {
         $mock->shouldReceive('getAccessToken')
@@ -97,7 +97,7 @@ test('throws exception when token format is invalid', function () {
 });
 
 test('can get auth url', function () {
-    $service = new XeroIntegrationService();
+    $service = new XeroIntegrationService;
 
     $this->mock(Xero::class, function (MockInterface $mock) {
         $mock->shouldReceive('getAuthorizationUrl')
@@ -110,7 +110,7 @@ test('can get auth url', function () {
 });
 
 test('can save access token from code', function () {
-    $service = new XeroIntegrationService();
+    $service = new XeroIntegrationService;
 
     $this->mock(Xero::class, function (MockInterface $mock) {
         $mock->shouldReceive('getAccessToken')
@@ -134,7 +134,7 @@ test('can save access token from code', function () {
 test('can change xero tenant', function () {
     $token = XeroToken::factory()->create();
 
-    $service = new XeroIntegrationService();
+    $service = new XeroIntegrationService;
     $updatedToken = $service->changeXeroTenant('new-tenant-id');
 
     expect($updatedToken)->toBeInstanceOf(XeroToken::class)
