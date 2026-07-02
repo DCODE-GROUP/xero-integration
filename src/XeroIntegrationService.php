@@ -6,7 +6,10 @@ use Calcinai\OAuth2\Client\Provider\Xero;
 use DcodeGroup\XeroIntegration\Exceptions\UnauthorizedXero;
 use DcodeGroup\XeroIntegration\Models\XeroToken;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Session;
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
+use League\OAuth2\Client\Token\AccessTokenInterface;
 
 class XeroIntegrationService
 {
@@ -58,5 +61,60 @@ class XeroIntegrationService
         }
 
         return $token;
+    }
+
+    public function changeXeroTenant(string $tenantId): ?XeroToken
+    {
+        $token = $this->getTokenModel();
+
+        if (empty($token)) {
+            return null;
+        }
+
+        $token->current_tenant_id = $tenantId;
+        $token->save();
+
+        return $token;
+    }
+
+    public function getAuthUrl(): string
+    {
+        return resolve(Xero::class)->getAuthorizationUrl([
+            'scope' => [config('xero-integration.oauth.scopes')],
+        ]);
+    }
+
+    /**
+     * @throws IdentityProviderException
+     * @throws UnauthorizedXero
+     */
+    public function getAccessTokenFromCode(string $code): AccessTokenInterface
+    {
+        $token = resolve(Xero::class)->getAccessToken('authorization_code', [
+            'code' => $code,
+        ]);
+
+        if (! XeroToken::isValidTokenFormat($token)) {
+            throw new UnauthorizedXero('Token is invalid or the provided token has invalid format!');
+        }
+
+        return $token;
+    }
+
+    public function saveAccessTokenFromCode(string $code): XeroToken
+    {
+        $token = $this->getAccessTokenFromCode($code);
+        $data = $token->jsonSerialize();
+
+        if (config('xero-integration.tenancy.enabled')) {
+            $data['tenant_id'] = null;
+            $sessionName = config('xero-integration.tenancy.session_name');
+            if (! empty($sessionName) && Session::has($sessionName)) {
+                $tenantId = Session::get($sessionName);
+                $data['tenant_id'] = $tenantId;
+            }
+        }
+
+        return XeroToken::create($data);
     }
 }
