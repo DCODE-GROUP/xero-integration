@@ -39,7 +39,7 @@ abstract class XeroQuoteData extends Data implements XeroSyncable
         // otherwise we may overwrite the Contact details in Xero with outdated information from our local model
         $contactData = $this->Contact->localModel() ? ['ContactID' => $this->Contact->ContactID] : $this->Contact->toXeroArray();
 
-        return  [
+        return [
             'Contact' => $contactData,
             'Status' => $this->Status,
             'Date' => $this->Date,
@@ -59,8 +59,8 @@ abstract class XeroQuoteData extends Data implements XeroSyncable
 
     /**
      * Create from Xero Model
-     * @param XeroQuote $xeroObject
-     * @return self
+     *
+     * @param  XeroQuote  $xeroObject
      */
     public static function fromXero(XeroModel|XeroQuote $xeroObject): self
     {

@@ -28,8 +28,8 @@ abstract class XeroContactPersonData extends Data implements XeroSyncable
 
     /**
      * Create from Xero Model
-     * @param array $xeroContactPerson
-     * @return self
+     *
+     * @param  array  $xeroContactPerson
      */
     public static function fromXero(XeroModel|array $xeroContactPerson): self
     {

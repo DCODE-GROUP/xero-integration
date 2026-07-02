@@ -25,8 +25,8 @@ abstract class XeroInvoicePaymentData extends Data implements XeroSyncable
 
     /**
      * Create from Xero Model
-     * @param XeroPayment $xeroPayment
-     * @return self
+     *
+     * @param  XeroPayment  $xeroPayment
      */
     public static function fromXero(XeroModel|XeroPayment $xeroPayment): self
     {

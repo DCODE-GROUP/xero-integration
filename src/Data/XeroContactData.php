@@ -3,9 +3,6 @@
 namespace DcodeGroup\XeroIntegration\Data;
 
 use DcodeGroup\XeroIntegration\Data\Contracts\XeroSyncable;
-use DcodeGroup\XeroIntegration\Data\XeroAddressData;
-use DcodeGroup\XeroIntegration\Data\XeroContactPersonData;
-use DcodeGroup\XeroIntegration\Data\XeroPhoneData;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -39,8 +36,8 @@ abstract class XeroContactData extends Data implements XeroSyncable
 
     /**
      * Create from Xero Model
-     * @param XeroContact $xeroContact
-     * @return self
+     *
+     * @param  XeroContact  $xeroContact
      */
     public static function fromXero(XeroModel|XeroContact $xeroContact): self
     {

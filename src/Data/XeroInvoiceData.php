@@ -3,9 +3,6 @@
 namespace DcodeGroup\XeroIntegration\Data;
 
 use DcodeGroup\XeroIntegration\Data\Contracts\XeroSyncable;
-use DcodeGroup\XeroIntegration\Data\XeroContactData;
-use DcodeGroup\XeroIntegration\Data\XeroInvoiceItemData;
-use DcodeGroup\XeroIntegration\Data\XeroInvoicePaymentData;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -41,14 +38,14 @@ abstract class XeroInvoiceData extends Data implements XeroSyncable
 
     /**
      * Create from Xero Model
-     * @param XeroInvoice $xeroInvoice
-     * @return XeroInvoiceData
+     *
+     * @param  XeroInvoice  $xeroInvoice
      */
     public static function fromXero(XeroModel|XeroInvoice $xeroInvoice): self
     {
         return new static(
             Contact: XeroContactData::fromXero($xeroInvoice->getContact()),
-            LineItems: !empty($xeroInvoice->getLineItems()) ?  : collect(),
+            LineItems: ! empty($xeroInvoice->getLineItems()) ?: collect(),
             InvoiceDate: Carbon::instance($xeroInvoice->getDate()),
             DueDate: Carbon::instance($xeroInvoice->getDueDate()),
             InvoiceNumber: $xeroInvoice->getInvoiceNumber(),
@@ -74,7 +71,7 @@ abstract class XeroInvoiceData extends Data implements XeroSyncable
         return [
             'Type' => $this->Type,
             'Contact' => $contactData,
-            'LineItems' => !empty($this->LineItems) ? $this->LineItems->map(function (XeroInvoiceItemData $item) {
+            'LineItems' => ! empty($this->LineItems) ? $this->LineItems->map(function (XeroInvoiceItemData $item) {
                 return $item->toXeroArray();
             })->toArray() : null,
             'Date' => $this->InvoiceDate,

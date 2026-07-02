@@ -3,8 +3,8 @@
 namespace App\Data\Xero;
 
 use App\Models\Invoice;
-use DcodeGroup\XeroIntegration\Data\XeroInvoiceData as PackageXeroInvoiceData;
 use DcodeGroup\XeroIntegration\Data\Contracts\XeroSyncable;
+use DcodeGroup\XeroIntegration\Data\XeroInvoiceData as PackageXeroInvoiceData;
 use Illuminate\Database\Eloquent\Model;
 
 class InvoiceData extends PackageXeroInvoiceData implements XeroSyncable

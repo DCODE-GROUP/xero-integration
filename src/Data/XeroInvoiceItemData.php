@@ -2,7 +2,6 @@
 
 namespace DcodeGroup\XeroIntegration\Data;
 
-
 use DcodeGroup\XeroIntegration\Data\Contracts\XeroSyncable;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelData\Data;
@@ -37,8 +36,8 @@ abstract class XeroInvoiceItemData extends Data implements XeroSyncable
 
     /**
      * Create from Xero Model
-     * @param LineItem $xeroLineItem
-     * @return self
+     *
+     * @param  LineItem  $xeroLineItem
      */
     public static function fromXero(XeroModel|LineItem $xeroLineItem): self
     {

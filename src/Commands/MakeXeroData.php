@@ -6,6 +6,7 @@ use Illuminate\Console\Concerns\ConfiguresPrompts;
 use Illuminate\Console\Concerns\CreatesMatchingTest;
 use Illuminate\Console\GeneratorCommand;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -30,20 +31,20 @@ class MakeXeroData extends GeneratorCommand implements PromptsForMissingInput
 
     protected function promptForMissingArgumentsUsing(): array
     {
-        $dataClasses = $this->getClassesInDirectory(dirname(__DIR__) . '/../Data');
+        $dataClasses = $this->getClassesInDirectory(dirname(__DIR__).'/../Data');
 
         return [
             'name' => fn () => text(
-                    label: 'What is the name of the Data class to extend a XeroData class?',
-                    placeholder: 'e.g. InvoiceData',
-                    required: 'The class name is required',
-                    validate: ['name' => ['required', 'string', 'min:3', 'max:255', 'alphanum']],
-                ),
+                label: 'What is the name of the Data class to extend a XeroData class?',
+                placeholder: 'e.g. InvoiceData',
+                required: 'The class name is required',
+                validate: ['name' => ['required', 'string', 'min:3', 'max:255', 'alphanum']],
+            ),
             'xero-data' => fn () => select(
-                label:'What is the name of the Xero Data to extend?',
+                label: 'What is the name of the Xero Data to extend?',
                 required: 'The Xero Data class name is required',
                 options: $dataClasses,
-                validate: ['xero-data' => ['required', 'string', 'in:' . implode(',', $dataClasses)]],
+                validate: ['xero-data' => ['required', 'string', 'in:'.implode(',', $dataClasses)]],
                 info: 'Select the Xero Data class to extend from the list of available classes.',
             ),
         ];
@@ -51,9 +52,6 @@ class MakeXeroData extends GeneratorCommand implements PromptsForMissingInput
 
     /**
      * Summary of afterPromptingForMissingArguments
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return void
      */
     protected function afterPromptingForMissingArguments(InputInterface $input, OutputInterface $output): void
     {
@@ -62,7 +60,7 @@ class MakeXeroData extends GeneratorCommand implements PromptsForMissingInput
         $input->setOption('model', select(
             label: 'What is the name of the model to use for this Data class?',
             options: $modelClasses,
-            validate: ['model' => [ 'string', 'in:' . implode(',', $modelClasses)]],
+            validate: ['model' => ['string', 'in:'.implode(',', $modelClasses)]],
             info: 'Select the model class to use for this Data class from the list of available classes.',
             default: $this->option('model'),
         ));
@@ -74,7 +72,7 @@ class MakeXeroData extends GeneratorCommand implements PromptsForMissingInput
      * @param  string  $name
      * @return string
      *
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws FileNotFoundException
      */
     protected function buildClass($name)
     {
@@ -117,8 +115,6 @@ class MakeXeroData extends GeneratorCommand implements PromptsForMissingInput
 
     /**
      * Summary of getClassesInDirectory
-     * @param string $directory
-     * @return array
      */
     protected function getClassesInDirectory(string $directory): array
     {
@@ -129,21 +125,20 @@ class MakeXeroData extends GeneratorCommand implements PromptsForMissingInput
 
     /**
      * Summary of getStub
-     * @return string
      */
     protected function getStub(): string
     {
-        return __DIR__ . '/../Stubs/xero-data.stub';
+        return __DIR__.'/../Stubs/xero-data.stub';
     }
 
     /**
      * Summary of getDefaultNamespace
-     * @param mixed $rootNamespace
+     *
+     * @param  mixed  $rootNamespace
      * @return string
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\Data\Xero';
+        return $rootNamespace.'\Data\Xero';
     }
-
 }

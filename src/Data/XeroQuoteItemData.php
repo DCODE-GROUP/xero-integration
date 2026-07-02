@@ -36,8 +36,8 @@ abstract class XeroQuoteItemData extends Data implements XeroSyncable
 
     /**
      * Create from Xero Model
-     * @param XeroLineItem $xeroQuoteItem
-     * @return self
+     *
+     * @param  XeroLineItem  $xeroQuoteItem
      */
     public static function fromXero(XeroModel|XeroLineItem $xeroQuoteItem): self
     {

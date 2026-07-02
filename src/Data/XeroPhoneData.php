@@ -13,10 +13,6 @@ abstract class XeroPhoneData extends Data implements XeroSyncable
 {
     /**
      * Summary of __construct
-     * @param string|Optional|null $PhoneType
-     * @param string|Optional|null $PhoneNumber
-     * @param string|Optional|null $PhoneAreCode
-     * @param string|Optional|null $PhoneCountryCode
      */
     final public function __construct(
         public string|Optional|null $PhoneType,
@@ -37,8 +33,8 @@ abstract class XeroPhoneData extends Data implements XeroSyncable
 
     /**
      * Create from Xero Model
-     * @param XeroPhone $xeroPhone
-     * @return self
+     *
+     * @param  XeroPhone  $xeroPhone
      */
     public static function fromXero(XeroModel|XeroPhone $xeroPhone): self
     {
