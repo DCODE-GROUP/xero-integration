@@ -2,7 +2,6 @@
 
 namespace DcodeGroup\XeroIntegration\Data;
 
-use DcodeGroup\XeroIntegration\Data\Contracts\HasXeroData;
 use DcodeGroup\XeroIntegration\Data\Contracts\XeroSyncable;
 use DcodeGroup\XeroIntegration\Data\Traits\XeroSyncTrait;
 use DcodeGroup\XeroIntegration\Enums\XeroPaymentTypesEnum;
@@ -13,7 +12,7 @@ use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\Payment as XeroPayment;
 use XeroPHP\Remote\Model as XeroModel;
 
-abstract class XeroPaymentData extends AbstractXeroData implements HasXeroData, XeroSyncable
+abstract class XeroPaymentData extends AbstractXeroData implements XeroSyncable
 {
     use XeroSyncTrait;
 

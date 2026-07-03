@@ -2,12 +2,11 @@
 
 namespace DcodeGroup\XeroIntegration\Data;
 
-use DcodeGroup\XeroIntegration\Data\Contracts\HasXeroData;
 use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\Phone as XeroPhone;
 use XeroPHP\Remote\Model as XeroModel;
 
-abstract class XeroPhoneData extends AbstractXeroData implements HasXeroData
+abstract class XeroPhoneData extends AbstractXeroData
 {
     protected string $xeroRelationship = 'phone';
 

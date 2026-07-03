@@ -2,7 +2,7 @@
 
 namespace DcodeGroup\XeroIntegration;
 
-use DcodeGroup\XeroIntegration\Commands\MakeXeroData;
+use DcodeGroup\XeroIntegration\Commands\MakeXeroDataCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -24,7 +24,7 @@ class XeroIntegrationServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasViews()
             ->hasMigration('create_xero_tokens_table')
-            ->hasCommand(MakeXeroData::class)
+            ->hasCommand(MakeXeroDataCommand::class)
             ->hasRoute('xero');
     }
 }

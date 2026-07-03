@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
-class MakeXeroData extends GeneratorCommand implements PromptsForMissingInput
+class MakeXeroDataCommand extends GeneratorCommand implements PromptsForMissingInput
 {
     use ConfiguresPrompts;
     use CreatesMatchingTest;

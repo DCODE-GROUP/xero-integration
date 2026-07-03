@@ -2,12 +2,13 @@
 
 namespace DcodeGroup\XeroIntegration\Data;
 
+use DcodeGroup\XeroIntegration\Data\Contracts\HasXeroData;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use XeroPHP\Remote\Collection as XeroCollection;
 use XeroPHP\Remote\Model as XeroModel;
 
-abstract class AbstractXeroData
+abstract class AbstractXeroData implements HasXeroData
 {
     protected ?Model $localModel = null;
 

@@ -2,12 +2,11 @@
 
 namespace DcodeGroup\XeroIntegration\Data;
 
-use DcodeGroup\XeroIntegration\Data\Contracts\HasXeroData;
 use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\LineItem;
 use XeroPHP\Remote\Model as XeroModel;
 
-abstract class XeroInvoiceItemData extends AbstractXeroData implements HasXeroData
+abstract class XeroInvoiceItemData extends AbstractXeroData
 {
     protected string $xeroRelationship = 'line-item';
 

@@ -2,7 +2,6 @@
 
 namespace DcodeGroup\XeroIntegration\Data;
 
-use DcodeGroup\XeroIntegration\Data\Contracts\HasXeroData;
 use DcodeGroup\XeroIntegration\Data\Traits\XeroSyncTrait;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -12,7 +11,7 @@ use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\Invoice as XeroInvoice;
 use XeroPHP\Remote\Model as XeroModel;
 
-abstract class XeroInvoiceData extends AbstractXeroData implements HasXeroData
+abstract class XeroInvoiceData extends AbstractXeroData
 {
     use XeroSyncTrait;
 
