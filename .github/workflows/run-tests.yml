@@ -22,8 +22,7 @@ concurrency:
 
 jobs:
   static-analysis:
-    call-workflow:
-      uses: ./.github/workflows/static-analysis.yml
+    uses: ./.github/workflows/static-analysis.yml
   test:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 5

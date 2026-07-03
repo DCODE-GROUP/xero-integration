@@ -23,5 +23,4 @@ jobs:
       - name: Run Laravel Pint
         run: ./vendor/bin/pint --test --verbose
   phpstan:
-    call-workflow:
-      uses: ./.github/workflows/phpstan.yml
+    uses: ./.github/workflows/phpstan.yml
