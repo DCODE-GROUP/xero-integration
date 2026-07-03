@@ -1,9 +1,10 @@
 {
     "name": "dcode-group/xero-integration",
-    "description": "A Package for the integration of Laravel with Xero",
+    "description": "An opininated Xero integration package for Laravel that allows for fluent quering of Xero records and mapping of Xero Entities",
     "keywords": [
         "Dcode Group",
         "laravel",
+        "xero",
         "xero-integration"
     ],
     "homepage": "https://github.com/dcode-group/xero-integration",
@@ -14,13 +15,18 @@
             "name": "Dcode Group",
             "email": "forge@dcodegroup.com",
             "homepage": "https://dcodegroup.com"
+        },
+        {
+            "name": "Josh Young",
+            "email": "jny986@gmail.com",
+            "homepage": "https://jny986.com"
         }
     ],
     "require": {
         "php": "^8.4",
         "calcinai/xero-php": "^2.8",
-        "illuminate/contracts": "^11.0||^12.0||^13.0",
-        "illuminate/support": "^11.0||^12.0||^13.0",
+        "illuminate/contracts": "^10.0||^11.0||^12.0||^13.0",
+        "illuminate/support": "^10.0||^11.0||^12.0||^13.0",
         "laravel/prompts": "^0.3.21",
         "league/oauth2-client": "^2.9",
         "spatie/laravel-data": "^4.23",

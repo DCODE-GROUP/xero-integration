@@ -24,6 +24,7 @@ class XeroIntegrationServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasViews()
             ->hasMigration('create_xero_tokens_table')
-            ->hasCommand(MakeXeroData::class);
+            ->hasCommand(MakeXeroData::class)
+            ->hasRoute('xero');
     }
 }

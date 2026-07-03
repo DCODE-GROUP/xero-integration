@@ -1,11 +1,11 @@
 # A Package for the integration of Laravel with Xero
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/dcode-group/xero-integration.svg?style=flat-square)](https://packagist.org/packages/dcode-group/xero-integration)
-[![GitHub Tests Action Status](https://github.com/spatie/package-xero-integration-laravel/actions/workflows/run-tests.yml/badge.svg)](https://github.com/dcode-group/xero-integration/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://github.com/spatie/package-xero-integration-laravel/actions/workflows/fix-php-code-style-issues.yml/badge.svg)](https://github.com/dcode-group/xero-integration/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
+[![GitHub Tests Action Status](https://github.com/DCODE-GROUP/xero-integration/actions/workflows/run-tests.yml/badge.svg)](https://github.com/DCODE-GROUP/xero-integration/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Code Style Action Status](https://github.com/DCODE-GROUP/xero-integration/actions/workflows/fix-php-code-style-issues.yml/badge.svg)](https://github.com/DCODE-GROUP/xero-integration/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/dcode-group/xero-integration.svg?style=flat-square)](https://packagist.org/packages/dcode-group/xero-integration)
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+An opininated Xero integration package for Laravel that allows for fluent quering of Xero records and mapping of Xero Entities
 
 ## Installation
 
@@ -28,24 +28,10 @@ You can publish the config file with:
 php artisan vendor:publish --tag="xero-integration-config"
 ```
 
-This is the contents of the published config file:
-
-```php
-return [
-];
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag="xero-integration-views"
-```
-
 ## Usage
 
 ```php
-$xeroIntegration = new DcodeGroup\XeroIntegration();
-echo $xeroIntegration->echoPhrase('Hello, DcodeGroup!');
+XeroIntegration::{Model}->{Query}->get();
 ```
 
 ## Testing
@@ -69,7 +55,7 @@ If believe there is a valnerability in this package please send us an email at [
 ## Credits
 
 - [Dcode Group](https://dcodegroup.com)
-- [All Contributors](../../contributors)
+- [Josh Young](https://jny986.com)
 
 Package based on [Spatie's Laravel Skeleton](https://github.com/spatie/package-skeleton-laravel).
 
