@@ -25,9 +25,9 @@
     "require": {
         "php": "^8.3",
         "calcinai/xero-php": "^2.8",
-        "illuminate/contracts": "^10.0||^11.0||^12.0||^13.0",
-        "illuminate/support": "^10.0||^11.0||^12.0||^13.0",
-        "laravel/prompts": "^0.1||^0.2||^0.3",
+        "illuminate/contracts": "^11.0||^12.0||^13.0",
+        "illuminate/support": "^11.0||^12.0||^13.0",
+        "laravel/prompts": "^0.2||^0.3",
         "league/oauth2-client": "^2.9",
         "spatie/laravel-data": "^4.23",
         "spatie/laravel-package-tools": "^1.16"
@@ -36,7 +36,7 @@
         "laravel/pint": "^1.14",
         "nunomaduro/collision": "^8.8",
         "larastan/larastan": "^3.0",
-        "orchestra/testbench": "^8.0.0||^9.0.0||^10.0.0||^11.0.0",
+        "orchestra/testbench": "^9.0.0||^10.0.0||^11.0.0",
         "pestphp/pest": "^4.0",
         "pestphp/pest-plugin-arch": "^4.0",
         "pestphp/pest-plugin-laravel": "^4.0",
