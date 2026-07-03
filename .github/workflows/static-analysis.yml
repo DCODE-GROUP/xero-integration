@@ -5,22 +5,6 @@ on:
 
 jobs:
   pint:
-    name: pint
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v7
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.5'
-          coverage: none
-
-      - name: Install composer dependencies
-        uses: ramsey/composer-install@v4
-
-      - name: Run Laravel Pint
-        run: ./vendor/bin/pint --test --verbose
+    uses: ./.github/workflows/pint.yml
   phpstan:
     uses: ./.github/workflows/phpstan.yml
