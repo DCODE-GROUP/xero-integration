@@ -2,27 +2,34 @@
 
 namespace DcodeGroup\XeroIntegration\Data;
 
-use DcodeGroup\XeroIntegration\Data\Contracts\XeroSyncable;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\LaravelData\Data;
+use DcodeGroup\XeroIntegration\Data\Contracts\HasXeroData;
+use Spatie\LaravelData\Optional;
 use XeroPHP\Remote\Model as XeroModel;
 
-abstract class XeroContactPersonData extends Data implements XeroSyncable
+abstract class XeroContactPersonData extends AbstractXeroData implements HasXeroData
 {
+    protected string $xeroRelationship = 'contact-person';
+
+    protected array $searchFields = [
+        'EmailAddress',
+    ];
+
+    protected array $relatedFields = [];
+
     final public function __construct(
-        public ?string $FirstName,
-        public ?string $LastName,
-        public ?string $EmailAddress,
-        public bool $IncludeInEmails
+        public string|Optional|null $FirstName,
+        public string|Optional|null $LastName,
+        public string|Optional|null $EmailAddress,
+        public bool $IncludeInEmails = false
     ) {}
 
     public function toXeroArray(): array
     {
         return [
-            'FirstName' => $this->FirstName,
-            'LastName' => $this->LastName,
-            'EmailAddress' => $this->EmailAddress,
-            'IncludeInEmails' => $this->IncludeInEmails,
+            'FirstName' => data_get($this, 'FirstName'),
+            'LastName' => data_get($this, 'LastName'),
+            'EmailAddress' => data_get($this, 'EmailAddress'),
+            'IncludeInEmails' => data_get($this, 'IncludeInEmails'),
         ];
     }
 
@@ -31,7 +38,7 @@ abstract class XeroContactPersonData extends Data implements XeroSyncable
      *
      * @param  array  $xeroContactPerson
      */
-    public static function fromXero(XeroModel|array $xeroContactPerson): self
+    protected static function fromXero(XeroModel|array $xeroContactPerson): self
     {
         return new static(
             FirstName: data_get($xeroContactPerson, 'FirstName'),
@@ -40,10 +47,4 @@ abstract class XeroContactPersonData extends Data implements XeroSyncable
             IncludeInEmails: data_get($xeroContactPerson, 'IncludeInEmails'),
         );
     }
-
-    abstract public static function fromModel(Model $model): self;
-
-    abstract public function syncToModel(): Model;
-
-    abstract public function localModel(): ?Model;
 }

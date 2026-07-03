@@ -13,6 +13,11 @@ class XeroIntegration
         protected XeroQuery $query
     ) {}
 
+    public function make(XeroApp $app, XeroQuery $query): self
+    {
+        return new self($app, $query);
+    }
+
     public function __call(string $name, ?array $arguments)
     {
         $returnValue = call_user_func_array([$this->query, $name], $arguments);

@@ -2,22 +2,36 @@
 
 namespace DcodeGroup\XeroIntegration\Data;
 
+use DcodeGroup\XeroIntegration\Data\Contracts\HasXeroData;
 use DcodeGroup\XeroIntegration\Data\Contracts\XeroSyncable;
-use Illuminate\Database\Eloquent\Model;
+use DcodeGroup\XeroIntegration\Data\Traits\XeroSyncTrait;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
-use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\Contact as XeroContact;
 use XeroPHP\Remote\Model as XeroModel;
 
-abstract class XeroContactData extends Data implements XeroSyncable
+abstract class XeroContactData extends AbstractXeroData implements HasXeroData, XeroSyncable
 {
+    use XeroSyncTrait;
+
+    protected string $xeroRelationship = 'contact';
+
+    protected array $searchFields = [
+        'EmailAddress',
+    ];
+
+    protected array $relatedFields = [
+        'ContactPersons',
+        'Addresses',
+        'Phones',
+    ];
+
     final public function __construct(
         public string|Optional|null $ContactID,
-        public string $ContactStatus,
+        public string $ContactStatus, // ToDo: Change Enum
         public string|Optional|null $Name,
         public string|Optional|null $FirstName,
         public string|Optional|null $LastName,
@@ -28,7 +42,7 @@ abstract class XeroContactData extends Data implements XeroSyncable
         public ?Collection $ContactPersons = null,
         public bool $IsSupplier = false,
         public bool $IsCustomer = true,
-        /** @var Collection<int,XeroContactAddressData>|null */
+        /** @var Collection<int,XeroAddressData>|null */
         public ?Collection $Addresses = null,
         /** @var Collection<int,XeroPhoneData>|null */
         public ?Collection $Phones = null,
@@ -39,45 +53,39 @@ abstract class XeroContactData extends Data implements XeroSyncable
      *
      * @param  XeroContact  $xeroContact
      */
-    public static function fromXero(XeroModel|XeroContact $xeroContact): self
+    protected static function fromXero(XeroModel|XeroContact $xeroContact): self
     {
         return new static(
-            ContactID: $xeroContact->getContactID(),
-            ContactStatus: $xeroContact->getContactStatus(),
-            Name: $xeroContact->getName(),
-            FirstName: $xeroContact->getFirstName(),
-            LastName: $xeroContact->getLastName(),
-            EmailAddress: $xeroContact->getEmailAddress(),
-            UpdatedDateUTC: Carbon::parse($xeroContact->getUpdatedDateUTC()),
-            ContactPersons: collect($xeroContact->getContactPersons())->map(fn ($person) => XeroContactPersonData::fromXero($person)),
-            Addresses: collect($xeroContact->getAddresses())->map(fn ($address) => XeroAddressData::fromXero($address)),
-            IsSupplier: $xeroContact->getIsSupplier(),
-            IsCustomer: $xeroContact->getIsCustomer(),
-            Phones: collect($xeroContact->getPhones())->map(fn ($phone) => XeroPhoneData::fromXero($phone)),
+            ContactID: data_get($xeroContact, 'ContactID'),
+            ContactStatus: data_get($xeroContact, 'ContactStatus'),
+            Name: data_get($xeroContact, 'Name'),
+            FirstName: data_get($xeroContact, 'FirstName'),
+            LastName: data_get($xeroContact, 'LastName'),
+            EmailAddress: data_get($xeroContact, 'EmailAddress'),
+            UpdatedDateUTC: Carbon::parse(data_get($xeroContact, 'UpdatedDateUTC')),
+            ContactPersons: XeroContactPersonData::toCollection(data_get($xeroContact, 'ContactPersons')),
+            Addresses: XeroAddressData::toCollection(data_get($xeroContact, 'Addresses')),
+            IsSupplier: data_get($xeroContact, 'IsSupplier'),
+            IsCustomer: data_get($xeroContact, 'IsCustomer'),
+            Phones: XeroPhoneData::toCollection(data_get($xeroContact, 'Phones')),
         );
     }
 
     public function toXeroArray(): array
     {
         return [
-            'ContactID' => $this->ContactID,
-            'ContactStatus' => $this->ContactStatus,
-            'Name' => $this->Name,
-            'FirstName' => $this->FirstName,
-            'LastName' => $this->LastName,
-            'EmailAddress' => $this->EmailAddress,
-            'UpdatedDateUTC' => $this->UpdatedDateUTC,
-            'IsSupplier' => $this->IsSupplier,
-            'IsCustomer' => $this->IsCustomer,
-            'ContactPersons' => $this->ContactPersons?->map(fn ($person) => $person->toXeroArray())->toArray(),
-            'Addresses' => $this->Addresses?->map(fn ($address) => $address->toXeroArray())->toArray(),
-            'Phones' => $this->Phones?->map(fn ($phone) => $phone->toXeroArray())->toArray(),
+            'ContactID' => data_get($this, 'ContactID'),
+            'ContactStatus' => data_get($this, 'ContactStatus'),
+            'Name' => data_get($this, 'Name'),
+            'FirstName' => data_get($this, 'FirstName'),
+            'LastName' => data_get($this, 'LastName'),
+            'EmailAddress' => data_get($this, 'EmailAddress'),
+            'UpdatedDateUTC' => data_get($this, 'UpdatedDateUTC'),
+            'IsSupplier' => data_get($this, 'IsSupplier'),
+            'IsCustomer' => data_get($this, 'IsCustomer'),
+            'ContactPersons' => XeroContactPersonData::toXeroCollection(data_get($this, 'ContactPersons')),
+            'Addresses' => XeroAddressData::toXeroCollection(data_get($this, 'Addresses')),
+            'Phones' => XeroPhoneData::toXeroCollection(data_get($this, 'Phones')),
         ];
     }
-
-    abstract public static function fromModel(Model $model): self;
-
-    abstract public function syncToModel(): Model;
-
-    abstract public function localModel(): ?Model;
 }

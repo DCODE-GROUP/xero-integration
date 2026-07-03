@@ -2,15 +2,24 @@
 
 namespace DcodeGroup\XeroIntegration\Data;
 
-use DcodeGroup\XeroIntegration\Data\Contracts\XeroSyncable;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\LaravelData\Data;
+use DcodeGroup\XeroIntegration\Data\Contracts\HasXeroData;
 use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\LineItem;
 use XeroPHP\Remote\Model as XeroModel;
 
-abstract class XeroInvoiceItemData extends Data implements XeroSyncable
+abstract class XeroInvoiceItemData extends AbstractXeroData implements HasXeroData
 {
+    protected string $xeroRelationship = 'line-item';
+
+    protected array $searchFields = [
+        'Description',
+        'Quantity',
+        'UnitAmount',
+        'LineAmount',
+    ];
+
+    protected array $relatedFields = [];
+
     final public function __construct(
         public string|Optional|null $LineItemID,
         public string $Description,
@@ -24,13 +33,13 @@ abstract class XeroInvoiceItemData extends Data implements XeroSyncable
     public function toXeroArray(): array
     {
         return [
-            'LineItemID' => $this->LineItemID,
-            'Description' => $this->Description,
-            'Quantity' => $this->Quantity,
-            'UnitAmount' => $this->UnitAmount,
-            'LineAmount' => $this->LineAmount,
-            'TaxAmount' => $this->TaxAmount,
-            'DiscountAmount' => $this->DiscountAmount,
+            'LineItemID' => data_get($this, 'LineItemID'),
+            'Description' => data_get($this, 'Description'),
+            'Quantity' => data_get($this, 'Quantity'),
+            'UnitAmount' => data_get($this, 'UnitAmount'),
+            'LineAmount' => data_get($this, 'LineAmount'),
+            'TaxAmount' => data_get($this, 'TaxAmount'),
+            'DiscountAmount' => data_get($this, 'DiscountAmount'),
         ];
     }
 
@@ -39,22 +48,16 @@ abstract class XeroInvoiceItemData extends Data implements XeroSyncable
      *
      * @param  LineItem  $xeroLineItem
      */
-    public static function fromXero(XeroModel|LineItem $xeroLineItem): self
+    protected static function fromXero(XeroModel|LineItem $xeroLineItem): self
     {
         return new static(
-            LineItemID: $xeroLineItem->getLineItemID(),
-            Description: $xeroLineItem->getDescription(),
-            Quantity: (float) $xeroLineItem->getQuantity(),
-            UnitAmount: $xeroLineItem->getUnitAmount(),
-            LineAmount: $xeroLineItem->getLineAmount(),
-            TaxAmount: $xeroLineItem->getTaxAmount(),
-            DiscountAmount: $xeroLineItem->getDiscountAmount(),
+            LineItemID: data_get($xeroLineItem, 'LineItemID'),
+            Description: data_get($xeroLineItem, 'Description'),
+            Quantity: (float) data_get($xeroLineItem, 'Quantity'),
+            UnitAmount: data_get($xeroLineItem, 'UnitAmount'),
+            LineAmount: data_get($xeroLineItem, 'LineAmount'),
+            TaxAmount: data_get($xeroLineItem, 'TaxAmount'),
+            DiscountAmount: data_get($xeroLineItem, 'DiscountAmount'),
         );
     }
-
-    abstract public static function fromModel(Model $model): self;
-
-    abstract public function syncToModel(): Model;
-
-    abstract public function localModel(): ?Model;
 }

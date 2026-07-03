@@ -2,40 +2,51 @@
 
 namespace DcodeGroup\XeroIntegration\Data;
 
-use DcodeGroup\XeroIntegration\Data\Contracts\XeroSyncable;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\LaravelData\Data;
+use DcodeGroup\XeroIntegration\Data\Contracts\HasXeroData;
+use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\Address as XeroAddress;
 use XeroPHP\Remote\Model as XeroModel;
 
-abstract class XeroAddressData extends Data implements XeroSyncable
+abstract class XeroAddressData extends AbstractXeroData implements HasXeroData
 {
+    protected string $xeroRelationship = 'address';
+
+    protected array $searchFields = [
+        'AddressType',
+        'AddressLine1',
+        'City',
+        'PostalCode',
+        'Country',
+    ];
+
+    protected array $relatedFields = [];
+
     final public function __construct(
-        public ?string $AddressType,
-        public ?string $AddressLine1,
-        public ?string $AddressLine2,
-        public ?string $AddressLine3,
-        public ?string $AddressLine4,
-        public ?string $City,
-        public ?string $Region,
-        public ?string $PostalCode,
-        public ?string $Country,
-        public ?string $AttentionTo,
+        public string|Optional|null $AddressType,
+        public string|Optional|null $AddressLine1,
+        public string|Optional|null $AddressLine2,
+        public string|Optional|null $AddressLine3,
+        public string|Optional|null $AddressLine4,
+        public string|Optional|null $City,
+        public string|Optional|null $Region,
+        public string|Optional|null $PostalCode,
+        public string|Optional|null $Country,
+        public string|Optional|null $AttentionTo,
     ) {}
 
-    public function toXeroArray(): array
+    protected function toXeroArray(): array
     {
         return [
-            'AddressType' => $this->AddressType,
-            'AddressLine1' => $this->AddressLine1,
-            'AddressLine2' => $this->AddressLine2,
-            'AddressLine3' => $this->AddressLine3,
-            'AddressLine4' => $this->AddressLine4,
-            'City' => $this->City,
-            'Region' => $this->Region,
-            'PostalCode' => $this->PostalCode,
-            'Country' => $this->Country,
-            'AttentionTo' => $this->AttentionTo,
+            'AddressType' => data_get($this, 'AddressType'),
+            'AddressLine1' => data_get($this, 'AddressLine1'),
+            'AddressLine2' => data_get($this, 'AddressLine2'),
+            'AddressLine3' => data_get($this, 'AddressLine3'),
+            'AddressLine4' => data_get($this, 'AddressLine4'),
+            'City' => data_get($this, 'City'),
+            'Region' => data_get($this, 'Region'),
+            'PostalCode' => data_get($this, 'PostalCode'),
+            'Country' => data_get($this, 'Country'),
+            'AttentionTo' => data_get($this, 'AttentionTo'),
         ];
     }
 
@@ -44,7 +55,7 @@ abstract class XeroAddressData extends Data implements XeroSyncable
      *
      * @param  XeroAddress  $xeroAddress
      */
-    public static function fromXero(XeroModel|XeroAddress $xeroAddress): self
+    protected static function fromXero(XeroModel|XeroAddress $xeroAddress): self
     {
         return new static(
             AddressType: data_get($xeroAddress, 'AddressType'),
@@ -59,10 +70,4 @@ abstract class XeroAddressData extends Data implements XeroSyncable
             AttentionTo: data_get($xeroAddress, 'AttentionTo'),
         );
     }
-
-    abstract public static function fromModel(Model $model): self;
-
-    abstract public function syncToModel(): Model;
-
-    abstract public function localModel(): ?Model;
 }

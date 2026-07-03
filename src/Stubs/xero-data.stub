@@ -7,31 +7,21 @@ use DcodeGroup\XeroIntegration\Data\{{ xero-data }} as Package{{ xero-data }};
 use DcodeGroup\XeroIntegration\Data\Contracts\XeroSyncable;
 use Illuminate\Database\Eloquent\Model;
 
-class {{ class }} extends Package{{ xero-data }} implements XeroSyncable
+class {{ class }} extends Package{{ xero-data }}
 {
-    public static function fromModel(Model|{{ model }} $model): self
+    protected function mapToData(Model|{{ model }} $localModel): array
     {
-        // Functionality to map your models to Xero Models
+        // Map your local Model to this Xero Data
         return new self(
             // Map goes here.
         );
     }
 
-    public function syncToModel(): Model
+    public function mapToModel(): array
     {
-        $record = $this->localModel();
-
-        $record->update([
+        // Map this Xero Data to your local Model
+        return [
             // Map goes here.
-        ]);
-
-        return $record;
-    }
-
-    public function localModel(): ?Model
-    {
-        return {{ model }}::whereHas('xeroRecord', function ($query) {
-            $query->where('xero_id', $this->XeroID);
-        })->firstOrNew();
+        ]
     }
 }

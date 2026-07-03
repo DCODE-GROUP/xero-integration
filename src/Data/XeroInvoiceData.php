@@ -2,38 +2,53 @@
 
 namespace DcodeGroup\XeroIntegration\Data;
 
-use DcodeGroup\XeroIntegration\Data\Contracts\XeroSyncable;
-use Illuminate\Database\Eloquent\Model;
+use DcodeGroup\XeroIntegration\Data\Contracts\HasXeroData;
+use DcodeGroup\XeroIntegration\Data\Traits\XeroSyncTrait;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
-use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\Invoice as XeroInvoice;
 use XeroPHP\Remote\Model as XeroModel;
 
-abstract class XeroInvoiceData extends Data implements XeroSyncable
+abstract class XeroInvoiceData extends AbstractXeroData implements HasXeroData
 {
+    use XeroSyncTrait;
+
+    protected string $xeroRelationship = 'invoice';
+
+    protected array $searchFields = [
+        'InvoiceNumber',
+    ];
+
+    protected array $relatedFields = [
+        'Contact',
+        'LineItems',
+        'Payments',
+    ];
+
     final public function __construct(
+        public string|Optional|null $InvoiceID,
         public XeroContactData $Contact,
+        /** @var Collection<int,XeroInvoiceItemData> */
         public Collection $LineItems,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         public Carbon $InvoiceDate,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         public Carbon $DueDate,
         public string $InvoiceNumber,
-        public string $Status,
+        public string $Status, // ToDo: change to Enum
         public float $Subtotal,
         public float $TaxAmount,
         public float $Total,
         public float $Discount,
+        /** @var Collection<int,XeroPaymentData>|null */
         public Collection|Optional|null $Payments,
         public float $AmountDue,
         public float $AmountPaid,
-        public string|Optional|null $InvoiceID,
         public ?Carbon $UpdatedDateUTC,
-        public string $Type = XeroInvoice::INVOICE_TYPE_ACCREC,
+        public string $Type = XeroInvoice::INVOICE_TYPE_ACCREC, // ToDo: change to Enum
     ) {}
 
     /**
@@ -41,58 +56,46 @@ abstract class XeroInvoiceData extends Data implements XeroSyncable
      *
      * @param  XeroInvoice  $xeroInvoice
      */
-    public static function fromXero(XeroModel|XeroInvoice $xeroInvoice): self
+    protected static function fromXero(XeroModel|XeroInvoice $xeroInvoice): self
     {
         return new static(
-            Contact: XeroContactData::fromXero($xeroInvoice->getContact()),
-            LineItems: ! empty($xeroInvoice->getLineItems()) ?: collect(),
-            InvoiceDate: Carbon::instance($xeroInvoice->getDate()),
-            DueDate: Carbon::instance($xeroInvoice->getDueDate()),
-            InvoiceNumber: $xeroInvoice->getInvoiceNumber(),
-            Status: $xeroInvoice->getStatus(),
-            Subtotal: $xeroInvoice->getSubTotal(),
-            TaxAmount: $xeroInvoice->getTotalTax(),
-            Total: $xeroInvoice->getTotal(),
-            Discount: $xeroInvoice->getTotalDiscount(),
-            Payments: ! empty($xeroInvoice->getPayments()) ? XeroInvoicePaymentData::xeroCollection($xeroInvoice->getPayments()) : null, // @phpstan-ignore-line
-            AmountDue: $xeroInvoice->getAmountDue(),
-            AmountPaid: $xeroInvoice->getAmountPaid(),
-            InvoiceID: $xeroInvoice->getInvoiceID(),
-            UpdatedDateUTC: Carbon::instance($xeroInvoice->getUpdatedDateUTC()),
+            InvoiceID: data_get($xeroInvoice, 'InvoiceID'),
+            Contact: XeroContactData::fromXero(data_get($xeroInvoice, 'Contact')),
+            LineItems: XeroInvoiceItemData::toCollection(data_get($xeroInvoice, 'LineItems')),
+            InvoiceDate: Carbon::instance(data_get($xeroInvoice, 'Date')),
+            DueDate: Carbon::instance(data_get($xeroInvoice, 'DueDate')),
+            InvoiceNumber: data_get($xeroInvoice, 'InvoiceNumber'),
+            Status: data_get($xeroInvoice, 'Status'),
+            Subtotal: data_get($xeroInvoice, 'SubTotal'),
+            TaxAmount: data_get($xeroInvoice, 'TotalTax'),
+            Total: data_get($xeroInvoice, 'Total'),
+            Discount: data_get($xeroInvoice, 'TotalDiscount'),
+            Payments: XeroPaymentData::toCollection(data_get($xeroInvoice, 'Payments')),
+            AmountDue: data_get($xeroInvoice, 'AmountDue'),
+            AmountPaid: data_get($xeroInvoice, 'AmountPaid'),
+            UpdatedDateUTC: Carbon::instance(data_get($xeroInvoice, 'UpdatedDateUTC')),
         );
     }
 
     public function toXeroArray(): array
     {
-        // Ensure we don't overwrite the Contact in Xero if we have a local model with a Xero ID
-        // otherwise we may overwrite the Contact details in Xero with outdated information from our local model
-        $contactData = $this->Contact->localModel() ? ['ContactID' => $this->Contact->ContactID] : $this->Contact->toXeroArray();
-
         return [
-            'Type' => $this->Type,
-            'Contact' => $contactData,
-            'LineItems' => ! empty($this->LineItems) ? $this->LineItems->map(function (XeroInvoiceItemData $item) {
-                return $item->toXeroArray();
-            })->toArray() : null,
-            'Date' => $this->InvoiceDate,
-            'DueDate' => $this->DueDate,
-            'InvoiceNumber' => $this->InvoiceNumber,
-            'Status' => $this->Status,
-            'Subtotal' => $this->Subtotal,
-            'TotalTax' => $this->TaxAmount,
-            'Total' => $this->Total,
-            'TotalDiscount' => $this->Discount,
-            'Payments' => ! empty($this->Payments) ? $this->Payments->map(fn ($payment) => $payment->toXeroArray()) : null,
-            'AmountDue' => $this->AmountDue,
-            'AmountPaid' => $this->AmountPaid,
-            'InvoiceID' => $this->InvoiceID,
-            'UpdatedDateUTC' => $this->UpdatedDateUTC,
+            'Type' => data_get($this, 'Type'),
+            'Contact' => data_get($this, 'Contact')?->toXeroArray(),
+            'LineItems' => XeroInvoiceItemData::toXeroCollection(data_get($this, 'LineItems')),
+            'Date' => data_get($this, 'InvoiceDate'),
+            'DueDate' => data_get($this, 'DueDate'),
+            'InvoiceNumber' => data_get($this, 'InvoiceNumber'),
+            'Status' => data_get($this, 'Status'),
+            'Subtotal' => data_get($this, 'Subtotal'),
+            'TotalTax' => data_get($this, 'TaxAmount'),
+            'Total' => data_get($this, 'Total'),
+            'TotalDiscount' => data_get($this, 'Discount'),
+            'Payments' => XeroPaymentData::toXeroCollection(data_get($this, 'Payments')),
+            'AmountDue' => data_get($this, 'AmountDue'),
+            'AmountPaid' => data_get($this, 'AmountPaid'),
+            'InvoiceID' => data_get($this, 'InvoiceID'),
+            'UpdatedDateUTC' => data_get($this, 'UpdatedDateUTC'),
         ];
     }
-
-    abstract public static function fromModel(Model $model): self;
-
-    abstract public function syncToModel(): Model;
-
-    abstract public function localModel(): ?Model;
 }

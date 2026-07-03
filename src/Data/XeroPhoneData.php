@@ -2,15 +2,24 @@
 
 namespace DcodeGroup\XeroIntegration\Data;
 
-use DcodeGroup\XeroIntegration\Data\Contracts\XeroSyncable;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\LaravelData\Data;
+use DcodeGroup\XeroIntegration\Data\Contracts\HasXeroData;
 use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\Phone as XeroPhone;
 use XeroPHP\Remote\Model as XeroModel;
 
-abstract class XeroPhoneData extends Data implements XeroSyncable
+abstract class XeroPhoneData extends AbstractXeroData implements HasXeroData
 {
+    protected string $xeroRelationship = 'phone';
+
+    protected array $searchFields = [
+        'PhoneType',
+        'PhoneNumber',
+        'PhoneAreaCode',
+        'PhoneCountryCode',
+    ];
+
+    protected array $relatedFields = [];
+
     /**
      * Summary of __construct
      */
@@ -24,10 +33,10 @@ abstract class XeroPhoneData extends Data implements XeroSyncable
     public function toXeroArray(): array
     {
         return [
-            'PhoneType' => $this->PhoneType,
-            'PhoneNumber' => $this->PhoneNumber,
-            'PhoneAreaCode' => $this->PhoneAreCode,
-            'PhoneCountryCode' => $this->PhoneCountryCode,
+            'PhoneType' => data_get($this, 'PhoneType'),
+            'PhoneNumber' => data_get($this, 'PhoneNumber'),
+            'PhoneAreaCode' => data_get($this, 'PhoneAreCode'),
+            'PhoneCountryCode' => data_get($this, 'PhoneCountryCode'),
         ];
     }
 
@@ -36,19 +45,13 @@ abstract class XeroPhoneData extends Data implements XeroSyncable
      *
      * @param  XeroPhone  $xeroPhone
      */
-    public static function fromXero(XeroModel|XeroPhone $xeroPhone): self
+    protected static function fromXero(XeroModel|XeroPhone $xeroPhone): self
     {
         return new static(
-            PhoneType: $xeroPhone->getPhoneType(),
-            PhoneNumber: $xeroPhone->getPhoneNumber(),
-            PhoneAreCode: $xeroPhone->getPhoneAreaCode(),
-            PhoneCountryCode: $xeroPhone->getPhoneCountryCode(),
+            PhoneType: data_get($xeroPhone, 'PhoneType'),
+            PhoneNumber: data_get($xeroPhone, 'PhoneNumber'),
+            PhoneAreCode: data_get($xeroPhone, 'PhoneAreaCode'),
+            PhoneCountryCode: data_get($xeroPhone, 'PhoneCountryCode'),
         );
     }
-
-    abstract public static function fromModel(Model $model): self;
-
-    abstract public function syncToModel(): Model;
-
-    abstract public function localModel(): ?Model;
 }

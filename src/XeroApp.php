@@ -10,16 +10,27 @@ use Override;
 use XeroPHP\Application;
 
 /**
+ * @method XeroIntegration address()
+ * @method XeroIntegration contact()
+ * @method XeroIntegration contactPerson()
+ * @method XeroIntegration lineItem()
  * @method XeroIntegration quotes()
  * @method XeroIntegration contacts()
  * @method XeroIntegration invoices()
+ * @method XeroIntegration payments()
  */
 class XeroApp extends Application
 {
     protected array $relationshipToModelMap = [
+        'address' => 'XeroPHP\Models\Accounting\Address',
+        'contact' => 'XeroPHP\Models\Accounting\Contact',
+        'contact-person' => 'XeroPHP\Models\Accounting\ContactPerson',
+        'line-item' => 'XeroPHP\Models\Accounting\LineItem',
         'quotes' => 'XeroPHP\Models\Accounting\Quote',
         'contacts' => 'XeroPHP\Models\Accounting\Contact',
         'invoices' => 'XeroPHP\Models\Accounting\Invoice',
+        'payments' => 'XeroPHP\Models\Accounting\Payment',
+
     ];
 
     public function __construct()

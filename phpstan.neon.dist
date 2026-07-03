@@ -9,9 +9,3 @@ parameters:
     tmpDir: build/phpstan
     configDirectories:
         - config
-    ignoreErrors:
-        -
-            identifiers:
-                - class.notFound
-                - argument.missing
-            path: src/Stubs/xero-data-example.php

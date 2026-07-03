@@ -2,26 +2,41 @@
 
 namespace DcodeGroup\XeroIntegration\Data;
 
+use DcodeGroup\XeroIntegration\Data\Contracts\HasXeroData;
 use DcodeGroup\XeroIntegration\Data\Contracts\XeroSyncable;
-use Illuminate\Database\Eloquent\Model;
+use DcodeGroup\XeroIntegration\Data\Traits\XeroSyncTrait;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
-use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\Quote as XeroQuote;
 use XeroPHP\Remote\Model as XeroModel;
 
-abstract class XeroQuoteData extends Data implements XeroSyncable
+abstract class XeroQuoteData extends AbstractXeroData implements HasXeroData, XeroSyncable
 {
+    use XeroSyncTrait;
+
+    protected string $xeroRelationship = 'quote';
+
+    protected array $searchFields = [
+        'QuoteNumber',
+    ];
+
+    protected array $relatedFields = [
+        'Contact',
+        'LineItems',
+    ];
+
     final public function __construct(
+        /** @var XeroContactData|Optional|null $Contact */
         public XeroContactData|Optional|null $Contact,
-        public string|Optional|null $Status,
+        public string|Optional|null $Status, // ToDo: Make Enum
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         public Carbon $Date,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         public Carbon $ExpiryDate,
+        /** @var Collection<int,XeroQuoteItemData> $LineItems */
         public Collection $LineItems,
         public float|Optional|null $SubTotal,
         public float|Optional|null $TotalTax,
@@ -35,25 +50,19 @@ abstract class XeroQuoteData extends Data implements XeroSyncable
 
     public function toXeroArray(): array
     {
-        // Ensure we don't overwrite the Contact in Xero if we have a local model with a Xero ID
-        // otherwise we may overwrite the Contact details in Xero with outdated information from our local model
-        $contactData = $this->Contact->localModel() ? ['ContactID' => $this->Contact->ContactID] : $this->Contact->toXeroArray();
-
         return [
-            'Contact' => $contactData,
-            'Status' => $this->Status,
-            'Date' => $this->Date,
-            'ExpiryDate' => $this->ExpiryDate,
-            'LineItems' => $this->LineItems->map(function (XeroQuoteItemData $item) {
-                return $item->toXeroArray();
-            })->toArray(),
-            'SubTotal' => $this->SubTotal,
-            'TotalTax' => $this->TotalTax,
-            'Total' => $this->Total,
-            'TotalDiscount' => $this->TotalDiscount,
-            'UpdatedDateUTC' => $this->UpdatedDateUTC,
-            'QuoteID' => $this->QuoteID,
-            'QuoteNumber' => $this->QuoteNumber,
+            'Contact' => data_get($this, 'Contact')?->toXeroArray(),
+            'Status' => data_get($this, 'Status'),
+            'Date' => data_get($this, 'Date'),
+            'ExpiryDate' => data_get($this, 'ExpiryDate'),
+            'LineItems' => XeroQuoteItemData::toXeroCollection(data_get($this, 'LineItems')),
+            'SubTotal' => data_get($this, 'SubTotal'),
+            'TotalTax' => data_get($this, 'TotalTax'),
+            'Total' => data_get($this, 'Total'),
+            'TotalDiscount' => data_get($this, 'TotalDiscount'),
+            'UpdatedDateUTC' => data_get($this, 'UpdatedDateUTC'),
+            'QuoteID' => data_get($this, 'QuoteID'),
+            'QuoteNumber' => data_get($this, 'QuoteNumber'),
         ];
     }
 
@@ -62,27 +71,21 @@ abstract class XeroQuoteData extends Data implements XeroSyncable
      *
      * @param  XeroQuote  $xeroObject
      */
-    public static function fromXero(XeroModel|XeroQuote $xeroObject): self
+    protected static function fromXero(XeroModel|XeroQuote $xeroObject): self
     {
         return new static(
-            Contact: XeroContactData::fromXero($xeroObject->getContact()),
-            Status: $xeroObject->getStatus(),
-            Date: Carbon::instance($xeroObject->getDate()),
-            ExpiryDate: Carbon::instance($xeroObject->getExpiryDate()),
-            LineItems: collect($xeroObject->getLineItems())->map(fn ($item) => XeroQuoteItemData::fromXero($item)),
-            SubTotal: $xeroObject->getSubTotal(),
-            TotalTax: $xeroObject->getTotalTax(),
-            Total: $xeroObject->getTotal(),
-            TotalDiscount: $xeroObject->getTotalDiscount(),
-            UpdatedDateUTC: Carbon::instance($xeroObject->getUpdatedDateUTC()),
-            QuoteID: $xeroObject->getQuoteID(),
-            QuoteNumber: $xeroObject->getQuoteNumber(),
+            Contact: XeroContactData::fromXero(data_get($xeroObject, 'Contact')),
+            Status: data_get($xeroObject, 'Status'),
+            Date: Carbon::instance(data_get($xeroObject, 'Date')),
+            ExpiryDate: Carbon::instance(data_get($xeroObject, 'ExpiryDate')),
+            LineItems: collect(data_get($xeroObject, 'LineItems'))->map(fn ($item) => XeroQuoteItemData::fromXero($item)),
+            SubTotal: data_get($xeroObject, 'SubTotal'),
+            TotalTax: data_get($xeroObject, 'TotalTax'),
+            Total: data_get($xeroObject, 'Total'),
+            TotalDiscount: data_get($xeroObject, 'TotalDiscount'),
+            UpdatedDateUTC: Carbon::instance(data_get($xeroObject, 'UpdatedDateUTC')),
+            QuoteID: data_get($xeroObject, 'QuoteID'),
+            QuoteNumber: data_get($xeroObject, 'QuoteNumber'),
         );
     }
-
-    abstract public static function fromModel(Model $model): self;
-
-    abstract public function syncToModel(): Model;
-
-    abstract public function localModel(): ?Model;
 }
