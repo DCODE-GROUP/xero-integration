@@ -22,35 +22,17 @@ concurrency:
 
 jobs:
   static-analysis:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v7
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.5
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
-          coverage: none
-
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-interaction
-
-      - name: Check Linting
-        run: vendor/bin/pint --test --bail --quiet
-
-      - name: Execute static analysis
-        run: vendor/bin/phpstan analyse --memory-limit=2G --no-progress
+    call-workflow:
+      uses: ./.github/workflows/static-analysis.yml
   test:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 5
+    needs: [static-analysis]
     strategy:
       fail-fast: true
       matrix:
         os: [ubuntu-latest, windows-latest]
-        php: [8.5, 8.4]
+        php: [8.5, 8.4, 8.3]
         laravel: [13.*, 12.*, 11.*, 10.*]
         stability: [prefer-lowest, prefer-stable]
         include:

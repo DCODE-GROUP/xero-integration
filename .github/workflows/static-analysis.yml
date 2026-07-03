@@ -1,16 +1,11 @@
-name: PHPStan
+name: Static Analysis
 
 on:
-  push:
-    paths:
-      - '**.php'
-      - 'phpstan.neon.dist'
-      - '.github/workflows/phpstan.yml'
   workflow_call:
 
 jobs:
-  phpstan:
-    name: phpstan
+  pint:
+    name: pint
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -25,5 +20,8 @@ jobs:
       - name: Install composer dependencies
         uses: ramsey/composer-install@v4
 
-      - name: Run PHPStan
-        run: ./vendor/bin/phpstan --error-format=github
+      - name: Run Laravel Pint
+        run: ./vendor/bin/pint --test --verbose
+  phpstan:
+    call-workflow:
+      uses: ./.github/workflows/phpstan.yml
