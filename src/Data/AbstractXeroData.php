@@ -75,5 +75,4 @@ abstract class AbstractXeroData
     abstract protected function mapToData(Model $model): array;
 
     abstract protected function mapToModel(): array;
-
 }
