@@ -28,6 +28,8 @@ class TestCase extends Orchestra
     {
         config()->set('database.default', 'testing');
         config()->set('xero-integration.routes.callback_success_route', 'dashboard');
+        config()->set('app.key', 'base64:AckfSECXIvnK5r28GVIWUAxmbBSjTsmFVb/gGnlNyNE=');
+        config()->set('app.cipher', 'AES-256-CBC');
     }
 
     protected function defineDatabaseMigrations()
