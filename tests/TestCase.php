@@ -27,6 +27,7 @@ class TestCase extends Orchestra
     public function getEnvironmentSetUp($app)
     {
         config()->set('database.default', 'testing');
+        config()->set('xero-integration.routes.callback_success_route', 'dashboard');
     }
 
     protected function defineDatabaseMigrations()

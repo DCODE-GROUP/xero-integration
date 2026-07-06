@@ -4,35 +4,31 @@ namespace DcodeGroup\XeroIntegration\Tests\Feature;
 
 use Calcinai\OAuth2\Client\Provider\Xero;
 use DcodeGroup\XeroIntegration\Exceptions\UnauthorizedXero;
-use DcodeGroup\XeroIntegration\Http\Controllers\XeroAuthController;
-use DcodeGroup\XeroIntegration\Http\Controllers\XeroCallbackController;
 use DcodeGroup\XeroIntegration\Models\XeroToken;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use League\OAuth2\Client\Token\AccessToken;
 use Mockery\MockInterface;
 
-test('auth controller redirects to xero login', function () {
+beforeEach(function () {
+    config()->set('xero-integration.routes.callback_success_route', 'dashboard');
+});
+
+test('auth route redirects to xero for authorization', function () {
     $this->mock(Xero::class, function (MockInterface $mock) {
         $mock->shouldReceive('getAuthorizationUrl')
             ->andReturn('https://login.xero.com/identity/connect/authorize?client_id=test');
     });
 
-    $controller = new XeroAuthController;
-    $response = $controller();
-
-    expect($response->status())->toBe(Response::HTTP_FOUND);
+    $this->get('/xero/auth')
+        ->assertRedirect('https://login.xero.com/identity/connect/authorize?client_id=test');
 });
 
-test('callback controller validates required code parameter', function () {
-    $controller = new XeroCallbackController;
-    $request = Request::create('/?code=', 'GET');
+test('callback route throws unauthorized exception when code is missing', function () {
+    $this->withoutExceptionHandling();
 
-    expect(fn () => $controller($request))
-        ->toThrow(UnauthorizedXero::class);
-});
+    $this->get('/xero/callback');
+})->throws(UnauthorizedXero::class, 'Could not authorize Xero!');
 
-test('callback controller saves token from authorization code', function () {
+test('callback route saves token from authorization code and redirects', function () {
     $this->mock(Xero::class, function (MockInterface $mock) {
         $mock->shouldReceive('getAccessToken')
             ->with('authorization_code', ['code' => 'auth_code_123'])
@@ -46,18 +42,18 @@ test('callback controller saves token from authorization code', function () {
             ]));
     });
 
-    config()->set('xero-integration.routes.callback_success_route', '/dashboard');
+    expect(XeroToken::count())->toBe(0);
 
-    $controller = new XeroCallbackController;
-    $request = Request::create('/?code=auth_code_123', 'GET');
+    $this->get('/xero/callback?code=auth_code_123')
+        ->assertRedirect('dashboard');
 
-    $response = $controller($request);
-
-    expect($response->status())->toBe(Response::HTTP_FOUND)
-        ->and(XeroToken::count())->toBe(1);
+    expect(XeroToken::count())->toBe(1);
+    $token = XeroToken::first();
+    expect($token->access_token)->toBe('new_access_token');
+    expect($token->refresh_token)->toBe('new_refresh_token');
 });
 
-test('callback creates new token record', function () {
+test('callback route creates new token record with correct attributes', function () {
     $this->mock(Xero::class, function (MockInterface $mock) {
         $mock->shouldReceive('getAccessToken')
             ->andReturn(new AccessToken([
@@ -70,21 +66,20 @@ test('callback creates new token record', function () {
             ]));
     });
 
-    config()->set('xero-integration.routes.callback_success_route', '/dashboard');
-
     expect(XeroToken::count())->toBe(0);
 
-    $controller = new XeroCallbackController;
-    $request = Request::create('/?code=test_code', 'GET');
-    $controller($request);
+    $this->get('/xero/callback?code=test_code');
 
     expect(XeroToken::count())->toBe(1);
+
     $token = XeroToken::first();
     expect($token->access_token)->toBe('token_123');
+    expect($token->refresh_token)->toBe('refresh_123');
+    expect($token->id_token)->toBe('id_token_123');
 });
 
-test('callback redirects to success route', function () {
-    config()->set('xero-integration.routes.callback_success_route', '/xero/dashboard');
+test('callback route redirects to configured success route', function () {
+    config()->set('xero-integration.routes.callback_success_route', 'xero/dashboard');
 
     $this->mock(Xero::class, function (MockInterface $mock) {
         $mock->shouldReceive('getAccessToken')
@@ -98,29 +93,21 @@ test('callback redirects to success route', function () {
             ]));
     });
 
-    $controller = new XeroCallbackController;
-    $request = Request::create('/?code=test_code', 'GET');
-    $response = $controller($request);
-
-    expect($response->status())->toBe(Response::HTTP_FOUND)
-        ->and($response->getTargetUrl())->toContain('/xero/dashboard');
+    $this->get('/xero/callback?code=test_code')
+        ->assertRedirect('xero/dashboard');
 });
 
-test('auth controller can be invoked directly', function () {
+test('auth route returns redirect response', function () {
     $this->mock(Xero::class, function (MockInterface $mock) {
         $mock->shouldReceive('getAuthorizationUrl')
             ->andReturn('https://login.xero.com/test');
     });
 
-    $controller = new XeroAuthController;
-    $response = $controller();
-
-    expect($response->status())->toBe(Response::HTTP_FOUND);
+    $this->get('/xero/auth')
+        ->assertStatus(302);
 });
 
-test('callback controller handles valid request', function () {
-    config()->set('xero-integration.routes.callback_success_route', '/success');
-
+test('callback route handles valid request', function () {
     $this->mock(Xero::class, function (MockInterface $mock) {
         $mock->shouldReceive('getAccessToken')
             ->andReturn(new AccessToken([
@@ -133,10 +120,6 @@ test('callback controller handles valid request', function () {
             ]));
     });
 
-    $controller = new XeroCallbackController;
-    $request = Request::create('/?code=valid_code', 'GET');
-
-    $response = $controller($request);
-
-    expect($response->status())->toBe(Response::HTTP_FOUND);
+    $this->get('/xero/callback?code=valid_code')
+        ->assertStatus(302);
 });

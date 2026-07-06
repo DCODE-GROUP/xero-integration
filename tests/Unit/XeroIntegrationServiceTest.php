@@ -52,7 +52,7 @@ test('returns null when no token exists', function () {
     expect($oauthToken)->toBeNull();
 });
 
-test('can handle expired token and refresh it', function () {
+test('can refresh expired token', function () {
     $expiredToken = XeroToken::factory()->create([
         'expires' => now()->subHours(1)->timestamp,
     ]);
@@ -72,12 +72,12 @@ test('can handle expired token and refresh it', function () {
             ]));
     });
 
-    try {
-        $oauthToken = $service->getToken($expiredToken);
-        expect($oauthToken)->toBeInstanceOf(AccessToken::class);
-    } catch (UnauthorizedXero $e) {
-        expect($e->getMessage())->toContain('invalid');
-    }
+    $oauthToken = $service->getToken($expiredToken);
+
+    expect($oauthToken)
+        ->toBeInstanceOf(AccessToken::class)
+        ->and($oauthToken->getToken())->toBe('new_access_token')
+        ->and($oauthToken->getRefreshToken())->toBe('new_refresh_token');
 });
 
 test('throws exception when token format is invalid', function () {

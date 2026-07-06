@@ -19,14 +19,19 @@ test('rate limiter key generated without tenancy', function () {
 
 test('rate limiter key includes tenant when tenancy enabled', function () {
     config()->set('xero-integration.tenancy.enabled', true);
-    config()->set('xero-integration.tenancy.current_method', function () {
-        return (object) ['getKey' => fn () => 'test-tenant-id'];
+    config()->set('xero-integration.tenancy.method', function () {
+        return new class
+        {
+            public function getKey(): string
+            {
+                return 'test-tenant-id';
+            }
+        };
     });
 
-    session()->put('xero_current_tenant_id', 'test-tenant-id');
+    $key = XeroQuery::getRateLimiterKey();
 
-    $method = config('xero-integration.tenancy.current_method');
-    expect($method())->not->toBeNull();
+    expect($key)->toBe('DcodeGroup\XeroIntegration\XeroQuery:test-tenant-id');
 });
 
 test('xero query can be created from xero app', function () {
