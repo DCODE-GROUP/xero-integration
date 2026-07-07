@@ -7,7 +7,7 @@ permissions:
 
 jobs:
   dependabot:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 5
     if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'dcode-group/xero-integration' }}
     steps:

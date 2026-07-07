@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   php-code-styling:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 5
 
     steps:
