@@ -1,0 +1,27 @@
+<?php
+
+namespace {{ namespace }};
+
+use App\Models\{{ model }};
+use DcodeGroup\XeroIntegration\Data\{{ xero-data }} as Package{{ xero-data }};
+use DcodeGroup\XeroIntegration\Data\Contracts\XeroSyncable;
+use Illuminate\Database\Eloquent\Model;
+
+class {{ class }} extends Package{{ xero-data }}
+{
+    protected function mapToData(Model|{{ model }} $localModel): array
+    {
+        // Map your local Model to this Xero Data
+        return new self(
+            // Map goes here.
+        );
+    }
+
+    public function mapToModel(): array
+    {
+        // Map this Xero Data to your local Model
+        return [
+            // Map goes here.
+        ]
+    }
+}

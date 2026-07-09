@@ -1,0 +1,10 @@
+name: Static Analysis
+
+on:
+  workflow_call:
+
+jobs:
+  pint:
+    uses: ./.github/workflows/pint.yml
+  phpstan:
+    uses: ./.github/workflows/phpstan.yml
