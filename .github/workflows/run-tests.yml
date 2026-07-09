@@ -17,7 +17,7 @@ jobs:
   static-analysis:
     uses: ./.github/workflows/static-analysis.yml
   test:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     timeout-minutes: 5
     needs: [static-analysis]
     strategy:
