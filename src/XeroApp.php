@@ -103,8 +103,10 @@ class XeroApp extends Application
 
     protected function getAvailableRelationships(): Collection
     {
-        $relationships = array_keys($this->relationshipToModelMap);
+        $reflection = new \ReflectionProperty(self::class, 'relationshipToModelMap');
+        $relationshipToModelMap = $reflection->getDefaultValue();
 
+        $relationships = array_keys($relationshipToModelMap);
         sort($relationships);
 
         return collect($relationships);
