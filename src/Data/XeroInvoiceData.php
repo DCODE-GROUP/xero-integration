@@ -48,6 +48,28 @@ abstract class XeroInvoiceData extends AbstractXeroData
         public float $AmountPaid,
         public ?Carbon $UpdatedDateUTC,
         public string $Type = XeroInvoice::INVOICE_TYPE_ACCREC, // ToDo: change to Enum
+        public string|Optional|null $LineAmountTypes = null,
+        public string|Optional|null $Reference = null,
+        public string|Optional|null $BrandingThemeID = null,
+        public string|Optional|null $Url = null,
+        public string|Optional|null $CurrencyCode = null,
+        public float|Optional|null $CurrencyRate = null,
+        public bool|Optional|null $SentToContact = null,
+        #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
+        public Carbon|Optional|null $ExpectedPaymentDate = null,
+        #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
+        public Carbon|Optional|null $PlannedPaymentDate = null,
+        public string|Optional|null $RepeatingInvoiceID = null,
+        public bool|Optional|null $HasAttachments = null,
+        /** @var Collection|Optional|null */
+        public Collection|Optional|null $Prepayments = null,
+        /** @var Collection|Optional|null */
+        public Collection|Optional|null $Overpayments = null,
+        #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
+        public Carbon|Optional|null $FullyPaidOnDate = null,
+        public float|Optional|null $AmountCredited = null,
+        /** @var Collection|Optional|null */
+        public Collection|Optional|null $CreditNotes = null,
     ) {}
 
     /**
@@ -73,6 +95,23 @@ abstract class XeroInvoiceData extends AbstractXeroData
             AmountDue: data_get($xeroInvoice, 'AmountDue'),
             AmountPaid: data_get($xeroInvoice, 'AmountPaid'),
             UpdatedDateUTC: Carbon::instance(data_get($xeroInvoice, 'UpdatedDateUTC')),
+            Type: data_get($xeroInvoice, 'Type', XeroInvoice::INVOICE_TYPE_ACCREC),
+            LineAmountTypes: data_get($xeroInvoice, 'LineAmountTypes'),
+            Reference: data_get($xeroInvoice, 'Reference'),
+            BrandingThemeID: data_get($xeroInvoice, 'BrandingThemeID'),
+            Url: data_get($xeroInvoice, 'Url'),
+            CurrencyCode: data_get($xeroInvoice, 'CurrencyCode'),
+            CurrencyRate: data_get($xeroInvoice, 'CurrencyRate'),
+            SentToContact: data_get($xeroInvoice, 'SentToContact'),
+            ExpectedPaymentDate: data_get($xeroInvoice, 'ExpectedPaymentDate') ? Carbon::instance(data_get($xeroInvoice, 'ExpectedPaymentDate')) : null,
+            PlannedPaymentDate: data_get($xeroInvoice, 'PlannedPaymentDate') ? Carbon::instance(data_get($xeroInvoice, 'PlannedPaymentDate')) : null,
+            RepeatingInvoiceID: data_get($xeroInvoice, 'RepeatingInvoiceID'),
+            HasAttachments: data_get($xeroInvoice, 'HasAttachments'),
+            Prepayments: collect(data_get($xeroInvoice, 'Prepayments')),
+            Overpayments: collect(data_get($xeroInvoice, 'Overpayments')),
+            FullyPaidOnDate: data_get($xeroInvoice, 'FullyPaidOnDate') ? Carbon::instance(data_get($xeroInvoice, 'FullyPaidOnDate')) : null,
+            AmountCredited: data_get($xeroInvoice, 'AmountCredited'),
+            CreditNotes: collect(data_get($xeroInvoice, 'CreditNotes')),
         );
     }
 
@@ -95,6 +134,22 @@ abstract class XeroInvoiceData extends AbstractXeroData
             'AmountPaid' => data_get($this, 'AmountPaid'),
             'InvoiceID' => data_get($this, 'InvoiceID'),
             'UpdatedDateUTC' => data_get($this, 'UpdatedDateUTC'),
+            'LineAmountTypes' => data_get($this, 'LineAmountTypes'),
+            'Reference' => data_get($this, 'Reference'),
+            'BrandingThemeID' => data_get($this, 'BrandingThemeID'),
+            'Url' => data_get($this, 'Url'),
+            'CurrencyCode' => data_get($this, 'CurrencyCode'),
+            'CurrencyRate' => data_get($this, 'CurrencyRate'),
+            'SentToContact' => data_get($this, 'SentToContact'),
+            'ExpectedPaymentDate' => data_get($this, 'ExpectedPaymentDate'),
+            'PlannedPaymentDate' => data_get($this, 'PlannedPaymentDate'),
+            'RepeatingInvoiceID' => data_get($this, 'RepeatingInvoiceID'),
+            'HasAttachments' => data_get($this, 'HasAttachments'),
+            'Prepayments' => data_get($this, 'Prepayments')?->toArray(),
+            'Overpayments' => data_get($this, 'Overpayments')?->toArray(),
+            'FullyPaidOnDate' => data_get($this, 'FullyPaidOnDate'),
+            'AmountCredited' => data_get($this, 'AmountCredited'),
+            'CreditNotes' => data_get($this, 'CreditNotes')?->toArray(),
         ];
     }
 }
