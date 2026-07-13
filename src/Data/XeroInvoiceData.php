@@ -61,14 +61,14 @@ abstract class XeroInvoiceData extends AbstractXeroData
         public Carbon|Optional|null $PlannedPaymentDate = null,
         public string|Optional|null $RepeatingInvoiceID = null,
         public bool|Optional|null $HasAttachments = null,
-        /** @var Collection|Optional|null */
+        /** @var Collection<int,XeroPrepaymentData>|null */
         public Collection|Optional|null $Prepayments = null,
-        /** @var Collection|Optional|null */
+        /** @var Collection<int,XeroOverpaymentData>|null */
         public Collection|Optional|null $Overpayments = null,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         public Carbon|Optional|null $FullyPaidOnDate = null,
         public float|Optional|null $AmountCredited = null,
-        /** @var Collection|Optional|null */
+        /** @var Collection<int,XeroCreditNoteData>|null */
         public Collection|Optional|null $CreditNotes = null,
     ) {}
 
@@ -107,11 +107,11 @@ abstract class XeroInvoiceData extends AbstractXeroData
             PlannedPaymentDate: data_get($xeroInvoice, 'PlannedPaymentDate') ? Carbon::instance(data_get($xeroInvoice, 'PlannedPaymentDate')) : null,
             RepeatingInvoiceID: data_get($xeroInvoice, 'RepeatingInvoiceID'),
             HasAttachments: data_get($xeroInvoice, 'HasAttachments'),
-            Prepayments: collect(data_get($xeroInvoice, 'Prepayments')),
-            Overpayments: collect(data_get($xeroInvoice, 'Overpayments')),
+            Prepayments: XeroPrepaymentData::toCollection(data_get($xeroInvoice, 'Prepayments')),
+            Overpayments: XeroOverpaymentData::toCollection(data_get($xeroInvoice, 'Overpayments')),
             FullyPaidOnDate: data_get($xeroInvoice, 'FullyPaidOnDate') ? Carbon::instance(data_get($xeroInvoice, 'FullyPaidOnDate')) : null,
             AmountCredited: data_get($xeroInvoice, 'AmountCredited'),
-            CreditNotes: collect(data_get($xeroInvoice, 'CreditNotes')),
+            CreditNotes: XeroCreditNoteData::toCollection(data_get($xeroInvoice, 'CreditNotes')),
         );
     }
 
@@ -145,11 +145,11 @@ abstract class XeroInvoiceData extends AbstractXeroData
             'PlannedPaymentDate' => data_get($this, 'PlannedPaymentDate'),
             'RepeatingInvoiceID' => data_get($this, 'RepeatingInvoiceID'),
             'HasAttachments' => data_get($this, 'HasAttachments'),
-            'Prepayments' => data_get($this, 'Prepayments')?->toArray(),
-            'Overpayments' => data_get($this, 'Overpayments')?->toArray(),
+            'Prepayments' => XeroPrepaymentData::toXeroCollection(data_get($this, 'Prepayments')),
+            'Overpayments' => XeroOverpaymentData::toXeroCollection(data_get($this, 'Overpayments')),
             'FullyPaidOnDate' => data_get($this, 'FullyPaidOnDate'),
             'AmountCredited' => data_get($this, 'AmountCredited'),
-            'CreditNotes' => data_get($this, 'CreditNotes')?->toArray(),
+            'CreditNotes' => XeroCreditNoteData::toXeroCollection(data_get($this, 'CreditNotes')),
         ];
     }
 }
