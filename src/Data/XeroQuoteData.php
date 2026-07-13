@@ -45,6 +45,15 @@ abstract class XeroQuoteData extends AbstractXeroData implements XeroSyncable
         public Carbon $UpdatedDateUTC,
         public string|Optional|null $QuoteID,
         public string $QuoteNumber,
+        public string|Optional|null $LineAmountTypes,
+        public string|Optional|null $CurrencyCode,
+        public float|Optional|null $CurrencyRate,
+        public string|Optional|null $Reference,
+        public string|Optional|null $BrandingThemeID,
+        public string|Optional|null $Title,
+        public string|Optional|null $Summary,
+        public string|Optional|null $Terms,
+        public string|Optional|null $Url,
     ) {}
 
     public function toXeroArray(): array
@@ -55,13 +64,22 @@ abstract class XeroQuoteData extends AbstractXeroData implements XeroSyncable
             'Date' => data_get($this, 'Date'),
             'ExpiryDate' => data_get($this, 'ExpiryDate'),
             'LineItems' => XeroQuoteItemData::toXeroCollection(data_get($this, 'LineItems')),
+            'LineAmountTypes' => data_get($this, 'LineAmountTypes'),
             'SubTotal' => data_get($this, 'SubTotal'),
             'TotalTax' => data_get($this, 'TotalTax'),
             'Total' => data_get($this, 'Total'),
             'TotalDiscount' => data_get($this, 'TotalDiscount'),
             'UpdatedDateUTC' => data_get($this, 'UpdatedDateUTC'),
+            'CurrencyCode' => data_get($this, 'CurrencyCode'),
+            'CurrencyRate' => data_get($this, 'CurrencyRate'),
             'QuoteID' => data_get($this, 'QuoteID'),
             'QuoteNumber' => data_get($this, 'QuoteNumber'),
+            'Reference' => data_get($this, 'Reference'),
+            'BrandingThemeID' => data_get($this, 'BrandingThemeID'),
+            'Title' => data_get($this, 'Title'),
+            'Summary' => data_get($this, 'Summary'),
+            'Terms' => data_get($this, 'Terms'),
+            'Url' => data_get($this, 'Url'),
         ];
     }
 
@@ -85,6 +103,15 @@ abstract class XeroQuoteData extends AbstractXeroData implements XeroSyncable
             UpdatedDateUTC: Carbon::instance(data_get($xeroObject, 'UpdatedDateUTC')),
             QuoteID: data_get($xeroObject, 'QuoteID'),
             QuoteNumber: data_get($xeroObject, 'QuoteNumber'),
+            LineAmountTypes: data_get($xeroObject, 'LineAmountTypes'),
+            CurrencyCode: data_get($xeroObject, 'CurrencyCode'),
+            CurrencyRate: data_get($xeroObject, 'CurrencyRate'),
+            Reference: data_get($xeroObject, 'Reference'),
+            BrandingThemeID: data_get($xeroObject, 'BrandingThemeID'),
+            Title: data_get($xeroObject, 'Title'),
+            Summary: data_get($xeroObject, 'Summary'),
+            Terms: data_get($xeroObject, 'Terms'),
+            Url: data_get($xeroObject, 'Url'),
         );
     }
 }
