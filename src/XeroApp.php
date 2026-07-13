@@ -21,6 +21,12 @@ use XeroPHP\Application;
  */
 class XeroApp extends Application
 {
+    private const AVAILABLE_RELATIONSHIPS = [
+        'quotes' => 'XeroPHP\Models\Accounting\Quote',
+        'contacts' => 'XeroPHP\Models\Accounting\Contact',
+        'invoices' => 'XeroPHP\Models\Accounting\Invoice',
+    ];
+
     protected array $relationshipToModelMap = [
         'address' => 'XeroPHP\Models\Accounting\Address',
         'contact' => 'XeroPHP\Models\Accounting\Contact',
@@ -114,10 +120,7 @@ class XeroApp extends Application
 
     protected function getAvailableRelationships(): Collection
     {
-        $reflection = new \ReflectionProperty(self::class, 'relationshipToModelMap');
-        $relationshipToModelMap = $reflection->getDefaultValue();
-
-        $relationships = array_keys($relationshipToModelMap);
+        $relationships = array_keys(self::AVAILABLE_RELATIONSHIPS);
         sort($relationships);
 
         return collect($relationships);
