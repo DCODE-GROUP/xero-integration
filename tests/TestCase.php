@@ -13,7 +13,10 @@ class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'DcodeGroup\\XeroIntegration\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            fn (string $modelName) => match (true) {
+                str_starts_with($modelName, 'Workbench\\') => 'Workbench\\Database\\Factories\\'.class_basename($modelName).'Factory',
+                default => 'DcodeGroup\\XeroIntegration\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            }
         );
     }
 
@@ -30,6 +33,9 @@ class TestCase extends Orchestra
         config()->set('xero-integration.routes.callback_success_route', 'dashboard');
         config()->set('app.key', 'base64:AckfSECXIvnK5r28GVIWUAxmbBSjTsmFVb/gGnlNyNE=');
         config()->set('app.cipher', 'AES-256-CBC');
+
+        // Configure tenancy model so migrations can create tenant_id column
+        config()->set('xero-integration.tenancy.model', 'Workbench\\App\\Models\\Tenant');
     }
 
     protected function defineDatabaseMigrations()
