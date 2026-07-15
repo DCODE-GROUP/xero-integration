@@ -275,4 +275,3 @@ test('latestToken respects tenant scoping', function () {
     expect($latest->id)->toBe($token2->id)
         ->and($latest->tenant_id)->toBe($tenant1->id);
 });
-

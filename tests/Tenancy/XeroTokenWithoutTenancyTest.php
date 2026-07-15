@@ -56,4 +56,3 @@ test('latestToken returns most recent token when tenancy is disabled', function 
 
     expect($latest->id)->toBe($token2->id);
 });
-

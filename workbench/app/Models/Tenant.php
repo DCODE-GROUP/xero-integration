@@ -20,4 +20,3 @@ class Tenant extends Model
 
     protected $table = 'tenants';
 }
-
