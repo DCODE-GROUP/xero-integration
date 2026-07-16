@@ -13,7 +13,10 @@ class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'DcodeGroup\\XeroIntegration\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            fn (string $modelName) => match (true) {
+                str_starts_with($modelName, 'Workbench\\') => 'Workbench\\Database\\Factories\\'.class_basename($modelName).'Factory',
+                default => 'DcodeGroup\\XeroIntegration\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            }
         );
     }
 
@@ -27,11 +30,31 @@ class TestCase extends Orchestra
     public function getEnvironmentSetUp($app)
     {
         config()->set('database.default', 'testing');
+        config()->set('xero-integration.routes.callback_success_route', 'dashboard');
+        config()->set('app.key', 'base64:AckfSECXIvnK5r28GVIWUAxmbBSjTsmFVb/gGnlNyNE=');
+        config()->set('app.cipher', 'AES-256-CBC');
 
-        /*
-         foreach (\Illuminate\Support\Facades\File::allFiles(__DIR__ . '/../database/migrations') as $migration) {
-            (include $migration->getRealPath())->up();
-         }
-         */
+        // Configure tenancy model so migrations can create tenant_id column
+        config()->set('xero-integration.tenancy.model', 'Workbench\\App\\Models\\Tenant');
+    }
+
+    protected function defineDatabaseMigrations()
+    {
+        // Load package migrations
+        $packageMigrationsPath = __DIR__.'/../database/migrations';
+        $this->loadMigrationsFrom($packageMigrationsPath);
+
+        // Load workbench migrations (includes tenants table)
+        $workbenchMigrationsPath = __DIR__.'/../workbench/database/migrations';
+        $this->loadMigrationsFrom($workbenchMigrationsPath);
+
+        // Run the xero_tokens stub migration directly for testing
+        $extensions = ['stub'];
+
+        foreach (\File::allFiles($packageMigrationsPath) as $migration) {
+            if (in_array($migration->getExtension(), $extensions, true)) {
+                (include $migration->getRealPath())->up();
+            }
+        }
     }
 }
