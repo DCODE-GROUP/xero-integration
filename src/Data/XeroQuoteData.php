@@ -12,6 +12,9 @@ use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\Quote as XeroQuote;
 use XeroPHP\Remote\Model as XeroModel;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 abstract class XeroQuoteData extends AbstractXeroData implements XeroSyncable
 {
     use XeroSyncTrait;
@@ -27,7 +30,7 @@ abstract class XeroQuoteData extends AbstractXeroData implements XeroSyncable
         'LineItems',
     ];
 
-    final public function __construct(
+    public function __construct(
         /** @var XeroContactData|Optional|null $Contact */
         public XeroContactData|Optional|null $Contact,
         public string|Optional|null $Status, // ToDo: Make Enum

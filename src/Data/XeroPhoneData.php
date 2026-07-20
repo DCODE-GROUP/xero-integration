@@ -6,6 +6,9 @@ use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\Phone as XeroPhone;
 use XeroPHP\Remote\Model as XeroModel;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 abstract class XeroPhoneData extends AbstractXeroData
 {
     protected string $xeroRelationship = 'phone';
@@ -22,7 +25,7 @@ abstract class XeroPhoneData extends AbstractXeroData
     /**
      * Summary of __construct
      */
-    final public function __construct(
+    public function __construct(
         public string|Optional|null $PhoneType,
         public string|Optional|null $PhoneNumber,
         public string|Optional|null $PhoneAreCode,

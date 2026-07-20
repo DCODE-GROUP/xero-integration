@@ -12,6 +12,9 @@ use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\Contact as XeroContact;
 use XeroPHP\Remote\Model as XeroModel;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 abstract class XeroContactData extends AbstractXeroData implements XeroSyncable
 {
     use XeroSyncTrait;
@@ -28,7 +31,7 @@ abstract class XeroContactData extends AbstractXeroData implements XeroSyncable
         'Phones',
     ];
 
-    final public function __construct(
+    public function __construct(
         public string|Optional|null $ContactID,
         public string $ContactStatus, // ToDo: Change Enum
         public string|Optional|null $Name,

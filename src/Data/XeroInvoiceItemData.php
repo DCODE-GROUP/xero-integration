@@ -6,6 +6,9 @@ use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\LineItem;
 use XeroPHP\Remote\Model as XeroModel;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 abstract class XeroInvoiceItemData extends AbstractXeroData
 {
     protected string $xeroRelationship = 'line-item';
@@ -19,7 +22,7 @@ abstract class XeroInvoiceItemData extends AbstractXeroData
 
     protected array $relatedFields = [];
 
-    final public function __construct(
+    public function __construct(
         public string|Optional|null $LineItemID,
         public string $Description,
         public float $Quantity,

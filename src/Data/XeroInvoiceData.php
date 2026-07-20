@@ -11,6 +11,9 @@ use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\Invoice as XeroInvoice;
 use XeroPHP\Remote\Model as XeroModel;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 abstract class XeroInvoiceData extends AbstractXeroData
 {
     use XeroSyncTrait;
@@ -27,7 +30,7 @@ abstract class XeroInvoiceData extends AbstractXeroData
         'Payments',
     ];
 
-    final public function __construct(
+    public function __construct(
         public string|Optional|null $InvoiceID,
         public XeroContactData $Contact,
         /** @var Collection<int,XeroInvoiceItemData> */

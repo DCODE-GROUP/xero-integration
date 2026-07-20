@@ -6,6 +6,9 @@ use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\Address as XeroAddress;
 use XeroPHP\Remote\Model as XeroModel;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 abstract class XeroAddressData extends AbstractXeroData
 {
     protected string $xeroRelationship = 'address';
@@ -20,7 +23,7 @@ abstract class XeroAddressData extends AbstractXeroData
 
     protected array $relatedFields = [];
 
-    final public function __construct(
+    public function __construct(
         public string|Optional|null $AddressType,
         public string|Optional|null $AddressLine1,
         public string|Optional|null $AddressLine2,

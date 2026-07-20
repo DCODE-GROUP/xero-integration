@@ -12,6 +12,9 @@ use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\Payment as XeroPayment;
 use XeroPHP\Remote\Model as XeroModel;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 abstract class XeroPaymentData extends AbstractXeroData implements XeroSyncable
 {
     use XeroSyncTrait;
@@ -28,7 +31,7 @@ abstract class XeroPaymentData extends AbstractXeroData implements XeroSyncable
         'Invoice',
     ];
 
-    final public function __construct(
+    public function __construct(
         /** @var XeroInvoiceData|Optional|null */
         public XeroInvoiceData|Optional|null $Invoice,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
