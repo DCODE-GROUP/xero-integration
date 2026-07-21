@@ -15,7 +15,9 @@ return [
     'oauth' => [
         'client_id' => env('XERO_CLIENT_ID'),
         'client_secret' => env('XERO_CLIENT_SECRET'),
-        'scopes' => env('XERO_SCOPES', implode(',', [
+        'authorization_url' => env('XERO_AUTHORIZATION_URL', 'https://login.xero.com/identity/connect/authorize'),
+        'token_url' => env('XERO_TOKEN_URL', 'https://identity.xero.com/connect/token'),
+        'scopes' => env('XERO_SCOPES', implode(' ', [
             'openid',
             'profile',
             'email',
@@ -45,4 +47,8 @@ return [
         'exclude_middleware_for_callback' => env('XERO_ROUTE_EXCLUDE_MIDDLEWARE_FOR_CALLBACK', []),
         'callback_success_route' => env('XERO_ROUTE_CALLBACK_SUCCESS_ROUTE', 'xero.index'),
     ],
+
+    'rate-limit' => [
+        'store' => env('XERO_RATE_LIMIT_STORE', 'file'),
+    ]
 ];

@@ -2,11 +2,23 @@
 
 namespace DcodeGroup\XeroIntegration;
 
+use DcodeGroup\XeroIntegration\Commands\MakeXeroDataCommand;
+use DcodeGroup\XeroIntegration\Http\Connectors\XeroConnector;
+use Saloon\Http\Senders\GuzzleSender;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class XeroIntegrationServiceProvider extends PackageServiceProvider
 {
+    public function register()
+    {
+        parent::register();
+
+        $this->app->singleton(GuzzleSender::class, fn () => new GuzzleSender);
+
+        $this->app->singleton(XeroConnector::class, fn () => new XeroConnector);
+    }
+
     public function configurePackage(Package $package): void
     {
         /*

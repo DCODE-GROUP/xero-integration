@@ -2,21 +2,19 @@
 
 namespace DcodeGroup\XeroIntegration;
 
-use Calcinai\OAuth2\Client\Provider\Xero;
 use DcodeGroup\XeroIntegration\Exceptions\UnauthorizedXero;
+use DcodeGroup\XeroIntegration\Http\Connectors\XeroConnector;
 use DcodeGroup\XeroIntegration\Models\XeroToken;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
-use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
-use League\OAuth2\Client\Token\AccessToken;
-use League\OAuth2\Client\Token\AccessTokenInterface;
+use Saloon\Http\Auth\AccessTokenAuthenticator;
 
 class XeroIntegrationService
 {
     /**
      * @throws UnauthorizedXero
      */
-    public function getToken(?XeroToken $token = null): ?AccessToken
+    public function getAuthenticator(?XeroToken $token = null): ?AccessTokenAuthenticator
     {
         if (empty($token)) {
             $token = $this->getTokenModel();
@@ -26,26 +24,20 @@ class XeroIntegrationService
             return null;
         }
 
-        $oauth2Token = $token->toOAuth2Token();
+        $authenticator = $token->toAuthenticator();
 
-        if ($oauth2Token->hasExpired()) {
-            $oauth2Token = $this->getAccessTokenFromXero($oauth2Token);
+        if ($authenticator->hasExpired()) {
+            $authenticator = $this->refreshAccessToken($authenticator);
 
-            if (! XeroToken::isValidTokenFormat($oauth2Token)) {
-                throw new UnauthorizedXero('Token is invalid or the provided token has invalid format!');
-            }
-
-            XeroToken::create(array_merge($oauth2Token->jsonSerialize(), ['current_tenant_id' => $token->current_tenant_id]));
+            $this->saveAccessToken($authenticator, $token->current_tenant_id);
         }
 
-        return $oauth2Token;
+        return $authenticator;
     }
 
-    public function getAccessTokenFromXero(AccessToken $token): mixed
+    public function refreshAccessToken(AccessTokenAuthenticator $authenticator): mixed
     {
-        return resolve(Xero::class)->getAccessToken('refresh_token', [
-            'refresh_token' => $token->getRefreshToken(),
-        ]);
+        return resolve(XeroConnector::class)->refreshAccessToken($authenticator);
     }
 
     public function getTokenModel(): ?XeroToken
@@ -79,41 +71,40 @@ class XeroIntegrationService
 
     public function getAuthUrl(): string
     {
-        return resolve(Xero::class)->getAuthorizationUrl([
-            'scope' => [config('xero-integration.oauth.scopes')],
-        ]);
-    }
-
-    /**
-     * @throws IdentityProviderException
-     * @throws UnauthorizedXero
-     */
-    public function getAccessTokenFromCode(string $code): AccessTokenInterface
-    {
-        $token = resolve(Xero::class)->getAccessToken('authorization_code', [
-            'code' => $code,
-        ]);
-
-        if (! XeroToken::isValidTokenFormat($token)) {
-            throw new UnauthorizedXero('Token is invalid or the provided token has invalid format!');
-        }
-
-        return $token;
+        return resolve(XeroConnector::class)->getAuthorizationUrl();
     }
 
     public function saveAccessTokenFromCode(string $code): XeroToken
     {
-        $token = $this->getAccessTokenFromCode($code);
-        $data = $token->jsonSerialize();
+        $authenticator = resolve(XeroConnector::class)->getAccessToken($code);
+
+        return $this->saveAccessToken($authenticator);
+    }
+
+    protected function saveAccessToken(AccessTokenAuthenticator $authenticator, ?string $tenantId = null): XeroToken
+    {
+        $data = [
+            'id_token' => $authenticator->getAccessToken(),
+            'token_type' => 'Bearer',
+            'access_token' => $authenticator->getAccessToken(),
+            'refresh_token' => $authenticator->getRefreshToken(),
+            'expires' => $authenticator->getExpiresAt(),
+            'scope' => config('xero-integration.oauth.scopes'),
+        ];
 
         if (config('xero-integration.tenancy.enabled')) {
-            $data['tenant_id'] = null;
-            $sessionName = config('xero-integration.tenancy.session_name');
-            if (! empty($sessionName) && Session::has($sessionName)) {
-                $tenantId = Session::get($sessionName);
-                $data['tenant_id'] = $tenantId;
+            $data['tenant_id'] = $tenantId;
+            if (empty($tenantId)) {
+                $sessionName = config('xero-integration.tenancy.session_name');
+                if (! empty($sessionName) && Session::has($sessionName)) {
+                    $data['tenant_id'] = Session::get($sessionName);
+                }
             }
         }
+
+        if (! XeroToken::isValidTokenFormat($data)) {
+                throw new UnauthorizedXero('Token is invalid or the provided token has invalid format!');
+            }
 
         return XeroToken::create($data);
     }

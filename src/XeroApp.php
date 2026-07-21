@@ -9,17 +9,10 @@ use Illuminate\Support\Collection;
 use Override;
 use XeroPHP\Application;
 
-/**
- * @method XeroIntegration quotes()
- * @method XeroIntegration contacts()
- * @method XeroIntegration invoices()
- */
 class XeroApp extends Application
 {
     protected array $relationshipToModelMap = [
-        'quotes' => 'XeroPHP\Models\Accounting\Quote',
-        'contacts' => 'XeroPHP\Models\Accounting\Contact',
-        'invoices' => 'XeroPHP\Models\Accounting\Invoice',
+
     ];
 
     public function __construct()

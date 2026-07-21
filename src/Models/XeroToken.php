@@ -7,8 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
-use League\OAuth2\Client\Token\AccessToken;
-use League\OAuth2\Client\Token\AccessTokenInterface;
+use Saloon\Http\Auth\AccessTokenAuthenticator;
 
 /**
  * @property int $id
@@ -19,7 +18,7 @@ use League\OAuth2\Client\Token\AccessTokenInterface;
  * @property string|null $refresh_token
  * @property string|null $scope
  * @property string|null $current_tenant_id
- * @property int|null $expires
+ * @property Carbon|null $expires
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
@@ -34,25 +33,33 @@ class XeroToken extends Model
      */
     protected $guarded = ['id'];
 
+    protected $casts = [
+        'expires' => 'datetime',
+    ];
+
     public static function latestToken(): ?XeroToken
     {
         return self::latest('id')->first();
     }
 
-    public function toOAuth2Token(): AccessToken
+    public function toAuthenticator(): AccessTokenAuthenticator
     {
-        return new AccessToken($this->toArray());
+        return new AccessTokenAuthenticator(
+            $this->access_token,
+            $this->refresh_token,
+            $this->expires
+        );
     }
 
-    public static function isValidTokenFormat(AccessTokenInterface $token): bool
+    public static function isValidTokenFormat(array $data): bool
     {
-        return ! Validator::make($token->jsonSerialize(), [
-            'id_token' => 'required',
-            'token_type' => 'required',
-            'access_token' => 'required',
-            'refresh_token' => 'required',
-            'expires' => 'required',
-            'scope' => 'required',
+        return ! Validator::make($data, [
+            'id_token' => ['required', 'string'],
+            'token_type' => ['required', 'string', 'in:Bearer'],
+            'access_token' => ['required', 'string'],
+            'refresh_token' => ['required', 'string'],
+            'expires' => ['required', 'date'],
+            'scope' => ['required', 'string'],
         ])->fails();
     }
 
