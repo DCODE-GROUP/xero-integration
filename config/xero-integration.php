@@ -50,5 +50,5 @@ return [
 
     'rate-limit' => [
         'store' => env('XERO_RATE_LIMIT_STORE', 'file'),
-    ]
+    ],
 ];

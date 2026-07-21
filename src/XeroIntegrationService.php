@@ -103,8 +103,8 @@ class XeroIntegrationService
         }
 
         if (! XeroToken::isValidTokenFormat($data)) {
-                throw new UnauthorizedXero('Token is invalid or the provided token has invalid format!');
-            }
+            throw new UnauthorizedXero('Token is invalid or the provided token has invalid format!');
+        }
 
         return XeroToken::create($data);
     }

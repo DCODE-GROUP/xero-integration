@@ -2,7 +2,6 @@
 
 namespace DcodeGroup\XeroIntegration\Http\Requests\Accounting;
 
-use DateTime;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
@@ -11,36 +10,31 @@ use Saloon\Http\Request;
  */
 class CreateOverpaymentAllocations extends Request
 {
-	protected Method $method = Method::PUT;
+    protected Method $method = Method::PUT;
 
+    public function resolveEndpoint(): string
+    {
+        return "/Overpayments/{$this->overpaymentId}/Allocations";
+    }
 
-	public function resolveEndpoint(): string
-	{
-		return "/Overpayments/{$this->overpaymentId}/Allocations";
-	}
+    /**
+     * @param  string  $overpaymentId  Unique identifier for a Overpayment
+     * @param  null|bool  $summarizeErrors  If false return 200 OK and mix of successfully created objects and any with validation errors
+     * @param  null|string  $idempotencyKey  This allows you to safely retry requests without the risk of duplicate processing. 128 character max.
+     */
+    public function __construct(
+        protected string $overpaymentId,
+        protected ?bool $summarizeErrors = null,
+        protected ?string $idempotencyKey = null,
+    ) {}
 
+    public function defaultQuery(): array
+    {
+        return array_filter(['summarizeErrors' => $this->summarizeErrors]);
+    }
 
-	/**
-	 * @param string $overpaymentId Unique identifier for a Overpayment
-	 * @param null|bool $summarizeErrors If false return 200 OK and mix of successfully created objects and any with validation errors
-	 * @param null|string $idempotencyKey This allows you to safely retry requests without the risk of duplicate processing. 128 character max.
-	 */
-	public function __construct(
-		protected string $overpaymentId,
-		protected ?bool $summarizeErrors = null,
-		protected ?string $idempotencyKey = null,
-	) {
-	}
-
-
-	public function defaultQuery(): array
-	{
-		return array_filter(['summarizeErrors' => $this->summarizeErrors]);
-	}
-
-
-	public function defaultHeaders(): array
-	{
-		return array_filter(['Idempotency-Key' => $this->idempotencyKey]);
-	}
+    public function defaultHeaders(): array
+    {
+        return array_filter(['Idempotency-Key' => $this->idempotencyKey]);
+    }
 }

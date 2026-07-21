@@ -2,7 +2,6 @@
 
 namespace DcodeGroup\XeroIntegration\Http\Requests\Accounting;
 
-use DateTime;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
@@ -11,20 +10,17 @@ use Saloon\Http\Request;
  */
 class GetReceiptAttachments extends Request
 {
-	protected Method $method = Method::GET;
+    protected Method $method = Method::GET;
 
+    public function resolveEndpoint(): string
+    {
+        return "/Receipts/{$this->receiptId}/Attachments";
+    }
 
-	public function resolveEndpoint(): string
-	{
-		return "/Receipts/{$this->receiptId}/Attachments";
-	}
-
-
-	/**
-	 * @param string $receiptId Unique identifier for a Receipt
-	 */
-	public function __construct(
-		protected string $receiptId,
-	) {
-	}
+    /**
+     * @param  string  $receiptId  Unique identifier for a Receipt
+     */
+    public function __construct(
+        protected string $receiptId,
+    ) {}
 }

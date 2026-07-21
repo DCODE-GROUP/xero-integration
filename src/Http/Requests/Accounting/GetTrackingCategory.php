@@ -2,7 +2,6 @@
 
 namespace DcodeGroup\XeroIntegration\Http\Requests\Accounting;
 
-use DateTime;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
@@ -11,20 +10,17 @@ use Saloon\Http\Request;
  */
 class GetTrackingCategory extends Request
 {
-	protected Method $method = Method::GET;
+    protected Method $method = Method::GET;
 
+    public function resolveEndpoint(): string
+    {
+        return "/TrackingCategories/{$this->trackingCategoryId}";
+    }
 
-	public function resolveEndpoint(): string
-	{
-		return "/TrackingCategories/{$this->trackingCategoryId}";
-	}
-
-
-	/**
-	 * @param string $trackingCategoryId Unique identifier for a TrackingCategory
-	 */
-	public function __construct(
-		protected string $trackingCategoryId,
-	) {
-	}
+    /**
+     * @param  string  $trackingCategoryId  Unique identifier for a TrackingCategory
+     */
+    public function __construct(
+        protected string $trackingCategoryId,
+    ) {}
 }

@@ -2,7 +2,6 @@
 
 namespace DcodeGroup\XeroIntegration\Http\Requests\Accounting;
 
-use DateTime;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
@@ -11,20 +10,17 @@ use Saloon\Http\Request;
  */
 class GetJournalByNumber extends Request
 {
-	protected Method $method = Method::GET;
+    protected Method $method = Method::GET;
 
+    public function resolveEndpoint(): string
+    {
+        return "/Journals/{$this->journalNumber}";
+    }
 
-	public function resolveEndpoint(): string
-	{
-		return "/Journals/{$this->journalNumber}";
-	}
-
-
-	/**
-	 * @param int $journalNumber Number of a Journal
-	 */
-	public function __construct(
-		protected int $journalNumber,
-	) {
-	}
+    /**
+     * @param  int  $journalNumber  Number of a Journal
+     */
+    public function __construct(
+        protected int $journalNumber,
+    ) {}
 }

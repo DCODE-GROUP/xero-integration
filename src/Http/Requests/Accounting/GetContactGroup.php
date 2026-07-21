@@ -2,7 +2,6 @@
 
 namespace DcodeGroup\XeroIntegration\Http\Requests\Accounting;
 
-use DateTime;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
@@ -11,20 +10,17 @@ use Saloon\Http\Request;
  */
 class GetContactGroup extends Request
 {
-	protected Method $method = Method::GET;
+    protected Method $method = Method::GET;
 
+    public function resolveEndpoint(): string
+    {
+        return "/ContactGroups/{$this->contactGroupId}";
+    }
 
-	public function resolveEndpoint(): string
-	{
-		return "/ContactGroups/{$this->contactGroupId}";
-	}
-
-
-	/**
-	 * @param string $contactGroupId Unique identifier for a Contact Group
-	 */
-	public function __construct(
-		protected string $contactGroupId,
-	) {
-	}
+    /**
+     * @param  string  $contactGroupId  Unique identifier for a Contact Group
+     */
+    public function __construct(
+        protected string $contactGroupId,
+    ) {}
 }

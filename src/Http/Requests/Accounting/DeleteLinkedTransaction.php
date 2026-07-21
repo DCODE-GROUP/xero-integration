@@ -2,7 +2,6 @@
 
 namespace DcodeGroup\XeroIntegration\Http\Requests\Accounting;
 
-use DateTime;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
@@ -11,20 +10,17 @@ use Saloon\Http\Request;
  */
 class DeleteLinkedTransaction extends Request
 {
-	protected Method $method = Method::DELETE;
+    protected Method $method = Method::DELETE;
 
+    public function resolveEndpoint(): string
+    {
+        return "/LinkedTransactions/{$this->linkedTransactionId}";
+    }
 
-	public function resolveEndpoint(): string
-	{
-		return "/LinkedTransactions/{$this->linkedTransactionId}";
-	}
-
-
-	/**
-	 * @param string $linkedTransactionId Unique identifier for a LinkedTransaction
-	 */
-	public function __construct(
-		protected string $linkedTransactionId,
-	) {
-	}
+    /**
+     * @param  string  $linkedTransactionId  Unique identifier for a LinkedTransaction
+     */
+    public function __construct(
+        protected string $linkedTransactionId,
+    ) {}
 }

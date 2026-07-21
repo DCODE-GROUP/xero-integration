@@ -2,7 +2,6 @@
 
 namespace DcodeGroup\XeroIntegration\Http\Requests\Accounting;
 
-use DateTime;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
@@ -11,20 +10,17 @@ use Saloon\Http\Request;
  */
 class GetAccountAttachments extends Request
 {
-	protected Method $method = Method::GET;
+    protected Method $method = Method::GET;
 
+    public function resolveEndpoint(): string
+    {
+        return "/Accounts/{$this->accountId}/Attachments";
+    }
 
-	public function resolveEndpoint(): string
-	{
-		return "/Accounts/{$this->accountId}/Attachments";
-	}
-
-
-	/**
-	 * @param string $accountId Unique identifier for Account object
-	 */
-	public function __construct(
-		protected string $accountId,
-	) {
-	}
+    /**
+     * @param  string  $accountId  Unique identifier for Account object
+     */
+    public function __construct(
+        protected string $accountId,
+    ) {}
 }

@@ -2,7 +2,6 @@
 
 namespace DcodeGroup\XeroIntegration\Http\Requests\Accounting;
 
-use DateTime;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
@@ -11,20 +10,17 @@ use Saloon\Http\Request;
  */
 class GetBatchPaymentHistory extends Request
 {
-	protected Method $method = Method::GET;
+    protected Method $method = Method::GET;
 
+    public function resolveEndpoint(): string
+    {
+        return "/BatchPayments/{$this->batchPaymentId}/History";
+    }
 
-	public function resolveEndpoint(): string
-	{
-		return "/BatchPayments/{$this->batchPaymentId}/History";
-	}
-
-
-	/**
-	 * @param string $batchPaymentId Unique identifier for BatchPayment
-	 */
-	public function __construct(
-		protected string $batchPaymentId,
-	) {
-	}
+    /**
+     * @param  string  $batchPaymentId  Unique identifier for BatchPayment
+     */
+    public function __construct(
+        protected string $batchPaymentId,
+    ) {}
 }

@@ -2,7 +2,6 @@
 
 namespace DcodeGroup\XeroIntegration\Http\Requests\Accounting;
 
-use DateTime;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
@@ -11,20 +10,17 @@ use Saloon\Http\Request;
  */
 class GetManualJournalAttachments extends Request
 {
-	protected Method $method = Method::GET;
+    protected Method $method = Method::GET;
 
+    public function resolveEndpoint(): string
+    {
+        return "/ManualJournals/{$this->manualJournalId}/Attachments";
+    }
 
-	public function resolveEndpoint(): string
-	{
-		return "/ManualJournals/{$this->manualJournalId}/Attachments";
-	}
-
-
-	/**
-	 * @param string $manualJournalId Unique identifier for a ManualJournal
-	 */
-	public function __construct(
-		protected string $manualJournalId,
-	) {
-	}
+    /**
+     * @param  string  $manualJournalId  Unique identifier for a ManualJournal
+     */
+    public function __construct(
+        protected string $manualJournalId,
+    ) {}
 }

@@ -2,7 +2,6 @@
 
 namespace DcodeGroup\XeroIntegration\Http\Requests\Accounting;
 
-use DateTime;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
@@ -11,22 +10,19 @@ use Saloon\Http\Request;
  */
 class DeleteContactGroupContact extends Request
 {
-	protected Method $method = Method::DELETE;
+    protected Method $method = Method::DELETE;
 
+    public function resolveEndpoint(): string
+    {
+        return "/ContactGroups/{$this->contactGroupId}/Contacts/{$this->contactId}";
+    }
 
-	public function resolveEndpoint(): string
-	{
-		return "/ContactGroups/{$this->contactGroupId}/Contacts/{$this->contactId}";
-	}
-
-
-	/**
-	 * @param string $contactGroupId Unique identifier for a Contact Group
-	 * @param string $contactId Unique identifier for a Contact
-	 */
-	public function __construct(
-		protected string $contactGroupId,
-		protected string $contactId,
-	) {
-	}
+    /**
+     * @param  string  $contactGroupId  Unique identifier for a Contact Group
+     * @param  string  $contactId  Unique identifier for a Contact
+     */
+    public function __construct(
+        protected string $contactGroupId,
+        protected string $contactId,
+    ) {}
 }

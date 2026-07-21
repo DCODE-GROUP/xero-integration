@@ -2,7 +2,6 @@
 
 namespace DcodeGroup\XeroIntegration\Http\Requests\Accounting;
 
-use DateTime;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
@@ -11,20 +10,17 @@ use Saloon\Http\Request;
  */
 class DeleteItem extends Request
 {
-	protected Method $method = Method::DELETE;
+    protected Method $method = Method::DELETE;
 
+    public function resolveEndpoint(): string
+    {
+        return "/Items/{$this->itemId}";
+    }
 
-	public function resolveEndpoint(): string
-	{
-		return "/Items/{$this->itemId}";
-	}
-
-
-	/**
-	 * @param string $itemId Unique identifier for an Item
-	 */
-	public function __construct(
-		protected string $itemId,
-	) {
-	}
+    /**
+     * @param  string  $itemId  Unique identifier for an Item
+     */
+    public function __construct(
+        protected string $itemId,
+    ) {}
 }

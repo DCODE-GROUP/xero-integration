@@ -2,7 +2,6 @@
 
 namespace DcodeGroup\XeroIntegration;
 
-use DcodeGroup\XeroIntegration\Commands\MakeXeroDataCommand;
 use DcodeGroup\XeroIntegration\Http\Connectors\XeroConnector;
 use Saloon\Http\Senders\GuzzleSender;
 use Spatie\LaravelPackageTools\Package;

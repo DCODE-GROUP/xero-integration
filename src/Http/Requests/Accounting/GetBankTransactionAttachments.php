@@ -2,7 +2,6 @@
 
 namespace DcodeGroup\XeroIntegration\Http\Requests\Accounting;
 
-use DateTime;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
@@ -11,20 +10,17 @@ use Saloon\Http\Request;
  */
 class GetBankTransactionAttachments extends Request
 {
-	protected Method $method = Method::GET;
+    protected Method $method = Method::GET;
 
+    public function resolveEndpoint(): string
+    {
+        return "/BankTransactions/{$this->bankTransactionId}/Attachments";
+    }
 
-	public function resolveEndpoint(): string
-	{
-		return "/BankTransactions/{$this->bankTransactionId}/Attachments";
-	}
-
-
-	/**
-	 * @param string $bankTransactionId Xero generated unique identifier for a bank transaction
-	 */
-	public function __construct(
-		protected string $bankTransactionId,
-	) {
-	}
+    /**
+     * @param  string  $bankTransactionId  Xero generated unique identifier for a bank transaction
+     */
+    public function __construct(
+        protected string $bankTransactionId,
+    ) {}
 }
