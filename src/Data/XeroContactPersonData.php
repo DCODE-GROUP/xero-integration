@@ -5,6 +5,9 @@ namespace DcodeGroup\XeroIntegration\Data;
 use Spatie\LaravelData\Optional;
 use XeroPHP\Remote\Model as XeroModel;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 abstract class XeroContactPersonData extends AbstractXeroData
 {
     protected string $xeroRelationship = 'contact-person';
@@ -15,7 +18,7 @@ abstract class XeroContactPersonData extends AbstractXeroData
 
     protected array $relatedFields = [];
 
-    final public function __construct(
+    public function __construct(
         public string|Optional|null $FirstName,
         public string|Optional|null $LastName,
         public string|Optional|null $EmailAddress,
