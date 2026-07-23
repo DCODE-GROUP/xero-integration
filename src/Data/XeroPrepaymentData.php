@@ -11,6 +11,9 @@ use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\Prepayment as XeroPrepayment;
 use XeroPHP\Remote\Model as XeroModel;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 abstract class XeroPrepaymentData extends AbstractXeroData
 {
     use XeroSyncTrait;
@@ -27,7 +30,7 @@ abstract class XeroPrepaymentData extends AbstractXeroData
         'LineItems',
     ];
 
-    final public function __construct(
+    public function __construct(
         public string|Optional|null $PrepaymentID,
         public XeroContactData $Contact,
         /** @var Collection<int,XeroInvoiceItemData> */

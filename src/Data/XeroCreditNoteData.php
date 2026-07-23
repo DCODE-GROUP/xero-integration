@@ -11,6 +11,9 @@ use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\CreditNote as XeroCreditNote;
 use XeroPHP\Remote\Model as XeroModel;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 abstract class XeroCreditNoteData extends AbstractXeroData
 {
     use XeroSyncTrait;
@@ -28,7 +31,7 @@ abstract class XeroCreditNoteData extends AbstractXeroData
         'LineItems',
     ];
 
-    final public function __construct(
+    public function __construct(
         public string|Optional|null $CreditNoteID,
         public XeroContactData $Contact,
         /** @var Collection<int,XeroInvoiceItemData> */

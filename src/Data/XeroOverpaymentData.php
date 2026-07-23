@@ -11,6 +11,9 @@ use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\Overpayment as XeroOverpayment;
 use XeroPHP\Remote\Model as XeroModel;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 abstract class XeroOverpaymentData extends AbstractXeroData
 {
     use XeroSyncTrait;
@@ -28,7 +31,7 @@ abstract class XeroOverpaymentData extends AbstractXeroData
         'Payments',
     ];
 
-    final public function __construct(
+    public function __construct(
         public string|Optional|null $OverpaymentID,
         public XeroContactData $Contact,
         /** @var Collection<int,XeroInvoiceItemData> */
