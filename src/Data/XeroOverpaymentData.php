@@ -3,6 +3,9 @@
 namespace DcodeGroup\XeroIntegration\Data;
 
 use DcodeGroup\XeroIntegration\Data\Traits\XeroSyncTrait;
+use DcodeGroup\XeroIntegration\Enums\XeroLineAmountTypeEnum;
+use DcodeGroup\XeroIntegration\Enums\XeroOverpaymentStatusEnum;
+use DcodeGroup\XeroIntegration\Enums\XeroOverpaymentTypeEnum;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
@@ -34,24 +37,25 @@ abstract class XeroOverpaymentData extends AbstractXeroData
     public function __construct(
         public string|Optional|null $OverpaymentID,
         public XeroContactData $Contact,
-        /** @var Collection<int,XeroInvoiceItemData> */
+        /** @var Collection<int,XeroItemData> */
         public Collection $LineItems,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         public Carbon $Date,
-        public string $Status, // ToDo: change to Enum
+        public XeroOverpaymentStatusEnum $Status, // ToDo: change to Enum
         public float $SubTotal,
         public float $TotalTax,
         public float $Total,
-        public string $Type,
-        public string|Optional|null $LineAmountTypes = null,
-        public string|Optional|null $CurrencyCode = null,
-        public float|Optional|null $CurrencyRate = null,
-        public string|Optional|null $RemainingCredit = null,
+        public XeroOverpaymentTypeEnum $Type,
+        public XeroLineAmountTypeEnum|Optional|null $LineAmountTypes,
+        public string|Optional|null $CurrencyCode,
+        public float|Optional|null $CurrencyRate,
+        public string|Optional|null $RemainingCredit,
         /** @var Collection<int,XeroPaymentData>|null */
-        public Collection|Optional|null $Payments = null,
-        public bool|Optional|null $HasAttachments = null,
+        public Collection|Optional|null $Payments,
+        public bool|Optional|null $HasAttachments,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
-        public Carbon|Optional|null $UpdatedDateUTC = null,
+        public Carbon|Optional|null $UpdatedDateUTC,
+        public string|Optional|null $Reference,
     ) {}
 
     /**
@@ -64,20 +68,21 @@ abstract class XeroOverpaymentData extends AbstractXeroData
         return new static(
             OverpaymentID: data_get($xeroOverpayment, 'OverpaymentID'),
             Contact: XeroContactData::fromXero(data_get($xeroOverpayment, 'Contact')),
-            LineItems: XeroInvoiceItemData::toCollection(data_get($xeroOverpayment, 'LineItems')),
+            LineItems: XeroItemData::toCollection(data_get($xeroOverpayment, 'LineItems')),
             Date: Carbon::instance(data_get($xeroOverpayment, 'Date')),
-            Status: data_get($xeroOverpayment, 'Status'),
+            Status: XeroOverpaymentStatusEnum::tryFrom(data_get($xeroOverpayment, 'Status')),
             SubTotal: data_get($xeroOverpayment, 'SubTotal'),
             TotalTax: data_get($xeroOverpayment, 'TotalTax'),
             Total: data_get($xeroOverpayment, 'Total'),
-            Type: data_get($xeroOverpayment, 'Type'),
-            LineAmountTypes: data_get($xeroOverpayment, 'LineAmountTypes'),
+            Type: XeroOverpaymentTypeEnum::tryFrom(data_get($xeroOverpayment, 'Type')),
+            LineAmountTypes: XeroLineAmountTypeEnum::tryFrom(data_get($xeroOverpayment, 'LineAmountTypes')),
             CurrencyCode: data_get($xeroOverpayment, 'CurrencyCode'),
             CurrencyRate: data_get($xeroOverpayment, 'CurrencyRate'),
             RemainingCredit: data_get($xeroOverpayment, 'RemainingCredit'),
             Payments: XeroPaymentData::toCollection(data_get($xeroOverpayment, 'Payments')),
             HasAttachments: data_get($xeroOverpayment, 'HasAttachments'),
             UpdatedDateUTC: data_get($xeroOverpayment, 'UpdatedDateUTC') ? Carbon::instance(data_get($xeroOverpayment, 'UpdatedDateUTC')) : null,
+            Reference: data_get($xeroOverpayment, 'Reference')
         );
     }
 
@@ -86,20 +91,21 @@ abstract class XeroOverpaymentData extends AbstractXeroData
         return [
             'OverpaymentID' => data_get($this, 'OverpaymentID'),
             'Contact' => data_get($this, 'Contact')?->toXeroArray(),
-            'LineItems' => XeroInvoiceItemData::toXeroCollection(data_get($this, 'LineItems')),
+            'LineItems' => XeroItemData::toXeroCollection(data_get($this, 'LineItems')),
             'Date' => data_get($this, 'Date'),
-            'Status' => data_get($this, 'Status'),
+            'Status' => data_get($this, 'Status')?->getXeroValue(),
             'SubTotal' => data_get($this, 'SubTotal'),
             'TotalTax' => data_get($this, 'TotalTax'),
             'Total' => data_get($this, 'Total'),
-            'Type' => data_get($this, 'Type'),
-            'LineAmountTypes' => data_get($this, 'LineAmountTypes'),
+            'Type' => data_get($this, 'Type')?->getXeroValue(),
+            'LineAmountTypes' => data_get($this, 'LineAmountTypes')?->getXeroValue(),
             'CurrencyCode' => data_get($this, 'CurrencyCode'),
             'CurrencyRate' => data_get($this, 'CurrencyRate'),
             'RemainingCredit' => data_get($this, 'RemainingCredit'),
             'Payments' => XeroPaymentData::toXeroCollection(data_get($this, 'Payments')),
             'HasAttachments' => data_get($this, 'HasAttachments'),
             'UpdatedDateUTC' => data_get($this, 'UpdatedDateUTC'),
+            'Reference' => data_get($this, 'Reference'),
         ];
     }
 }

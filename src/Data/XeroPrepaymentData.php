@@ -3,6 +3,9 @@
 namespace DcodeGroup\XeroIntegration\Data;
 
 use DcodeGroup\XeroIntegration\Data\Traits\XeroSyncTrait;
+use DcodeGroup\XeroIntegration\Enums\XeroLineAmountTypeEnum;
+use DcodeGroup\XeroIntegration\Enums\XeroPrepaymentStatusEnum;
+use DcodeGroup\XeroIntegration\Enums\XeroPrepaymentTypeEnum;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
@@ -33,22 +36,22 @@ abstract class XeroPrepaymentData extends AbstractXeroData
     public function __construct(
         public string|Optional|null $PrepaymentID,
         public XeroContactData $Contact,
-        /** @var Collection<int,XeroInvoiceItemData> */
+        /** @var Collection<int,XeroItemData> */
         public Collection $LineItems,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         public Carbon $Date,
-        public string $Status, // ToDo: change to Enum
+        public XeroPrepaymentStatusEnum $Status,
         public float $SubTotal,
         public float $TotalTax,
         public float $Total,
-        public string $Type,
-        public string|Optional|null $LineAmountTypes = null,
-        public string|Optional|null $CurrencyCode = null,
-        public float|Optional|null $CurrencyRate = null,
-        public string|Optional|null $RemainingCredit = null,
-        public bool|Optional|null $HasAttachments = null,
+        public XeroPrepaymentTypeEnum $Type,
+        public XeroLineAmountTypeEnum|Optional|null $LineAmountTypes,
+        public string|Optional|null $CurrencyCode,
+        public float|Optional|null $CurrencyRate,
+        public string|Optional|null $RemainingCredit,
+        public bool|Optional|null $HasAttachments,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
-        public Carbon|Optional|null $UpdatedDateUTC = null,
+        public Carbon|Optional|null $UpdatedDateUTC,
     ) {}
 
     /**
@@ -61,14 +64,14 @@ abstract class XeroPrepaymentData extends AbstractXeroData
         return new static(
             PrepaymentID: data_get($xeroPrepayment, 'PrepaymentID'),
             Contact: XeroContactData::fromXero(data_get($xeroPrepayment, 'Contact')),
-            LineItems: XeroInvoiceItemData::toCollection(data_get($xeroPrepayment, 'LineItems')),
+            LineItems: XeroItemData::toCollection(data_get($xeroPrepayment, 'LineItems')),
             Date: Carbon::instance(data_get($xeroPrepayment, 'Date')),
-            Status: data_get($xeroPrepayment, 'Status'),
+            Status: XeroPrepaymentStatusEnum::TryFrom(data_get($xeroPrepayment, 'Status')),
             SubTotal: data_get($xeroPrepayment, 'SubTotal'),
             TotalTax: data_get($xeroPrepayment, 'TotalTax'),
             Total: data_get($xeroPrepayment, 'Total'),
-            Type: data_get($xeroPrepayment, 'Type'),
-            LineAmountTypes: data_get($xeroPrepayment, 'LineAmountTypes'),
+            Type: XeroPrepaymentTypeEnum::TryFrom(data_get($xeroPrepayment, 'Type')),
+            LineAmountTypes: XeroLineAmountTypeEnum::TryFrom(data_get($xeroPrepayment, 'LineAmountTypes')),
             CurrencyCode: data_get($xeroPrepayment, 'CurrencyCode'),
             CurrencyRate: data_get($xeroPrepayment, 'CurrencyRate'),
             RemainingCredit: data_get($xeroPrepayment, 'RemainingCredit'),
@@ -82,14 +85,14 @@ abstract class XeroPrepaymentData extends AbstractXeroData
         return [
             'PrepaymentID' => data_get($this, 'PrepaymentID'),
             'Contact' => data_get($this, 'Contact')?->toXeroArray(),
-            'LineItems' => XeroInvoiceItemData::toXeroCollection(data_get($this, 'LineItems')),
+            'LineItems' => XeroItemData::toXeroCollection(data_get($this, 'LineItems')),
             'Date' => data_get($this, 'Date'),
-            'Status' => data_get($this, 'Status'),
+            'Status' => data_get($this, 'Status')?->getXeroValue(),
             'SubTotal' => data_get($this, 'SubTotal'),
             'TotalTax' => data_get($this, 'TotalTax'),
             'Total' => data_get($this, 'Total'),
-            'Type' => data_get($this, 'Type'),
-            'LineAmountTypes' => data_get($this, 'LineAmountTypes'),
+            'Type' => data_get($this, 'Type')?->getXeroValue(),
+            'LineAmountTypes' => data_get($this, 'LineAmountTypes')?->getXeroValue(),
             'CurrencyCode' => data_get($this, 'CurrencyCode'),
             'CurrencyRate' => data_get($this, 'CurrencyRate'),
             'RemainingCredit' => data_get($this, 'RemainingCredit'),

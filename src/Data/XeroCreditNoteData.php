@@ -3,6 +3,9 @@
 namespace DcodeGroup\XeroIntegration\Data;
 
 use DcodeGroup\XeroIntegration\Data\Traits\XeroSyncTrait;
+use DcodeGroup\XeroIntegration\Enums\XeroCreditNoteTypeEnum;
+use DcodeGroup\XeroIntegration\Enums\XeroInvoiceStatusEnum;
+use DcodeGroup\XeroIntegration\Enums\XeroLineAmountTypeEnum;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
@@ -34,28 +37,28 @@ abstract class XeroCreditNoteData extends AbstractXeroData
     public function __construct(
         public string|Optional|null $CreditNoteID,
         public XeroContactData $Contact,
-        /** @var Collection<int,XeroInvoiceItemData> */
+        /** @var Collection<int,XeroItemData> */
         public Collection $LineItems,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         public Carbon $Date,
-        public string $Status, // ToDo: change to Enum
+        public XeroInvoiceStatusEnum $Status,
         public float $SubTotal,
         public float $TotalTax,
         public float $Total,
-        public string $Type,
-        public string|Optional|null $CreditNoteNumber = null,
-        public string|Optional|null $LineAmountTypes = null,
-        public string|Optional|null $Reference = null,
-        public bool|Optional|null $SentToContact = null,
-        public string|Optional|null $CurrencyCode = null,
-        public float|Optional|null $CurrencyRate = null,
-        public string|Optional|null $RemainingCredit = null,
-        public string|Optional|null $BrandingThemeID = null,
-        public bool|Optional|null $HasAttachments = null,
+        public XeroCreditNoteTypeEnum $Type,
+        public string|Optional|null $CreditNoteNumber,
+        public XeroLineAmountTypeEnum|Optional|null $LineAmountTypes,
+        public string|Optional|null $Reference,
+        public bool|Optional|null $SentToContact,
+        public string|Optional|null $CurrencyCode,
+        public float|Optional|null $CurrencyRate,
+        public string|Optional|null $RemainingCredit,
+        public string|Optional|null $BrandingThemeID,
+        public bool|Optional|null $HasAttachments,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
-        public Carbon|Optional|null $FullyPaidOnDate = null,
+        public Carbon|Optional|null $FullyPaidOnDate,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
-        public Carbon|Optional|null $UpdatedDateUTC = null,
+        public Carbon|Optional|null $UpdatedDateUTC,
     ) {}
 
     /**
@@ -68,15 +71,15 @@ abstract class XeroCreditNoteData extends AbstractXeroData
         return new static(
             CreditNoteID: data_get($xeroCreditNote, 'CreditNoteID'),
             Contact: XeroContactData::fromXero(data_get($xeroCreditNote, 'Contact')),
-            LineItems: XeroInvoiceItemData::toCollection(data_get($xeroCreditNote, 'LineItems')),
+            LineItems: XeroItemData::toCollection(data_get($xeroCreditNote, 'LineItems')),
             Date: Carbon::instance(data_get($xeroCreditNote, 'Date')),
-            Status: data_get($xeroCreditNote, 'Status'),
+            Status: XeroInvoiceStatusEnum::TryFrom(data_get($xeroCreditNote, 'Status')),
             SubTotal: data_get($xeroCreditNote, 'SubTotal'),
             TotalTax: data_get($xeroCreditNote, 'TotalTax'),
             Total: data_get($xeroCreditNote, 'Total'),
-            Type: data_get($xeroCreditNote, 'Type'),
+            Type: XeroCreditNoteTypeEnum::TryFrom(data_get($xeroCreditNote, 'Type')),
             CreditNoteNumber: data_get($xeroCreditNote, 'CreditNoteNumber'),
-            LineAmountTypes: data_get($xeroCreditNote, 'LineAmountTypes'),
+            LineAmountTypes: XeroLineAmountTypeEnum::TryFrom(data_get($xeroCreditNote, 'LineAmountTypes')),
             Reference: data_get($xeroCreditNote, 'Reference'),
             SentToContact: data_get($xeroCreditNote, 'SentToContact'),
             CurrencyCode: data_get($xeroCreditNote, 'CurrencyCode'),
@@ -94,15 +97,15 @@ abstract class XeroCreditNoteData extends AbstractXeroData
         return [
             'CreditNoteID' => data_get($this, 'CreditNoteID'),
             'Contact' => data_get($this, 'Contact')?->toXeroArray(),
-            'LineItems' => XeroInvoiceItemData::toXeroCollection(data_get($this, 'LineItems')),
+            'LineItems' => XeroItemData::toXeroCollection(data_get($this, 'LineItems')),
             'Date' => data_get($this, 'Date'),
-            'Status' => data_get($this, 'Status'),
+            'Status' => data_get($this, 'Status')?->getXeroValue(),
             'SubTotal' => data_get($this, 'SubTotal'),
             'TotalTax' => data_get($this, 'TotalTax'),
             'Total' => data_get($this, 'Total'),
-            'Type' => data_get($this, 'Type'),
+            'Type' => data_get($this, 'Type')?->getXeroValue(),
             'CreditNoteNumber' => data_get($this, 'CreditNoteNumber'),
-            'LineAmountTypes' => data_get($this, 'LineAmountTypes'),
+            'LineAmountTypes' => data_get($this, 'LineAmountTypes')?->getXeroValue(),
             'Reference' => data_get($this, 'Reference'),
             'SentToContact' => data_get($this, 'SentToContact'),
             'CurrencyCode' => data_get($this, 'CurrencyCode'),

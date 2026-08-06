@@ -2,6 +2,7 @@
 
 namespace DcodeGroup\XeroIntegration\Data;
 
+use DcodeGroup\XeroIntegration\Enums\XeroPhoneTypeEnum;
 use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\Phone as XeroPhone;
 use XeroPHP\Remote\Model as XeroModel;
@@ -26,9 +27,9 @@ abstract class XeroPhoneData extends AbstractXeroData
      * Summary of __construct
      */
     public function __construct(
-        public string|Optional|null $PhoneType,
+        public XeroPhoneTypeEnum|Optional|null $PhoneType,
         public string|Optional|null $PhoneNumber,
-        public string|Optional|null $PhoneAreCode,
+        public string|Optional|null $PhoneAreaCode,
         public string|Optional|null $PhoneCountryCode,
     ) {}
 
@@ -37,7 +38,7 @@ abstract class XeroPhoneData extends AbstractXeroData
         return [
             'PhoneType' => data_get($this, 'PhoneType'),
             'PhoneNumber' => data_get($this, 'PhoneNumber'),
-            'PhoneAreaCode' => data_get($this, 'PhoneAreCode'),
+            'PhoneAreaCode' => data_get($this, 'PhoneAreaCode'),
             'PhoneCountryCode' => data_get($this, 'PhoneCountryCode'),
         ];
     }
@@ -50,9 +51,9 @@ abstract class XeroPhoneData extends AbstractXeroData
     protected static function fromXero(XeroModel|XeroPhone $xeroPhone): self
     {
         return new static(
-            PhoneType: data_get($xeroPhone, 'PhoneType'),
+            PhoneType: data_get($xeroPhone, 'PhoneType')?->getXeroValue(),
             PhoneNumber: data_get($xeroPhone, 'PhoneNumber'),
-            PhoneAreCode: data_get($xeroPhone, 'PhoneAreaCode'),
+            PhoneAreaCode: data_get($xeroPhone, 'PhoneAreaCode'),
             PhoneCountryCode: data_get($xeroPhone, 'PhoneCountryCode'),
         );
     }

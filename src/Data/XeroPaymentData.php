@@ -4,6 +4,7 @@ namespace DcodeGroup\XeroIntegration\Data;
 
 use DcodeGroup\XeroIntegration\Data\Contracts\XeroSyncable;
 use DcodeGroup\XeroIntegration\Data\Traits\XeroSyncTrait;
+use DcodeGroup\XeroIntegration\Enums\XeroPaymentStatusEnum;
 use DcodeGroup\XeroIntegration\Enums\XeroPaymentTypesEnum;
 use Illuminate\Support\Carbon;
 use Spatie\LaravelData\Attributes\WithCast;
@@ -46,18 +47,18 @@ abstract class XeroPaymentData extends AbstractXeroData implements XeroSyncable
         public XeroPaymentTypesEnum $PaymentType,
         public string|Optional|null $PaymentID,
         /** @var XeroCreditNoteData|Optional|null */
-        public XeroCreditNoteData|Optional|null $CreditNote = null,
+        public XeroCreditNoteData|Optional|null $CreditNote,
         /** @var XeroPrepaymentData|Optional|null */
-        public XeroPrepaymentData|Optional|null $Prepayment = null,
+        public XeroPrepaymentData|Optional|null $Prepayment,
         /** @var XeroOverpaymentData|Optional|null */
-        public XeroOverpaymentData|Optional|null $Overpayment = null,
-        public float|Optional|null $CurrencyRate = null,
-        public string|Optional|null $Details = null,
-        public string|Optional|null $BatchPaymentID = null,
-        public string|Optional|null $IsReconciled = null,
-        public string|Optional|null $Status = null,
+        public XeroOverpaymentData|Optional|null $Overpayment,
+        public float|Optional|null $CurrencyRate,
+        public string|Optional|null $Details,
+        public string|Optional|null $BatchPaymentID,
+        public string|Optional|null $IsReconciled,
+        public XeroPaymentStatusEnum|Optional|null $Status,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d\TH:i:s')]
-        public Carbon|Optional|null $UpdatedDateUTC = null,
+        public Carbon|Optional|null $UpdatedDateUTC,
     ) {}
 
     /**
@@ -101,7 +102,7 @@ abstract class XeroPaymentData extends AbstractXeroData implements XeroSyncable
             'CurrencyRate' => data_get($this, 'CurrencyRate'),
             'BatchPaymentID' => data_get($this, 'BatchPaymentID'),
             'IsReconciled' => data_get($this, 'IsReconciled'),
-            'Status' => data_get($this, 'Status'),
+            'Status' => data_get($this, 'Status')?->getXeroValue(),
             'PaymentType' => data_get($this, 'PaymentType')?->getXeroValue(),
             'UpdatedDateUTC' => data_get($this, 'UpdatedDateUTC'),
         ];

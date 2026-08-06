@@ -3,13 +3,13 @@
 namespace DcodeGroup\XeroIntegration\Data;
 
 use Spatie\LaravelData\Optional;
-use XeroPHP\Models\Accounting\LineItem as XeroLineItem;
+use XeroPHP\Models\Accounting\LineItem;
 use XeroPHP\Remote\Model as XeroModel;
 
 /**
  * @phpstan-consistent-constructor
  */
-abstract class XeroQuoteItemData extends AbstractXeroData
+abstract class XeroItemData extends AbstractXeroData
 {
     protected string $xeroRelationship = 'line-item';
 
@@ -18,6 +18,8 @@ abstract class XeroQuoteItemData extends AbstractXeroData
         'Quantity',
         'UnitAmount',
         'LineAmount',
+        'ItemCode',
+        'AccountCode',
     ];
 
     protected array $relatedFields = [];
@@ -28,13 +30,15 @@ abstract class XeroQuoteItemData extends AbstractXeroData
         public float $Quantity,
         public float|Optional|null $UnitAmount,
         public float $LineAmount,
+        public float|Optional|null $TaxAmount,
+        public float|Optional|null $DiscountAmount,
         public string|Optional|null $ItemCode,
         public string|Optional|null $AccountCode,
         public string|Optional|null $AccountId,
         public string|Optional|null $TaxType,
-        public float|Optional|null $TaxAmount,
         public string|Optional|null $DiscountRate,
-        public float|Optional|null $DiscountAmount,
+        public array|Optional|null $Tracking,
+        public string|Optional|null $RepeatingInvoiceID,
     ) {}
 
     public function toXeroArray(): array
@@ -45,36 +49,40 @@ abstract class XeroQuoteItemData extends AbstractXeroData
             'Quantity' => data_get($this, 'Quantity'),
             'UnitAmount' => data_get($this, 'UnitAmount'),
             'LineAmount' => data_get($this, 'LineAmount'),
+            'TaxAmount' => data_get($this, 'TaxAmount'),
+            'DiscountAmount' => data_get($this, 'DiscountAmount'),
             'ItemCode' => data_get($this, 'ItemCode'),
             'AccountCode' => data_get($this, 'AccountCode'),
             'AccountId' => data_get($this, 'AccountId'),
             'TaxType' => data_get($this, 'TaxType'),
-            'TaxAmount' => data_get($this, 'TaxAmount'),
             'DiscountRate' => data_get($this, 'DiscountRate'),
-            'DiscountAmount' => data_get($this, 'DiscountAmount'),
+            'Tracking' => data_get($this, 'Tracking'),
+            'RepeatingInvoiceID' => data_get($this, 'RepeatingInvoiceID'),
         ];
     }
 
     /**
      * Create from Xero Model
      *
-     * @param  XeroLineItem  $xeroQuoteItem
+     * @param  LineItem  $xeroLineItem
      */
-    protected static function fromXero(XeroModel|XeroLineItem $xeroQuoteItem): self
+    protected static function fromXero(XeroModel|LineItem $xeroLineItem): self
     {
         return new static(
-            LineItemID: data_get($xeroQuoteItem, 'LineItemID'),
-            Description: data_get($xeroQuoteItem, 'Description'),
-            Quantity: (float) data_get($xeroQuoteItem, 'Quantity'),
-            UnitAmount: (float) data_get($xeroQuoteItem, 'UnitAmount'),
-            LineAmount: (float) data_get($xeroQuoteItem, 'LineAmount'),
-            ItemCode: data_get($xeroQuoteItem, 'ItemCode'),
-            AccountCode: data_get($xeroQuoteItem, 'AccountCode'),
-            AccountId: data_get($xeroQuoteItem, 'AccountId'),
-            TaxType: data_get($xeroQuoteItem, 'TaxType'),
-            TaxAmount: (float) data_get($xeroQuoteItem, 'TaxAmount'),
-            DiscountRate: data_get($xeroQuoteItem, 'DiscountRate'),
-            DiscountAmount: (float) data_get($xeroQuoteItem, 'DiscountAmount'),
+            LineItemID: data_get($xeroLineItem, 'LineItemID'),
+            Description: data_get($xeroLineItem, 'Description'),
+            Quantity: (float) data_get($xeroLineItem, 'Quantity'),
+            UnitAmount: data_get($xeroLineItem, 'UnitAmount'),
+            LineAmount: data_get($xeroLineItem, 'LineAmount'),
+            TaxAmount: data_get($xeroLineItem, 'TaxAmount'),
+            DiscountAmount: data_get($xeroLineItem, 'DiscountAmount'),
+            ItemCode: data_get($xeroLineItem, 'ItemCode'),
+            AccountCode: data_get($xeroLineItem, 'AccountCode'),
+            AccountId: data_get($xeroLineItem, 'AccountId'),
+            TaxType: data_get($xeroLineItem, 'TaxType'),
+            DiscountRate: data_get($xeroLineItem, 'DiscountRate'),
+            Tracking: data_get($xeroLineItem, 'Tracking'),
+            RepeatingInvoiceID: data_get($xeroLineItem, 'RepeatingInvoiceID'),
         );
     }
 }

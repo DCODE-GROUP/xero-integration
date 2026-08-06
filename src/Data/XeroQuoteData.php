@@ -4,6 +4,8 @@ namespace DcodeGroup\XeroIntegration\Data;
 
 use DcodeGroup\XeroIntegration\Data\Contracts\XeroSyncable;
 use DcodeGroup\XeroIntegration\Data\Traits\XeroSyncTrait;
+use DcodeGroup\XeroIntegration\Enums\XeroLineAmountTypeEnum;
+use DcodeGroup\XeroIntegration\Enums\XeroQuoteStatusEnum;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
@@ -33,12 +35,12 @@ abstract class XeroQuoteData extends AbstractXeroData implements XeroSyncable
     public function __construct(
         /** @var XeroContactData|Optional|null $Contact */
         public XeroContactData|Optional|null $Contact,
-        public string|Optional|null $Status, // ToDo: Make Enum
+        public XeroQuoteStatusEnum|Optional|null $Status,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         public Carbon $Date,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         public Carbon $ExpiryDate,
-        /** @var Collection<int,XeroQuoteItemData> $LineItems */
+        /** @var Collection<int,XeroItemData> $LineItems */
         public Collection $LineItems,
         public float|Optional|null $SubTotal,
         public float|Optional|null $TotalTax,
@@ -48,7 +50,7 @@ abstract class XeroQuoteData extends AbstractXeroData implements XeroSyncable
         public Carbon $UpdatedDateUTC,
         public string|Optional|null $QuoteID,
         public string $QuoteNumber,
-        public string|Optional|null $LineAmountTypes,
+        public XeroLineAmountTypeEnum|Optional|null $LineAmountTypes,
         public string|Optional|null $CurrencyCode,
         public float|Optional|null $CurrencyRate,
         public string|Optional|null $Reference,
@@ -63,11 +65,11 @@ abstract class XeroQuoteData extends AbstractXeroData implements XeroSyncable
     {
         return [
             'Contact' => data_get($this, 'Contact')?->toXeroArray(),
-            'Status' => data_get($this, 'Status'),
+            'Status' => data_get($this, 'Status')?->getXeroValue(),
             'Date' => data_get($this, 'Date'),
             'ExpiryDate' => data_get($this, 'ExpiryDate'),
-            'LineItems' => XeroQuoteItemData::toXeroCollection(data_get($this, 'LineItems')),
-            'LineAmountTypes' => data_get($this, 'LineAmountTypes'),
+            'LineItems' => XeroItemData::toXeroCollection(data_get($this, 'LineItems')),
+            'LineAmountTypes' => data_get($this, 'LineAmountTypes')?->getXeroValue(),
             'SubTotal' => data_get($this, 'SubTotal'),
             'TotalTax' => data_get($this, 'TotalTax'),
             'Total' => data_get($this, 'Total'),
@@ -95,10 +97,10 @@ abstract class XeroQuoteData extends AbstractXeroData implements XeroSyncable
     {
         return new static(
             Contact: XeroContactData::fromXero(data_get($xeroObject, 'Contact')),
-            Status: data_get($xeroObject, 'Status'),
+            Status: XeroQuoteStatusEnum::TryFrom(data_get($xeroObject, 'Status')),
             Date: Carbon::instance(data_get($xeroObject, 'Date')),
             ExpiryDate: Carbon::instance(data_get($xeroObject, 'ExpiryDate')),
-            LineItems: collect(data_get($xeroObject, 'LineItems'))->map(fn ($item) => XeroQuoteItemData::fromXero($item)),
+            LineItems: collect(data_get($xeroObject, 'LineItems'))->map(fn ($item) => XeroItemData::fromXero($item)),
             SubTotal: data_get($xeroObject, 'SubTotal'),
             TotalTax: data_get($xeroObject, 'TotalTax'),
             Total: data_get($xeroObject, 'Total'),
@@ -106,7 +108,7 @@ abstract class XeroQuoteData extends AbstractXeroData implements XeroSyncable
             UpdatedDateUTC: Carbon::instance(data_get($xeroObject, 'UpdatedDateUTC')),
             QuoteID: data_get($xeroObject, 'QuoteID'),
             QuoteNumber: data_get($xeroObject, 'QuoteNumber'),
-            LineAmountTypes: data_get($xeroObject, 'LineAmountTypes'),
+            LineAmountTypes: XeroLineAmountTypeEnum::TryFrom(data_get($xeroObject, 'LineAmountTypes')),
             CurrencyCode: data_get($xeroObject, 'CurrencyCode'),
             CurrencyRate: data_get($xeroObject, 'CurrencyRate'),
             Reference: data_get($xeroObject, 'Reference'),

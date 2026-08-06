@@ -4,6 +4,7 @@ namespace DcodeGroup\XeroIntegration\Data;
 
 use DcodeGroup\XeroIntegration\Data\Contracts\XeroSyncable;
 use DcodeGroup\XeroIntegration\Data\Traits\XeroSyncTrait;
+use DcodeGroup\XeroIntegration\Enums\XeroContactStatusEnum;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
@@ -33,41 +34,41 @@ abstract class XeroContactData extends AbstractXeroData implements XeroSyncable
 
     public function __construct(
         public string|Optional|null $ContactID,
-        public string $ContactStatus, // ToDo: Change Enum
-        public string|Optional|null $Name,
+        public XeroContactStatusEnum $ContactStatus,
+        public string $Name,
         public string|Optional|null $FirstName,
         public string|Optional|null $LastName,
         public string|Optional|null $EmailAddress,
         #[WithCast(DateTimeInterfaceCast::class, format: DATE_ATOM, setTimeZone: 'UTC')]
         public Carbon $UpdatedDateUTC,
         /** @var Collection<int,XeroContactPersonData>|null */
-        public ?Collection $ContactPersons = null,
-        public bool $IsSupplier = false,
-        public bool $IsCustomer = true,
+        public ?Collection $ContactPersons,
+        public bool $IsSupplier,
+        public bool $IsCustomer,
         /** @var Collection<int,XeroAddressData>|null */
-        public ?Collection $Addresses = null,
+        public ?Collection $Addresses,
         /** @var Collection<int,XeroPhoneData>|null */
-        public ?Collection $Phones = null,
-        public string|Optional|null $ContactNumber = null,
-        public string|Optional|null $AccountNumber = null,
-        public string|Optional|null $SkypeUserName = null,
-        public string|Optional|null $BankAccountDetails = null,
-        public string|Optional|null $TaxNumber = null,
-        public string|Optional|null $CompanyNumber = null,
-        public string|Optional|null $AccountsReceivableTaxType = null,
-        public string|Optional|null $AccountsPayableTaxType = null,
-        public string|Optional|null $DefaultCurrency = null,
-        public string|Optional|null $XeroNetworkKey = null,
-        public string|Optional|null $MergedToContactID = null,
-        public string|Optional|null $SalesDefaultAccountCode = null,
-        public string|Optional|null $PurchasesDefaultAccountCode = null,
-        public string|Optional|null $TrackingCategoryName = null,
-        public string|Optional|null $TrackingCategoryOption = null,
-        public string|Optional|null $Website = null,
-        public string|Optional|null $BatchPayments = null,
-        public float|Optional|null $Discount = null,
-        public string|Optional|null $Balances = null,
-        public bool $HasAttachments = false,
+        public ?Collection $Phones,
+        public string|Optional|null $ContactNumber,
+        public string|Optional|null $AccountNumber,
+        public string|Optional|null $BankAccountDetails,
+        public string|Optional|null $TaxNumber,
+        public string|Optional|null $CompanyNumber,
+        public string|Optional|null $AccountsReceivableTaxType,
+        public string|Optional|null $AccountsPayableTaxType,
+        public string|Optional|null $DefaultCurrency,
+        public string|Optional|null $XeroNetworkKey,
+        public string|Optional|null $MergedToContactID,
+        public string|Optional|null $SalesDefaultAccountCode,
+        public string|Optional|null $PurchasesDefaultAccountCode,
+        public string|Optional|null $TrackingCategoryName,
+        public string|Optional|null $TrackingCategoryOption,
+        public string|Optional|null $PaymentTerms,
+        public string|Optional|null $Website,
+        public string|Optional|null $BatchPayments,
+        public float|Optional|null $Discount,
+        public string|Optional|null $Balances,
+        public bool $HasAttachments,
     ) {}
 
     /**
@@ -79,7 +80,7 @@ abstract class XeroContactData extends AbstractXeroData implements XeroSyncable
     {
         return new static(
             ContactID : data_get($xeroContact, 'ContactID'),
-            ContactStatus : data_get($xeroContact, 'ContactStatus'),
+            ContactStatus : data_get($xeroContact, 'ContactStatus') ?? XeroContactStatusEnum::ACTIVE,
             Name : data_get($xeroContact, 'Name'),
             FirstName : data_get($xeroContact, 'FirstName'),
             LastName : data_get($xeroContact, 'LastName'),
@@ -92,7 +93,6 @@ abstract class XeroContactData extends AbstractXeroData implements XeroSyncable
             Phones : XeroPhoneData::toCollection(data_get($xeroContact, 'Phones')),
             ContactNumber : data_get($xeroContact, 'ContactNumber'),
             AccountNumber : data_get($xeroContact, 'AccountNumber'),
-            SkypeUserName : data_get($xeroContact, 'SkypeUserName'),
             BankAccountDetails : data_get($xeroContact, 'BankAccountDetails'),
             TaxNumber : data_get($xeroContact, 'TaxNumber'),
             CompanyNumber : data_get($xeroContact, 'CompanyNumber'),
@@ -105,6 +105,7 @@ abstract class XeroContactData extends AbstractXeroData implements XeroSyncable
             PurchasesDefaultAccountCode : data_get($xeroContact, 'PurchasesDefaultAccountCode'),
             TrackingCategoryName : data_get($xeroContact, 'TrackingCategoryName'),
             TrackingCategoryOption : data_get($xeroContact, 'TrackingCategoryOption'),
+            PaymentTerms: data_get($xeroContact, 'PaymentTerms'),
             Website : data_get($xeroContact, 'Website'),
             BatchPayments : data_get($xeroContact, 'BatchPayments'),
             Discount : data_get($xeroContact, 'Discount'),
@@ -117,7 +118,7 @@ abstract class XeroContactData extends AbstractXeroData implements XeroSyncable
     {
         return [
             'ContactID' => data_get($this, 'ContactID'),
-            'ContactStatus' => data_get($this, 'ContactStatus'),
+            'ContactStatus' => data_get($this, 'ContactStatus')?->value,
             'Name' => data_get($this, 'Name'),
             'FirstName' => data_get($this, 'FirstName'),
             'LastName' => data_get($this, 'LastName'),
@@ -130,7 +131,6 @@ abstract class XeroContactData extends AbstractXeroData implements XeroSyncable
             'Phones' => XeroPhoneData::toXeroCollection(data_get($this, 'Phones')),
             'ContactNumber' => data_get($this, 'ContactNumber'),
             'AccountNumber' => data_get($this, 'AccountNumber'),
-            'SkypeUserName' => data_get($this, 'SkypeUserName'),
             'BankAccountDetails' => data_get($this, 'BankAccountDetails'),
             'TaxNumber' => data_get($this, 'TaxNumber'),
             'CompanyNumber' => data_get($this, 'CompanyNumber'),
@@ -144,10 +144,7 @@ abstract class XeroContactData extends AbstractXeroData implements XeroSyncable
             'TrackingCategoryName' => data_get($this, 'TrackingCategoryName'),
             'TrackingCategoryOption' => data_get($this, 'TrackingCategoryOption'),
             'Website' => data_get($this, 'Website'),
-            'BatchPayments' => data_get($this, 'BatchPayments'),
-            'Discount' => data_get($this, 'Discount'),
-            'Balances' => data_get($this, 'Balances'),
-            'HasAttachments' => data_get($this, 'HasAttachments'),
+            'PaymentTerms' => data_get($this, 'PaymentTerms'),
         ];
     }
 }
