@@ -4,6 +4,7 @@ namespace DcodeGroup\XeroIntegration\Data;
 
 use DcodeGroup\XeroIntegration\Data\Contracts\XeroSyncable;
 use DcodeGroup\XeroIntegration\Data\Traits\XeroSyncTrait;
+use DcodeGroup\XeroIntegration\Enums\XeroPaymentStatusEnum;
 use DcodeGroup\XeroIntegration\Enums\XeroPaymentTypesEnum;
 use Illuminate\Support\Carbon;
 use Spatie\LaravelData\Attributes\WithCast;
@@ -12,6 +13,9 @@ use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\Payment as XeroPayment;
 use XeroPHP\Remote\Model as XeroModel;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 abstract class XeroPaymentData extends AbstractXeroData implements XeroSyncable
 {
     use XeroSyncTrait;
@@ -22,13 +26,18 @@ abstract class XeroPaymentData extends AbstractXeroData implements XeroSyncable
         'Reference',
         'Date',
         'Amount',
+        'Status',
+        'PaymentType',
     ];
 
     protected array $relatedFields = [
         'Invoice',
+        'CreditNote',
+        'Prepayment',
+        'Overpayment',
     ];
 
-    final public function __construct(
+    public function __construct(
         /** @var XeroInvoiceData|Optional|null */
         public XeroInvoiceData|Optional|null $Invoice,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
@@ -37,6 +46,19 @@ abstract class XeroPaymentData extends AbstractXeroData implements XeroSyncable
         public string|Optional|null $Reference,
         public XeroPaymentTypesEnum $PaymentType,
         public string|Optional|null $PaymentID,
+        /** @var XeroCreditNoteData|Optional|null */
+        public XeroCreditNoteData|Optional|null $CreditNote,
+        /** @var XeroPrepaymentData|Optional|null */
+        public XeroPrepaymentData|Optional|null $Prepayment,
+        /** @var XeroOverpaymentData|Optional|null */
+        public XeroOverpaymentData|Optional|null $Overpayment,
+        public float|Optional|null $CurrencyRate,
+        public string|Optional|null $Details,
+        public string|Optional|null $BatchPaymentID,
+        public string|Optional|null $IsReconciled,
+        public XeroPaymentStatusEnum|Optional|null $Status,
+        #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d\TH:i:s')]
+        public Carbon|Optional|null $UpdatedDateUTC,
     ) {}
 
     /**
@@ -47,12 +69,21 @@ abstract class XeroPaymentData extends AbstractXeroData implements XeroSyncable
     protected static function fromXero(XeroModel|XeroPayment $xeroPayment): self
     {
         return new static(
-            PaymentID: data_get($xeroPayment, 'PaymentID'),
             Invoice: XeroInvoiceData::fromXero(data_get($xeroPayment, 'Invoice')),
             Date: Carbon::parse(data_get($xeroPayment, 'Date')),
             Amount: data_get($xeroPayment, 'Amount'),
             Reference: data_get($xeroPayment, 'Reference'),
             PaymentType: XeroPaymentTypesEnum::from(data_get($xeroPayment, 'PaymentType')),
+            PaymentID: data_get($xeroPayment, 'PaymentID'),
+            CreditNote: XeroCreditNoteData::fromXero(data_get($xeroPayment, 'CreditNote')),
+            Prepayment: XeroPrepaymentData::fromXero(data_get($xeroPayment, 'Prepayment')),
+            Overpayment: XeroOverpaymentData::fromXero(data_get($xeroPayment, 'Overpayment')),
+            CurrencyRate: data_get($xeroPayment, 'CurrencyRate'),
+            Details: data_get($xeroPayment, 'Details'),
+            BatchPaymentID: data_get($xeroPayment, 'BatchPaymentID'),
+            IsReconciled: data_get($xeroPayment, 'IsReconciled'),
+            Status: data_get($xeroPayment, 'Status'),
+            UpdatedDateUTC: data_get($xeroPayment, 'UpdatedDateUTC') ? Carbon::parse(data_get($xeroPayment, 'UpdatedDateUTC')) : null,
         );
     }
 
@@ -61,10 +92,19 @@ abstract class XeroPaymentData extends AbstractXeroData implements XeroSyncable
         return [
             'PaymentID' => data_get($this, 'PaymentID'),
             'Invoice' => data_get($this, 'Invoice')?->toXeroArray(),
+            'CreditNote' => data_get($this, 'CreditNote')?->toXeroArray(),
+            'Prepayment' => data_get($this, 'Prepayment')?->toXeroArray(),
+            'Overpayment' => data_get($this, 'Overpayment')?->toXeroArray(),
             'Date' => data_get($this, 'Date'),
             'Amount' => data_get($this, 'Amount'),
-            'Reference' => data_get($this, 'Reference')?->getXeroValue(),
+            'Reference' => data_get($this, 'Reference'),
+            'Details' => data_get($this, 'Details'),
+            'CurrencyRate' => data_get($this, 'CurrencyRate'),
+            'BatchPaymentID' => data_get($this, 'BatchPaymentID'),
+            'IsReconciled' => data_get($this, 'IsReconciled'),
+            'Status' => data_get($this, 'Status')?->getXeroValue(),
             'PaymentType' => data_get($this, 'PaymentType')?->getXeroValue(),
+            'UpdatedDateUTC' => data_get($this, 'UpdatedDateUTC'),
         ];
     }
 }
