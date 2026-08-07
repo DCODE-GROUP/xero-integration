@@ -1,5 +1,5 @@
 {
-    "name": "dcode-group/xero-integration",
+    "name": "dcodegroup/xero-integration",
     "description": "An opininated Xero integration package for Laravel that allows for fluent quering of Xero records and mapping of Xero Entities",
     "keywords": [
         "Dcode Group",
