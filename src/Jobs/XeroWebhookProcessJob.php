@@ -1,6 +1,6 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Jobs;
+namespace Dcodegroup\XeroIntegration\Jobs;
 
 use XeroPHP\Webhook;
 

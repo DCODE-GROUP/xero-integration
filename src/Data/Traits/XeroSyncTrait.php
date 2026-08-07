@@ -1,10 +1,10 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Data\Traits;
+namespace Dcodegroup\XeroIntegration\Data\Traits;
 
-use DcodeGroup\XeroIntegration\Exceptions\XeroIntegrationException;
-use DcodeGroup\XeroIntegration\XeroApp;
-use DcodeGroup\XeroIntegration\XeroQuery;
+use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
+use Dcodegroup\XeroIntegration\XeroApp;
+use Dcodegroup\XeroIntegration\XeroQuery;
 use Exception;
 use Illuminate\Support\Collection;
 use XeroPHP\Remote\Model as XeroModel;

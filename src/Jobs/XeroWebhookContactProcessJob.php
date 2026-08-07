@@ -1,13 +1,13 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Jobs;
+namespace Dcodegroup\XeroIntegration\Jobs;
 
-use DcodeGroup\XeroIntegration\Data\XeroContactData;
-use DcodeGroup\XeroIntegration\Enums\XeroRelationshipsEnum;
-use DcodeGroup\XeroIntegration\Events\XeroContactCreatedEvent;
-use DcodeGroup\XeroIntegration\Events\XeroContactUpdatedEvent;
-use DcodeGroup\XeroIntegration\Exceptions\XeroIntegrationException;
-use DcodeGroup\XeroIntegration\Facades\XeroIntegration;
+use Dcodegroup\XeroIntegration\Data\XeroContactData;
+use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
+use Dcodegroup\XeroIntegration\Events\XeroContactCreatedEvent;
+use Dcodegroup\XeroIntegration\Events\XeroContactUpdatedEvent;
+use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
+use Dcodegroup\XeroIntegration\Facades\XeroIntegration;
 use Illuminate\Foundation\Bus\PendingDispatch;
 use XeroPHP\Webhook\Event;
 
@@ -26,7 +26,7 @@ class XeroWebhookContactProcessJob extends AbstractXeroWebhookJob
     {
         $query = $this->xeroApp->load(XeroRelationshipsEnum::CONTACT->getModelClass());
 
-        /** @var \DcodeGroup\XeroIntegration\XeroIntegration $xero */
+        /** @var \Dcodegroup\XeroIntegration\XeroIntegration $xero */
         $xero = XeroIntegration::make($this->xeroApp, $query);
 
         $model = $xero->find($this->event->getResourceId());

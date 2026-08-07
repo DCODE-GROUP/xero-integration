@@ -1,6 +1,6 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Enums;
+namespace Dcodegroup\XeroIntegration\Enums;
 
 enum XeroRelationshipsEnum: string
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Data;
+namespace Dcodegroup\XeroIntegration\Data;
 
-use DcodeGroup\XeroIntegration\Data\Contracts\XeroSyncable;
-use DcodeGroup\XeroIntegration\Data\Traits\XeroSyncTrait;
-use DcodeGroup\XeroIntegration\Enums\XeroPaymentStatusEnum;
-use DcodeGroup\XeroIntegration\Enums\XeroPaymentTypesEnum;
-use DcodeGroup\XeroIntegration\Enums\XeroRelationshipsEnum;
+use Dcodegroup\XeroIntegration\Data\Contracts\XeroSyncable;
+use Dcodegroup\XeroIntegration\Data\Traits\XeroSyncTrait;
+use Dcodegroup\XeroIntegration\Enums\XeroPaymentStatusEnum;
+use Dcodegroup\XeroIntegration\Enums\XeroPaymentTypesEnum;
+use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Spatie\LaravelData\Attributes\WithCast;

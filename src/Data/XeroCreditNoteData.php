@@ -1,12 +1,12 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Data;
+namespace Dcodegroup\XeroIntegration\Data;
 
-use DcodeGroup\XeroIntegration\Data\Traits\XeroSyncTrait;
-use DcodeGroup\XeroIntegration\Enums\XeroCreditNoteTypeEnum;
-use DcodeGroup\XeroIntegration\Enums\XeroInvoiceStatusEnum;
-use DcodeGroup\XeroIntegration\Enums\XeroLineAmountTypeEnum;
-use DcodeGroup\XeroIntegration\Enums\XeroRelationshipsEnum;
+use Dcodegroup\XeroIntegration\Data\Traits\XeroSyncTrait;
+use Dcodegroup\XeroIntegration\Enums\XeroCreditNoteTypeEnum;
+use Dcodegroup\XeroIntegration\Enums\XeroInvoiceStatusEnum;
+use Dcodegroup\XeroIntegration\Enums\XeroLineAmountTypeEnum;
+use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;

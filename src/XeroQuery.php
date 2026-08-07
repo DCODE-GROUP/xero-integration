@@ -1,8 +1,8 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration;
+namespace Dcodegroup\XeroIntegration;
 
-use DcodeGroup\XeroIntegration\Exceptions\XeroRateLimitExceededException;
+use Dcodegroup\XeroIntegration\Exceptions\XeroRateLimitExceededException;
 use Illuminate\Support\Facades\RateLimiter;
 use Override;
 use XeroPHP\Remote\Collection;

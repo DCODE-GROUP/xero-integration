@@ -1,8 +1,8 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Database\Factories;
+namespace Dcodegroup\XeroIntegration\Database\Factories;
 
-use DcodeGroup\XeroIntegration\Models\XeroRecord;
+use Dcodegroup\XeroIntegration\Models\XeroRecord;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

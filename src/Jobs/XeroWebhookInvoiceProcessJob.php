@@ -1,13 +1,13 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Jobs;
+namespace Dcodegroup\XeroIntegration\Jobs;
 
-use DcodeGroup\XeroIntegration\Data\XeroInvoiceData;
-use DcodeGroup\XeroIntegration\Enums\XeroRelationshipsEnum;
-use DcodeGroup\XeroIntegration\Events\XeroInvoiceCreatedEvent;
-use DcodeGroup\XeroIntegration\Events\XeroInvoiceUpdatedEvent;
-use DcodeGroup\XeroIntegration\Exceptions\XeroIntegrationException;
-use DcodeGroup\XeroIntegration\Facades\XeroIntegration;
+use Dcodegroup\XeroIntegration\Data\XeroInvoiceData;
+use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
+use Dcodegroup\XeroIntegration\Events\XeroInvoiceCreatedEvent;
+use Dcodegroup\XeroIntegration\Events\XeroInvoiceUpdatedEvent;
+use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
+use Dcodegroup\XeroIntegration\Facades\XeroIntegration;
 use Illuminate\Foundation\Bus\PendingDispatch;
 use XeroPHP\Webhook\Event;
 
@@ -26,7 +26,7 @@ class XeroWebhookInvoiceProcessJob extends AbstractXeroWebhookJob
     {
         $query = $this->xeroApp->load(XeroRelationshipsEnum::INVOICE->getModelClass());
 
-        /** @var \DcodeGroup\XeroIntegration\XeroIntegration $xero */
+        /** @var \Dcodegroup\XeroIntegration\XeroIntegration $xero */
         $xero = XeroIntegration::make($this->xeroApp, $query);
 
         $model = $xero->find($this->event->getResourceId());

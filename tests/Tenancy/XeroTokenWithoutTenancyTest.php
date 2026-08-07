@@ -1,8 +1,8 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Tests\Tenancy;
+namespace Dcodegroup\XeroIntegration\Tests\Tenancy;
 
-use DcodeGroup\XeroIntegration\Models\XeroToken;
+use Dcodegroup\XeroIntegration\Models\XeroToken;
 use Workbench\App\Models\Tenant;
 
 beforeEach(function () {

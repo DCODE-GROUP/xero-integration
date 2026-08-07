@@ -1,8 +1,8 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Events;
+namespace Dcodegroup\XeroIntegration\Events;
 
-use DcodeGroup\XeroIntegration\Http\Requests\XeroWebhookRequest;
+use Dcodegroup\XeroIntegration\Http\Requests\XeroWebhookRequest;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

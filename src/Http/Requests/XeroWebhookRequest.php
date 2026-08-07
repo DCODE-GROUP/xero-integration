@@ -1,8 +1,8 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Http\Requests;
+namespace Dcodegroup\XeroIntegration\Http\Requests;
 
-use DcodeGroup\XeroIntegration\XeroApp;
+use Dcodegroup\XeroIntegration\XeroApp;
 use Illuminate\Foundation\Http\FormRequest;
 use XeroPHP\Webhook;
 

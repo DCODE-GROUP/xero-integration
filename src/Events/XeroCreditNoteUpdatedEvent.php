@@ -1,8 +1,8 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Events;
+namespace Dcodegroup\XeroIntegration\Events;
 
-use DcodeGroup\XeroIntegration\Data\XeroCreditNoteData;
+use Dcodegroup\XeroIntegration\Data\XeroCreditNoteData;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

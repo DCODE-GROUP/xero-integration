@@ -45,12 +45,13 @@
     },
     "autoload": {
         "psr-4": {
-            "DcodeGroup\\XeroIntegration\\": "src/"
+            "Dcodegroup\\XeroIntegration\\": "src/",
+            "Dcodegroup\\XeroIntegration\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "DcodeGroup\\XeroIntegration\\Tests\\": "tests/",
+            "Dcodegroup\\XeroIntegration\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/",
             "Workbench\\Database\\Factories\\": "workbench/database/factories/",
             "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
@@ -89,10 +90,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "DcodeGroup\\XeroIntegration\\XeroIntegrationServiceProvider"
+                "Dcodegroup\\XeroIntegration\\XeroIntegrationServiceProvider"
             ],
             "aliases": {
-                "XeroIntegration": "DcodeGroup\\XeroIntegration\\Facades\\XeroIntegration"
+                "XeroIntegration": "Dcodegroup\\XeroIntegration\\Facades\\XeroIntegration"
             }
         }
     },

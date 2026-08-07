@@ -1,9 +1,9 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Jobs;
+namespace Dcodegroup\XeroIntegration\Jobs;
 
-use DcodeGroup\XeroIntegration\XeroApp;
-use DcodeGroup\XeroIntegration\XeroQuery;
+use Dcodegroup\XeroIntegration\XeroApp;
+use Dcodegroup\XeroIntegration\XeroQuery;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

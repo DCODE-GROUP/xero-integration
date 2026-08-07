@@ -1,9 +1,9 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration;
+namespace Dcodegroup\XeroIntegration;
 
-use DcodeGroup\XeroIntegration\Commands\MakeXeroDataCommand;
-use DcodeGroup\XeroIntegration\Exceptions\XeroIntegrationException;
+use Dcodegroup\XeroIntegration\Commands\MakeXeroDataCommand;
+use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 

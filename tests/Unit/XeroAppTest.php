@@ -1,12 +1,12 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Tests\Unit;
+namespace Dcodegroup\XeroIntegration\Tests\Unit;
 
-use DcodeGroup\XeroIntegration\Exceptions\XeroIntegrationException;
-use DcodeGroup\XeroIntegration\Models\XeroToken;
-use DcodeGroup\XeroIntegration\XeroApp;
-use DcodeGroup\XeroIntegration\XeroIntegration;
-use DcodeGroup\XeroIntegration\XeroQuery;
+use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
+use Dcodegroup\XeroIntegration\Models\XeroToken;
+use Dcodegroup\XeroIntegration\XeroApp;
+use Dcodegroup\XeroIntegration\XeroIntegration;
+use Dcodegroup\XeroIntegration\XeroQuery;
 
 test('can load relationship model', function () {
     XeroToken::factory()->create();

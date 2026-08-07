@@ -1,13 +1,13 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Jobs;
+namespace Dcodegroup\XeroIntegration\Jobs;
 
-use DcodeGroup\XeroIntegration\Data\XeroCreditNoteData;
-use DcodeGroup\XeroIntegration\Enums\XeroRelationshipsEnum;
-use DcodeGroup\XeroIntegration\Events\XeroCreditNoteCreatedEvent;
-use DcodeGroup\XeroIntegration\Events\XeroCreditNoteUpdatedEvent;
-use DcodeGroup\XeroIntegration\Exceptions\XeroIntegrationException;
-use DcodeGroup\XeroIntegration\Facades\XeroIntegration;
+use Dcodegroup\XeroIntegration\Data\XeroCreditNoteData;
+use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
+use Dcodegroup\XeroIntegration\Events\XeroCreditNoteCreatedEvent;
+use Dcodegroup\XeroIntegration\Events\XeroCreditNoteUpdatedEvent;
+use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
+use Dcodegroup\XeroIntegration\Facades\XeroIntegration;
 use XeroPHP\Webhook\Event;
 
 /**
@@ -25,7 +25,7 @@ class XeroWebhookCreditNoteProcessJob extends AbstractXeroWebhookJob
     {
         $query = $this->xeroApp->load(XeroRelationshipsEnum::CREDIT_NOTE->getModelClass());
 
-        /** @var \DcodeGroup\XeroIntegration\XeroIntegration $xero */
+        /** @var \Dcodegroup\XeroIntegration\XeroIntegration $xero */
         $xero = XeroIntegration::make($this->xeroApp, $query);
 
         $model = $xero->find($this->event->getResourceId());

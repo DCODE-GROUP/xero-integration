@@ -1,11 +1,11 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Tests\Unit;
+namespace Dcodegroup\XeroIntegration\Tests\Unit;
 
-use DcodeGroup\XeroIntegration\Exceptions\XeroRateLimitExceededException;
-use DcodeGroup\XeroIntegration\Models\XeroToken;
-use DcodeGroup\XeroIntegration\XeroApp;
-use DcodeGroup\XeroIntegration\XeroQuery;
+use Dcodegroup\XeroIntegration\Exceptions\XeroRateLimitExceededException;
+use Dcodegroup\XeroIntegration\Models\XeroToken;
+use Dcodegroup\XeroIntegration\XeroApp;
+use Dcodegroup\XeroIntegration\XeroQuery;
 use Illuminate\Support\Facades\RateLimiter;
 
 test('rate limiter key generated without tenancy', function () {
@@ -31,7 +31,7 @@ test('rate limiter key includes tenant when tenancy enabled', function () {
 
     $key = XeroQuery::getRateLimiterKey();
 
-    expect($key)->toBe('DcodeGroup\XeroIntegration\XeroQuery:test-tenant-id');
+    expect($key)->toBe('Dcodegroup\XeroIntegration\XeroQuery:test-tenant-id');
 });
 
 test('xero query can be created from xero app', function () {

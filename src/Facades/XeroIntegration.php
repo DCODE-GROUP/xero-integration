@@ -1,21 +1,21 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Facades;
+namespace Dcodegroup\XeroIntegration\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static \DcodeGroup\XeroIntegration\XeroIntegration make(\DcodeGroup\XeroIntegration\XeroApp $app, \DcodeGroup\XeroIntegration\XeroQuery $query)
+ * @method static \Dcodegroup\XeroIntegration\XeroIntegration make(\Dcodegroup\XeroIntegration\XeroApp $app, \Dcodegroup\XeroIntegration\XeroQuery $query)
  *
- * @see \DcodeGroup\XeroIntegration\XeroIntegration
+ * @see \Dcodegroup\XeroIntegration\XeroIntegration
  */
 class XeroIntegration extends Facade
 {
     /**
-     * @return class-string<\DcodeGroup\XeroIntegration\XeroIntegration>
+     * @return class-string<\Dcodegroup\XeroIntegration\XeroIntegration>
      */
     protected static function getFacadeAccessor(): string
     {
-        return \DcodeGroup\XeroIntegration\XeroIntegration::class;
+        return \Dcodegroup\XeroIntegration\XeroIntegration::class;
     }
 }

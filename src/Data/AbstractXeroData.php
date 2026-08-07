@@ -1,8 +1,8 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Data;
+namespace Dcodegroup\XeroIntegration\Data;
 
-use DcodeGroup\XeroIntegration\Data\Contracts\HasXeroData;
+use Dcodegroup\XeroIntegration\Data\Contracts\HasXeroData;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use XeroPHP\Remote\Collection as XeroCollection;

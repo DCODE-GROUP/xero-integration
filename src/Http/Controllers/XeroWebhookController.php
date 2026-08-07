@@ -1,11 +1,11 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Http\Controllers;
+namespace Dcodegroup\XeroIntegration\Http\Controllers;
 
-use DcodeGroup\XeroIntegration\Events\XeroWebhookRecievedEvent;
-use DcodeGroup\XeroIntegration\Http\Requests\XeroWebhookRequest;
-use DcodeGroup\XeroIntegration\Jobs\XeroWebhookProcessJob;
-use DcodeGroup\XeroIntegration\XeroApp;
+use Dcodegroup\XeroIntegration\Events\XeroWebhookRecievedEvent;
+use Dcodegroup\XeroIntegration\Http\Requests\XeroWebhookRequest;
+use Dcodegroup\XeroIntegration\Jobs\XeroWebhookProcessJob;
+use Dcodegroup\XeroIntegration\XeroApp;
 use XeroPHP\Webhook as XeroWebHook;
 
 class XeroWebhookController

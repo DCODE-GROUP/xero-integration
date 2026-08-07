@@ -1,7 +1,7 @@
 <?php
 
-use DcodeGroup\XeroIntegration\Http\Controllers\XeroAuthController;
-use DcodeGroup\XeroIntegration\Http\Controllers\XeroCallbackController;
+use Dcodegroup\XeroIntegration\Http\Controllers\XeroAuthController;
+use Dcodegroup\XeroIntegration\Http\Controllers\XeroCallbackController;
 
 // config for DcodeGroup/XeroIntegration
 return [

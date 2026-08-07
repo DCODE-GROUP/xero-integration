@@ -1,11 +1,11 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration;
+namespace Dcodegroup\XeroIntegration;
 
-use DcodeGroup\XeroIntegration\Enums\XeroRelationshipsEnum;
-use DcodeGroup\XeroIntegration\Exceptions\XeroIntegrationException;
-use DcodeGroup\XeroIntegration\Facades\XeroIntegrationService;
-use DcodeGroup\XeroIntegration\Models\XeroToken;
+use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
+use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
+use Dcodegroup\XeroIntegration\Facades\XeroIntegrationService;
+use Dcodegroup\XeroIntegration\Models\XeroToken;
 use Illuminate\Support\Str;
 use Override;
 use XeroPHP\Application;

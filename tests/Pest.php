@@ -1,6 +1,6 @@
 <?php
 
-use DcodeGroup\XeroIntegration\Tests\TestCase;
+use Dcodegroup\XeroIntegration\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Orchestra\Testbench\Concerns\WithWorkbench;
 

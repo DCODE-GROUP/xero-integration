@@ -1,8 +1,8 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Tests;
+namespace Dcodegroup\XeroIntegration\Tests;
 
-use DcodeGroup\XeroIntegration\XeroIntegrationServiceProvider;
+use Dcodegroup\XeroIntegration\XeroIntegrationServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
 
@@ -15,7 +15,7 @@ class TestCase extends Orchestra
         Factory::guessFactoryNamesUsing(
             fn (string $modelName) => match (true) {
                 str_starts_with($modelName, 'Workbench\\') => 'Workbench\\Database\\Factories\\'.class_basename($modelName).'Factory',
-                default => 'DcodeGroup\\XeroIntegration\\Database\\Factories\\'.class_basename($modelName).'Factory'
+                default => 'Dcodegroup\\XeroIntegration\\Database\\Factories\\'.class_basename($modelName).'Factory'
             }
         );
     }

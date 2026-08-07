@@ -1,6 +1,6 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Data\Contracts;
+namespace Dcodegroup\XeroIntegration\Data\Contracts;
 
 interface XeroSyncable
 {

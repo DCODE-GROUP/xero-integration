@@ -1,6 +1,6 @@
 <?php
 
-use DcodeGroup\XeroIntegration\Http\Controllers\XeroWebhookController;
+use Dcodegroup\XeroIntegration\Http\Controllers\XeroWebhookController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([

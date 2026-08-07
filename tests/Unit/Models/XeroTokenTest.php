@@ -1,8 +1,8 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Tests\Unit\Models;
+namespace Dcodegroup\XeroIntegration\Tests\Unit\Models;
 
-use DcodeGroup\XeroIntegration\Models\XeroToken;
+use Dcodegroup\XeroIntegration\Models\XeroToken;
 use League\OAuth2\Client\Token\AccessToken;
 
 test('can create xero token', function () {
