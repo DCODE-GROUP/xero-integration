@@ -20,8 +20,8 @@ class XeroQuery extends Query
     {
         parent::__construct($app);
 
-        $this->limit = config('services.xero.rate_limit.no', 60);
-        $this->decaySeconds = config('services.xero.rate_limit.decay_seconds', 60);
+        $this->limit = config('xero-integration.rate_limit.no');
+        $this->decaySeconds = config('xero-integration.rate_limit.decay_seconds');
     }
 
     /**

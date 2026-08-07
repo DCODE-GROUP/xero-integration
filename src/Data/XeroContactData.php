@@ -5,6 +5,8 @@ namespace DcodeGroup\XeroIntegration\Data;
 use DcodeGroup\XeroIntegration\Data\Contracts\XeroSyncable;
 use DcodeGroup\XeroIntegration\Data\Traits\XeroSyncTrait;
 use DcodeGroup\XeroIntegration\Enums\XeroContactStatusEnum;
+use DcodeGroup\XeroIntegration\Enums\XeroRelationshipsEnum;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
@@ -16,11 +18,11 @@ use XeroPHP\Remote\Model as XeroModel;
 /**
  * @phpstan-consistent-constructor
  */
-abstract class XeroContactData extends AbstractXeroData implements XeroSyncable
+class XeroContactData extends AbstractXeroData implements XeroSyncable
 {
     use XeroSyncTrait;
 
-    protected string $xeroRelationship = 'contact';
+    protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::CONTACT;
 
     protected array $searchFields = [
         'EmailAddress',
@@ -73,10 +75,8 @@ abstract class XeroContactData extends AbstractXeroData implements XeroSyncable
 
     /**
      * Create from Xero Model
-     *
-     * @param  XeroContact  $xeroContact
      */
-    protected static function fromXero(XeroModel|XeroContact $xeroContact): self
+    public static function fromXero(XeroModel|XeroContact $xeroContact): self
     {
         return new static(
             ContactID : data_get($xeroContact, 'ContactID'),
@@ -146,5 +146,15 @@ abstract class XeroContactData extends AbstractXeroData implements XeroSyncable
             'Website' => data_get($this, 'Website'),
             'PaymentTerms' => data_get($this, 'PaymentTerms'),
         ];
+    }
+
+    public function mapToData(Model $model): array
+    {
+        return [];
+    }
+
+    public function mapToModel(): array
+    {
+        return [];
     }
 }

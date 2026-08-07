@@ -6,6 +6,8 @@ use DcodeGroup\XeroIntegration\Data\Traits\XeroSyncTrait;
 use DcodeGroup\XeroIntegration\Enums\XeroLineAmountTypeEnum;
 use DcodeGroup\XeroIntegration\Enums\XeroOverpaymentStatusEnum;
 use DcodeGroup\XeroIntegration\Enums\XeroOverpaymentTypeEnum;
+use DcodeGroup\XeroIntegration\Enums\XeroRelationshipsEnum;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
@@ -17,11 +19,11 @@ use XeroPHP\Remote\Model as XeroModel;
 /**
  * @phpstan-consistent-constructor
  */
-abstract class XeroOverpaymentData extends AbstractXeroData
+class XeroOverpaymentData extends AbstractXeroData
 {
     use XeroSyncTrait;
 
-    protected string $xeroRelationship = 'overpayment';
+    protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::OVERPAYMENT;
 
     protected array $searchFields = [
         'OverpaymentID',
@@ -63,7 +65,7 @@ abstract class XeroOverpaymentData extends AbstractXeroData
      *
      * @param  XeroOverpayment  $xeroOverpayment
      */
-    protected static function fromXero(XeroModel|XeroOverpayment $xeroOverpayment): self
+    public static function fromXero(XeroModel|XeroOverpayment $xeroOverpayment): self
     {
         return new static(
             OverpaymentID: data_get($xeroOverpayment, 'OverpaymentID'),
@@ -107,5 +109,15 @@ abstract class XeroOverpaymentData extends AbstractXeroData
             'UpdatedDateUTC' => data_get($this, 'UpdatedDateUTC'),
             'Reference' => data_get($this, 'Reference'),
         ];
+    }
+
+    public function mapToData(Model $model): array
+    {
+        return [];
+    }
+
+    public function mapToModel(): array
+    {
+        return [];
     }
 }

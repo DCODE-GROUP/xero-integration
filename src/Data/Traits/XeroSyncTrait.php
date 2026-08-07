@@ -17,7 +17,7 @@ trait XeroSyncTrait
     {
         $xeroApp = $this->getXeroApp();
 
-        $xeroModel = $xeroApp->getModelForRelationship($this->xeroRelationship);
+        $xeroModel = $this->xeroRelationship->getModelClass();
 
         $queryModel = $xeroApp->load($xeroModel);
 

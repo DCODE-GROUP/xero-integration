@@ -10,7 +10,7 @@ interface HasXeroData
 {
     public function fromModel(Model $model): self;
 
-    public static function toCollection(array $items): ?Collection;
+    public static function toCollection(array|XeroCollection|null $items): ?Collection;
 
     public static function toXeroCollection(Collection $items): ?XeroCollection;
 }

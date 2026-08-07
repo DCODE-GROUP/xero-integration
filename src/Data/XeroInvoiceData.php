@@ -6,6 +6,8 @@ use DcodeGroup\XeroIntegration\Data\Traits\XeroSyncTrait;
 use DcodeGroup\XeroIntegration\Enums\XeroInvoiceStatusEnum;
 use DcodeGroup\XeroIntegration\Enums\XeroInvoiceTypeEnum;
 use DcodeGroup\XeroIntegration\Enums\XeroLineAmountTypeEnum;
+use DcodeGroup\XeroIntegration\Enums\XeroRelationshipsEnum;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
@@ -17,11 +19,11 @@ use XeroPHP\Remote\Model as XeroModel;
 /**
  * @phpstan-consistent-constructor
  */
-abstract class XeroInvoiceData extends AbstractXeroData
+class XeroInvoiceData extends AbstractXeroData
 {
     use XeroSyncTrait;
 
-    protected string $xeroRelationship = 'invoice';
+    protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::INVOICE;
 
     protected array $searchFields = [
         'InvoiceNumber',
@@ -80,10 +82,8 @@ abstract class XeroInvoiceData extends AbstractXeroData
 
     /**
      * Create from Xero Model
-     *
-     * @param  XeroInvoice  $xeroInvoice
      */
-    protected static function fromXero(XeroModel|XeroInvoice $xeroInvoice): self
+    public static function fromXero(XeroModel|XeroInvoice $xeroInvoice): self
     {
         return new static(
             InvoiceID: data_get($xeroInvoice, 'InvoiceID'),
@@ -157,5 +157,15 @@ abstract class XeroInvoiceData extends AbstractXeroData
             'AmountCredited' => data_get($this, 'AmountCredited'),
             'CreditNotes' => XeroCreditNoteData::toXeroCollection(data_get($this, 'CreditNotes')),
         ];
+    }
+
+    public function mapToData(Model $model): array
+    {
+        return [];
+    }
+
+    public function mapToModel(): array
+    {
+        return [];
     }
 }

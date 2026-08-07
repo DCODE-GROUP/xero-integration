@@ -45,4 +45,15 @@ return [
         'exclude_middleware_for_callback' => env('XERO_ROUTE_EXCLUDE_MIDDLEWARE_FOR_CALLBACK', []),
         'callback_success_route' => env('XERO_ROUTE_CALLBACK_SUCCESS_ROUTE', 'xero.index'),
     ],
+    'webhooks' => [
+        'secret' => env('XERO_WEBHOOK_SECRET'),
+        'prefix' => env('XERO_WEBHOOK_PREFIX', 'webhooks'),
+        'middleware' => env('XERO_WEBHOOK_MIDDLEWARE', ['guest']),
+        'queue' => env('XERO_WEBHOOK_QUEUE', 'default'),
+        'backoffs' => env('XERO_WEBHOOK_BACKOFFS', [10, 30, 60, 120, 300]),
+    ],
+    'rate_limit' => [
+        'no' => env('XERO_RATE_LIMIT_NO', 60),
+        'decay_seconds' => env('XERO_RATE_LIMIT_DECAY_SECONDS', 60),
+    ],
 ];

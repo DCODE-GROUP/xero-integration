@@ -56,19 +56,6 @@ test('can throw exception when no token found', function () {
         ->toThrow(XeroIntegrationException::class, 'No Xero token found');
 });
 
-test('can get available relationships', function () {
-    XeroToken::factory()->create();
-
-    $app = new XeroApp;
-
-    $reflection = new \ReflectionMethod($app, 'getAvailableRelationships');
-    $reflection->setAccessible(true);
-    $relationships = $reflection->invoke($app);
-
-    expect($relationships)->toHaveCount(3)
-        ->and($relationships->toArray())->toEqual(['contacts', 'invoices', 'quotes']);
-});
-
 test('__call throws exception for invalid relationship', function () {
     XeroToken::factory()->create();
 

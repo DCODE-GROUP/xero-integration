@@ -6,6 +6,8 @@ use DcodeGroup\XeroIntegration\Data\Contracts\XeroSyncable;
 use DcodeGroup\XeroIntegration\Data\Traits\XeroSyncTrait;
 use DcodeGroup\XeroIntegration\Enums\XeroLineAmountTypeEnum;
 use DcodeGroup\XeroIntegration\Enums\XeroQuoteStatusEnum;
+use DcodeGroup\XeroIntegration\Enums\XeroRelationshipsEnum;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
@@ -17,11 +19,11 @@ use XeroPHP\Remote\Model as XeroModel;
 /**
  * @phpstan-consistent-constructor
  */
-abstract class XeroQuoteData extends AbstractXeroData implements XeroSyncable
+class XeroQuoteData extends AbstractXeroData implements XeroSyncable
 {
     use XeroSyncTrait;
 
-    protected string $xeroRelationship = 'quote';
+    protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::QUOTE;
 
     protected array $searchFields = [
         'QuoteNumber',
@@ -93,7 +95,7 @@ abstract class XeroQuoteData extends AbstractXeroData implements XeroSyncable
      *
      * @param  XeroQuote  $xeroObject
      */
-    protected static function fromXero(XeroModel|XeroQuote $xeroObject): self
+    public static function fromXero(XeroModel|XeroQuote $xeroObject): self
     {
         return new static(
             Contact: XeroContactData::fromXero(data_get($xeroObject, 'Contact')),
@@ -118,5 +120,15 @@ abstract class XeroQuoteData extends AbstractXeroData implements XeroSyncable
             Terms: data_get($xeroObject, 'Terms'),
             Url: data_get($xeroObject, 'Url'),
         );
+    }
+
+    public function mapToData(Model $model): array
+    {
+        return [];
+    }
+
+    public function mapToModel(): array
+    {
+        return [];
     }
 }

@@ -2,10 +2,11 @@
 
 namespace DcodeGroup\XeroIntegration;
 
+use DcodeGroup\XeroIntegration\Enums\XeroRelationshipsEnum;
 use DcodeGroup\XeroIntegration\Exceptions\XeroIntegrationException;
 use DcodeGroup\XeroIntegration\Facades\XeroIntegrationService;
 use DcodeGroup\XeroIntegration\Models\XeroToken;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Override;
 use XeroPHP\Application;
 
@@ -13,71 +14,67 @@ use XeroPHP\Application;
  * @method XeroIntegration address()
  * @method XeroIntegration contact()
  * @method XeroIntegration contactPerson()
- * @method XeroIntegration lineItem()
- * @method XeroIntegration quotes()
- * @method XeroIntegration contacts()
- * @method XeroIntegration invoices()
- * @method XeroIntegration payments()
+ * @method XeroIntegration creditNote()
+ * @method XeroIntegration invoice()
+ * @method XeroIntegration item()
+ * @method XeroIntegration overpayment()
+ * @method XeroIntegration payment()
+ * @method XeroIntegration phone()
+ * @method XeroIntegration prepayment()
+ * @method XeroIntegration quote()
  */
 class XeroApp extends Application
 {
-    private const AVAILABLE_RELATIONSHIPS = [
-        'quotes' => 'XeroPHP\Models\Accounting\Quote',
-        'contacts' => 'XeroPHP\Models\Accounting\Contact',
-        'invoices' => 'XeroPHP\Models\Accounting\Invoice',
-    ];
-
-    protected array $relationshipToModelMap = [
-        'address' => 'XeroPHP\Models\Accounting\Address',
-        'contact' => 'XeroPHP\Models\Accounting\Contact',
-        'contact-person' => 'XeroPHP\Models\Accounting\ContactPerson',
-        'line-item' => 'XeroPHP\Models\Accounting\LineItem',
-        'quotes' => 'XeroPHP\Models\Accounting\Quote',
-        'contacts' => 'XeroPHP\Models\Accounting\Contact',
-        'invoices' => 'XeroPHP\Models\Accounting\Invoice',
-        'payments' => 'XeroPHP\Models\Accounting\Payment',
-
-    ];
-
     public function __construct()
     {
         $tokenModel = $this->getTokenModel();
         $oauthToken = $this->getOauthToken($tokenModel);
 
         parent::__construct($oauthToken, $tokenModel->current_tenant_id);
+
+        $this->config['webhook'] = [
+            'signing_key' => config('xero-integration.webhooks.signing_key'),
+        ];
     }
 
     public function __call(string $name, ?array $arguments)
     {
-        $relationships = array_keys($this->relationshipToModelMap);
+        $relationship = $this->findRelationship($name);
 
-        if (! in_array($name, $relationships)) {
+        if (empty($relationship)) {
             throw new XeroIntegrationException("Model '{$name}' not found in Xero integration.");
         }
 
-        $model = $this->relationshipToModelMap[$name];
-
-        return new XeroIntegration($this, $this->load($model));
+        return new XeroIntegration($this, $this->load($relationship->getModelClass()));
     }
 
     public function __get(string $name)
     {
-        $relationships = array_keys($this->relationshipToModelMap);
+        $relationship = $this->findRelationship($name);
 
-        if (! in_array($name, $relationships)) {
+        if (empty($relationship)) {
             return null;
         }
 
-        return $this->$name()->get();
+        return $this->{$relationship->value}()->get();
     }
 
     public function getModelForRelationship(string $relationship): string
     {
-        if (! array_key_exists($relationship, $this->relationshipToModelMap)) {
+        $enum = $this->findRelationship($relationship);
+
+        if (empty($enum)) {
             throw new XeroIntegrationException("Relationship '{$relationship}' not found in Xero integration.");
         }
 
-        return $this->relationshipToModelMap[$relationship];
+        return $enum->getModelClass();
+    }
+
+    protected function findRelationship(string $name): ?XeroRelationshipsEnum
+    {
+        $normalized = Str::camel(Str::singular($name));
+
+        return XeroRelationshipsEnum::tryFrom($name) ?? XeroRelationshipsEnum::tryFrom($normalized);
     }
 
     /**
@@ -116,13 +113,5 @@ class XeroApp extends Application
         }
 
         return $oauthToken;
-    }
-
-    protected function getAvailableRelationships(): Collection
-    {
-        $relationships = array_keys(self::AVAILABLE_RELATIONSHIPS);
-        sort($relationships);
-
-        return collect($relationships);
     }
 }
