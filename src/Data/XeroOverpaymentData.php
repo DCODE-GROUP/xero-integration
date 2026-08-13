@@ -2,13 +2,12 @@
 
 namespace Dcodegroup\XeroIntegration\Data;
 
+use Carbon\Carbon;
 use Dcodegroup\XeroIntegration\Data\Traits\XeroSyncTrait;
 use Dcodegroup\XeroIntegration\Enums\XeroLineAmountTypeEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroOverpaymentStatusEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroOverpaymentTypeEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
@@ -25,6 +24,8 @@ class XeroOverpaymentData extends AbstractXeroData
 
     protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::OVERPAYMENT;
 
+    protected string $key = 'OverpaymentID';
+
     protected array $searchFields = [
         'OverpaymentID',
         'Status',
@@ -37,27 +38,27 @@ class XeroOverpaymentData extends AbstractXeroData
     ];
 
     public function __construct(
-        public string|Optional|null $OverpaymentID,
+        public string|Optional|null $OverpaymentID = null,
         public XeroContactData $Contact,
         /** @var Collection<int,XeroItemData> */
         public Collection $LineItems,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         public Carbon $Date,
-        public XeroOverpaymentStatusEnum $Status, // ToDo: change to Enum
+        public XeroOverpaymentStatusEnum $Status,
         public float $SubTotal,
         public float $TotalTax,
         public float $Total,
         public XeroOverpaymentTypeEnum $Type,
-        public XeroLineAmountTypeEnum|Optional|null $LineAmountTypes,
-        public string|Optional|null $CurrencyCode,
-        public float|Optional|null $CurrencyRate,
-        public string|Optional|null $RemainingCredit,
+        public XeroLineAmountTypeEnum|Optional|null $LineAmountTypes = null,
+        public string|Optional|null $CurrencyCode = null,
+        public float|Optional|null $CurrencyRate = null,
+        public string|Optional|null $RemainingCredit = null,
         /** @var Collection<int,XeroPaymentData>|null */
-        public Collection|Optional|null $Payments,
-        public bool|Optional|null $HasAttachments,
+        public Collection|Optional|null $Payments = null,
+        public bool|Optional|null $HasAttachments = null,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
-        public Carbon|Optional|null $UpdatedDateUTC,
-        public string|Optional|null $Reference,
+        public Carbon|Optional|null $UpdatedDateUTC = null,
+        public string|Optional|null $Reference = null,
     ) {}
 
     /**
@@ -109,15 +110,5 @@ class XeroOverpaymentData extends AbstractXeroData
             'UpdatedDateUTC' => data_get($this, 'UpdatedDateUTC'),
             'Reference' => data_get($this, 'Reference'),
         ];
-    }
-
-    public function mapToData(Model $model): array
-    {
-        return [];
-    }
-
-    public function mapToModel(): array
-    {
-        return [];
     }
 }

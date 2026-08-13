@@ -2,13 +2,12 @@
 
 namespace Dcodegroup\XeroIntegration\Data;
 
+use Carbon\Carbon;
 use Dcodegroup\XeroIntegration\Data\Contracts\XeroSyncable;
 use Dcodegroup\XeroIntegration\Data\Traits\XeroSyncTrait;
 use Dcodegroup\XeroIntegration\Enums\XeroPaymentStatusEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroPaymentTypesEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Optional;
@@ -23,6 +22,8 @@ class XeroPaymentData extends AbstractXeroData implements XeroSyncable
     use XeroSyncTrait;
 
     protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::PAYMENT;
+
+    protected string $key = 'PaymentID';
 
     protected array $searchFields = [
         'Reference',
@@ -41,26 +42,26 @@ class XeroPaymentData extends AbstractXeroData implements XeroSyncable
 
     public function __construct(
         /** @var XeroInvoiceData|Optional|null */
-        public XeroInvoiceData|Optional|null $Invoice,
+        public XeroInvoiceData|Optional|null $Invoice = null,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         public Carbon $Date,
         public float $Amount,
-        public string|Optional|null $Reference,
+        public string|Optional|null $Reference = null,
         public XeroPaymentTypesEnum $PaymentType,
-        public string|Optional|null $PaymentID,
+        public string|Optional|null $PaymentID = null,
         /** @var XeroCreditNoteData|Optional|null */
-        public XeroCreditNoteData|Optional|null $CreditNote,
+        public XeroCreditNoteData|Optional|null $CreditNote = null,
         /** @var XeroPrepaymentData|Optional|null */
-        public XeroPrepaymentData|Optional|null $Prepayment,
+        public XeroPrepaymentData|Optional|null $Prepayment = null,
         /** @var XeroOverpaymentData|Optional|null */
-        public XeroOverpaymentData|Optional|null $Overpayment,
-        public float|Optional|null $CurrencyRate,
-        public string|Optional|null $Details,
-        public string|Optional|null $BatchPaymentID,
-        public string|Optional|null $IsReconciled,
-        public XeroPaymentStatusEnum|Optional|null $Status,
+        public XeroOverpaymentData|Optional|null $Overpayment = null,
+        public float|Optional|null $CurrencyRate = null,
+        public string|Optional|null $Details = null,
+        public string|Optional|null $BatchPaymentID = null,
+        public string|Optional|null $IsReconciled = null,
+        public XeroPaymentStatusEnum|Optional|null $Status = null,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d\TH:i:s')]
-        public Carbon|Optional|null $UpdatedDateUTC,
+        public Carbon|Optional|null $UpdatedDateUTC = null,
     ) {}
 
     /**
@@ -108,15 +109,5 @@ class XeroPaymentData extends AbstractXeroData implements XeroSyncable
             'PaymentType' => data_get($this, 'PaymentType')?->getXeroValue(),
             'UpdatedDateUTC' => data_get($this, 'UpdatedDateUTC'),
         ];
-    }
-
-    public function mapToData(Model $model): array
-    {
-        return [];
-    }
-
-    public function mapToModel(): array
-    {
-        return [];
     }
 }

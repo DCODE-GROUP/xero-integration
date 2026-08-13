@@ -2,13 +2,12 @@
 
 namespace Dcodegroup\XeroIntegration\Data;
 
+use Carbon\Carbon;
 use Dcodegroup\XeroIntegration\Data\Contracts\XeroSyncable;
 use Dcodegroup\XeroIntegration\Data\Traits\XeroSyncTrait;
 use Dcodegroup\XeroIntegration\Enums\XeroLineAmountTypeEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroQuoteStatusEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
@@ -25,6 +24,8 @@ class XeroQuoteData extends AbstractXeroData implements XeroSyncable
 
     protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::QUOTE;
 
+    protected string $key = 'QuoteID';
+
     protected array $searchFields = [
         'QuoteNumber',
     ];
@@ -36,31 +37,31 @@ class XeroQuoteData extends AbstractXeroData implements XeroSyncable
 
     public function __construct(
         /** @var XeroContactData|Optional|null $Contact */
-        public XeroContactData|Optional|null $Contact,
-        public XeroQuoteStatusEnum|Optional|null $Status,
+        public XeroContactData|Optional|null $Contact = null,
+        public XeroQuoteStatusEnum|Optional|null $Status = null,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         public Carbon $Date,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         public Carbon $ExpiryDate,
         /** @var Collection<int,XeroItemData> $LineItems */
         public Collection $LineItems,
-        public float|Optional|null $SubTotal,
-        public float|Optional|null $TotalTax,
-        public float|Optional|null $Total,
-        public float|Optional|null $TotalDiscount,
+        public float|Optional|null $SubTotal = null,
+        public float|Optional|null $TotalTax = null,
+        public float|Optional|null $Total = null,
+        public float|Optional|null $TotalDiscount = null,
         #[WithCast(DateTimeInterfaceCast::class, format: DATE_ATOM, setTimeZone: 'UTC')]
         public Carbon $UpdatedDateUTC,
-        public string|Optional|null $QuoteID,
+        public string|Optional|null $QuoteID = null,
         public string $QuoteNumber,
-        public XeroLineAmountTypeEnum|Optional|null $LineAmountTypes,
-        public string|Optional|null $CurrencyCode,
-        public float|Optional|null $CurrencyRate,
-        public string|Optional|null $Reference,
-        public string|Optional|null $BrandingThemeID,
-        public string|Optional|null $Title,
-        public string|Optional|null $Summary,
-        public string|Optional|null $Terms,
-        public string|Optional|null $Url,
+        public XeroLineAmountTypeEnum|Optional|null $LineAmountTypes = null,
+        public string|Optional|null $CurrencyCode = null,
+        public float|Optional|null $CurrencyRate = null,
+        public string|Optional|null $Reference = null,
+        public string|Optional|null $BrandingThemeID = null,
+        public string|Optional|null $Title = null,
+        public string|Optional|null $Summary = null,
+        public string|Optional|null $Terms = null,
+        public string|Optional|null $Url = null,
     ) {}
 
     public function toXeroArray(): array
@@ -120,15 +121,5 @@ class XeroQuoteData extends AbstractXeroData implements XeroSyncable
             Terms: data_get($xeroObject, 'Terms'),
             Url: data_get($xeroObject, 'Url'),
         );
-    }
-
-    public function mapToData(Model $model): array
-    {
-        return [];
-    }
-
-    public function mapToModel(): array
-    {
-        return [];
     }
 }

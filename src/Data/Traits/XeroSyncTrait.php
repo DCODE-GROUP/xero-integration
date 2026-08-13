@@ -4,7 +4,6 @@ namespace Dcodegroup\XeroIntegration\Data\Traits;
 
 use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
 use Dcodegroup\XeroIntegration\XeroApp;
-use Dcodegroup\XeroIntegration\XeroQuery;
 use Exception;
 use Illuminate\Support\Collection;
 use XeroPHP\Remote\Model as XeroModel;
@@ -13,7 +12,7 @@ trait XeroSyncTrait
 {
     protected ?XeroApp $xeroApp = null;
 
-    public function sendToXero(string $tenant): void
+    public function sendToXero(): void
     {
         $xeroApp = $this->getXeroApp();
 
@@ -40,12 +39,12 @@ trait XeroSyncTrait
         $this->saveXeroRecord($xeroRecord, true);
     }
 
-    protected function searchForRecordInXero(XeroQuery $xeroQuery): ?XeroModel
+    protected static function searchForRecordInXero(): ?XeroModel
     {
-        $query = $xeroQuery;
+        $query = app(XeroApp::class)->load(self::xeroRelationship->getModelClass());
 
-        foreach ($this->searchFields as $index => $field) {
-            $value = data_get($this, $field);
+        foreach (self::searchFields as $index => $field) {
+            $value = data_get(self, $field);
 
             if (empty($value)) {
                 continue;
@@ -115,14 +114,14 @@ trait XeroSyncTrait
 
         $this->updateXeroRecord($xeroId);
 
-        if ($related && ! empty($this->searchFields)) {
+        if ($related && ! empty($this->relatedFields)) {
             $this->updateRelatedXeroRecords($xeroRecord);
         }
     }
 
     protected function updateRelatedXeroRecords(XeroModel $xeroRecord)
     {
-        foreach ($this->searchFields as $key => $relClass) {
+        foreach ($this->relatedFields as $key => $relClass) {
             $related = data_get($this, $key);
 
             if (empty($related)) {

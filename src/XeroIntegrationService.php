@@ -3,7 +3,9 @@
 namespace Dcodegroup\XeroIntegration;
 
 use Calcinai\OAuth2\Client\Provider\Xero;
+use Calcinai\OAuth2\Client\XeroTenant;
 use Dcodegroup\XeroIntegration\Exceptions\UnauthorizedXero;
+use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
 use Dcodegroup\XeroIntegration\Models\XeroToken;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
@@ -63,6 +65,45 @@ class XeroIntegrationService
         return $token;
     }
 
+    /**
+     * Summary of setXeroTenant
+     * @param XeroToken $token
+     * @return bool
+     */
+    public function setXeroTenant(XeroToken $token): bool
+    {
+        $xeroTenants = $this->getXeroTenants($token, true);
+
+        if (count($xeroTenants) === 1) {
+            $token->update([
+                'current_tenant_id' => data_get($xeroTenants[0], 'tenantId'),
+            ]);
+
+            return true;
+        }   
+
+        return false;
+    }
+
+    /**
+     * Summary of getXeroTenants
+     * @param XeroToken $token
+     * @param bool $useAuthEvent
+     * @return XeroTenant[]
+     */
+    public function getXeroTenants(XeroToken $token, bool $useAuthEvent = false): ?array
+    {
+        $params = null;
+
+        if ($useAuthEvent) {
+            $params['authEventId'] = $token->getAuthEventId();
+        }
+
+        $authToken = $this->getToken($token);
+
+        return resolve(Xero::class)->getTenants($authToken);
+    }
+
     public function changeXeroTenant(string $tenantId): ?XeroToken
     {
         $token = $this->getTokenModel();
@@ -71,16 +112,31 @@ class XeroIntegrationService
             return null;
         }
 
-        $token->current_tenant_id = $tenantId;
-        $token->save();
+        $token->update([
+            'current_tenant_id' => $tenantId,
+        ]);
 
         return $token;
     }
 
+    public function disconnectTenant(XeroToken $token): bool
+    {
+        // $oauthToken = $token->toOAuth2Token(); // ToDo: disconnect tenant with Xero.
+
+        // $response = resolve(Xero::class)->disconnect($oauthToken);
+
+        return $token->delete();
+    }
+
     public function getAuthUrl(): string
     {
+        if (empty(config('xero-integration.oauth.state'))) {
+            throw new XeroIntegrationException('State is empty. Set the XERO_STATE environment variable.');
+        }
+
         return resolve(Xero::class)->getAuthorizationUrl([
             'scope' => [config('xero-integration.oauth.scopes')],
+            'state' => config('xero-integration.oauth.state'),
         ]);
     }
 

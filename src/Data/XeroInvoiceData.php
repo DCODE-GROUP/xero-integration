@@ -2,13 +2,12 @@
 
 namespace Dcodegroup\XeroIntegration\Data;
 
+use Carbon\Carbon;
 use Dcodegroup\XeroIntegration\Data\Traits\XeroSyncTrait;
 use Dcodegroup\XeroIntegration\Enums\XeroInvoiceStatusEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroInvoiceTypeEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroLineAmountTypeEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
@@ -25,6 +24,8 @@ class XeroInvoiceData extends AbstractXeroData
 
     protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::INVOICE;
 
+    protected string $key = 'InvoiceID';
+
     protected array $searchFields = [
         'InvoiceNumber',
     ];
@@ -36,7 +37,7 @@ class XeroInvoiceData extends AbstractXeroData
     ];
 
     public function __construct(
-        public string|Optional|null $InvoiceID,
+        public string|Optional|null $InvoiceID = null,
         public XeroContactData $Contact,
         /** @var Collection<int,XeroItemData> */
         public Collection $LineItems,
@@ -49,35 +50,35 @@ class XeroInvoiceData extends AbstractXeroData
         public float $Subtotal,
         public float $TaxAmount,
         public float $Total,
-        public float|Optional|null $TotalDiscount,
+        public float|Optional|null $TotalDiscount = null,
         /** @var Collection<int,XeroPaymentData>|null */
-        public Collection|Optional|null $Payments,
+        public Collection|Optional|null $Payments = null,
         public float $AmountDue,
         public float $AmountPaid,
         public ?Carbon $UpdatedDateUTC,
         public XeroInvoiceTypeEnum $Type,
-        public XeroLineAmountTypeEnum|Optional|null $LineAmountTypes,
-        public string|Optional|null $Reference,
-        public string|Optional|null $BrandingThemeID,
-        public string|Optional|null $Url,
-        public string|Optional|null $CurrencyCode,
-        public float|Optional|null $CurrencyRate,
-        public bool|Optional|null $SentToContact,
+        public XeroLineAmountTypeEnum|Optional|null $LineAmountTypes = null,
+        public string|Optional|null $Reference = null,
+        public string|Optional|null $BrandingThemeID = null,
+        public string|Optional|null $Url = null,
+        public string|Optional|null $CurrencyCode = null,
+        public float|Optional|null $CurrencyRate = null,
+        public bool|Optional|null $SentToContact = null,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
-        public Carbon|Optional|null $ExpectedPaymentDate,
+        public Carbon|Optional|null $ExpectedPaymentDate = null,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
-        public Carbon|Optional|null $PlannedPaymentDate,
-        public string|Optional|null $RepeatingInvoiceID,
-        public bool|Optional|null $HasAttachments,
+        public Carbon|Optional|null $PlannedPaymentDate = null,
+        public string|Optional|null $RepeatingInvoiceID = null,
+        public bool|Optional|null $HasAttachments = false,
         /** @var Collection<int,XeroPrepaymentData>|null */
-        public Collection|Optional|null $Prepayments,
+        public Collection|Optional|null $Prepayments = null,
         /** @var Collection<int,XeroOverpaymentData>|null */
-        public Collection|Optional|null $Overpayments,
+        public Collection|Optional|null $Overpayments = null,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
-        public Carbon|Optional|null $FullyPaidOnDate,
-        public float|Optional|null $AmountCredited,
+        public Carbon|Optional|null $FullyPaidOnDate = null,
+        public float|Optional|null $AmountCredited = null,
         /** @var Collection<int,XeroCreditNoteData>|null */
-        public Collection|Optional|null $CreditNotes,
+        public Collection|Optional|null $CreditNotes = null,
     ) {}
 
     /**
@@ -157,15 +158,5 @@ class XeroInvoiceData extends AbstractXeroData
             'AmountCredited' => data_get($this, 'AmountCredited'),
             'CreditNotes' => XeroCreditNoteData::toXeroCollection(data_get($this, 'CreditNotes')),
         ];
-    }
-
-    public function mapToData(Model $model): array
-    {
-        return [];
-    }
-
-    public function mapToModel(): array
-    {
-        return [];
     }
 }

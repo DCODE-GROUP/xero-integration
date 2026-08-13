@@ -4,24 +4,16 @@ namespace {{ namespace }};
 
 use App\Models\{{ model }};
 use Dcodegroup\XeroIntegration\Data\{{ xero-data }} as Package{{ xero-data }};
-use Dcodegroup\XeroIntegration\Data\Contracts\XeroSyncable;
-use Illuminate\Database\Eloquent\Model;
 
 class {{ class }} extends Package{{ xero-data }}
 {
-    protected function mapToData(Model|{{ model }} $localModel): array
+    public static function fromModel({{ model }} ${{ model_var }}): self
     {
-        // Map your local Model to this Xero Data
-        return new self(
-            // Map goes here.
-        );
+        new self();
     }
 
-    public function mapToModel(): array
+    public function syncToModel(): {{ model }}
     {
-        // Map this Xero Data to your local Model
-        return [
-            // Map goes here.
-        ]
+        return {{ model }}::updateOrCreate([],[]);
     }
 }

@@ -6,7 +6,9 @@ use Dcodegroup\XeroIntegration\Exceptions\UnauthorizedXero;
 use Dcodegroup\XeroIntegration\Facades\XeroIntegrationService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\Response;
 
 class XeroCallbackController extends Controller
@@ -16,8 +18,10 @@ class XeroCallbackController extends Controller
      */
     public function __invoke(Request $request): Response
     {
+        // Validate here so that failure does not return 429 and can record error.
         $validator = Validator::make($request->all(), [
-            'code' => 'required|string',
+            'code' => ['required', 'string'],
+            'state' => ['required', Rule::in([config('xero-integration.oauth.state')])],
         ]);
 
         if ($validator->fails()) {
@@ -26,8 +30,10 @@ class XeroCallbackController extends Controller
 
         $validated = $validator->validated();
 
-        XeroIntegrationService::saveAccessTokenFromCode($validated['code']);
+        $xeroToken = XeroIntegrationService::saveAccessTokenFromCode($validated['code']);
 
-        return redirect()->to(config('xero-integration.routes.callback_success_route'));
+        XeroIntegrationService::setXeroTenant($xeroToken);
+
+        return redirect()->to(Session::get(config('xero-integration.routes.success_url_session_name')));
     }
 }

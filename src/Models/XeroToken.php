@@ -41,7 +41,18 @@ class XeroToken extends Model
 
     public function toOAuth2Token(): AccessToken
     {
-        return new AccessToken($this->toArray());
+        return new AccessToken($this->except(['id', 'tenant_id', 'created_at', 'updated_at']));
+    }
+
+    public function getAuthEventId()
+    {
+        $token = $this->toOAuth2Token()?->getToken();
+        $tokenParts = explode('.', $token);
+        $payloadBase64 = str_replace(['-', '_'], ['+', '/'], $tokenParts[1]);
+        $payloadJson = base64_decode($payloadBase64);
+        $payload = json_decode($payloadJson, true);
+        
+        return $payload['authentication_event_id'];
     }
 
     public static function isValidTokenFormat(AccessTokenInterface $token): bool

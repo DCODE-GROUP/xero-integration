@@ -3,6 +3,7 @@
 namespace Dcodegroup\XeroIntegration\Data;
 
 use Dcodegroup\XeroIntegration\Data\Contracts\HasXeroData;
+use Dcodegroup\XeroIntegration\Models\XeroRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use XeroPHP\Remote\Collection as XeroCollection;
@@ -10,18 +11,16 @@ use XeroPHP\Remote\Model as XeroModel;
 
 abstract class AbstractXeroData implements HasXeroData
 {
-    protected ?Model $localModel = null;
-
-    public function fromModel(Model $model): self
+    public function getLocalModel(): ?Model
     {
-        $this->localModel = $model;
+        if (!property_exists($this, 'key') || empty($this->key)) {
+            return null;
+        }
 
-        return new self(...$this->mapToData($model)); // @phpstan-ignore-line new.abstract
-    }
+        $record = XeroRecord::where('xero_id', $this->{$this->key})
+            ->first();
 
-    protected function getXeroId(): ?string
-    {
-        return $this->localModel->xeroRecord->xero_id ?? null;
+        return $record?->recordable;
     }
 
     /**
@@ -34,7 +33,7 @@ abstract class AbstractXeroData implements HasXeroData
         if (empty($items)) {
             return null;
         }
-
+        
         $collection = collect();
 
         foreach ($items as $item) {
@@ -64,16 +63,7 @@ abstract class AbstractXeroData implements HasXeroData
         return $collection;
     }
 
-    protected function syncToLocalModel(): void
-    {
-        $this->localModel->fill($this->mapToModel())->save();
-    }
-
     abstract public function toXeroArray(): array;
 
     abstract public static function fromXero(XeroModel $xeroObject): self;
-
-    abstract public function mapToData(Model $model): array;
-
-    abstract public function mapToModel(): array;
 }

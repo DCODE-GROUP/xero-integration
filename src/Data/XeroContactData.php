@@ -2,12 +2,11 @@
 
 namespace Dcodegroup\XeroIntegration\Data;
 
+use Carbon\Carbon;
 use Dcodegroup\XeroIntegration\Data\Contracts\XeroSyncable;
 use Dcodegroup\XeroIntegration\Data\Traits\XeroSyncTrait;
 use Dcodegroup\XeroIntegration\Enums\XeroContactStatusEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
@@ -24,6 +23,8 @@ class XeroContactData extends AbstractXeroData implements XeroSyncable
 
     protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::CONTACT;
 
+    protected string $key = 'ContactID';
+
     protected array $searchFields = [
         'EmailAddress',
     ];
@@ -35,42 +36,42 @@ class XeroContactData extends AbstractXeroData implements XeroSyncable
     ];
 
     public function __construct(
-        public string|Optional|null $ContactID,
+        public string|Optional|null $ContactID = null,
         public XeroContactStatusEnum $ContactStatus,
         public string $Name,
-        public string|Optional|null $FirstName,
-        public string|Optional|null $LastName,
-        public string|Optional|null $EmailAddress,
+        public string|Optional|null $FirstName = null,
+        public string|Optional|null $LastName = null,
+        public string|Optional|null $EmailAddress = null,
         #[WithCast(DateTimeInterfaceCast::class, format: DATE_ATOM, setTimeZone: 'UTC')]
         public Carbon $UpdatedDateUTC,
         /** @var Collection<int,XeroContactPersonData>|null */
-        public ?Collection $ContactPersons,
-        public bool $IsSupplier,
-        public bool $IsCustomer,
+        public ?Collection $ContactPersons = null,
+        public bool $IsSupplier = false,
+        public bool $IsCustomer = true,
         /** @var Collection<int,XeroAddressData>|null */
-        public ?Collection $Addresses,
+        public ?Collection $Addresses = null,
         /** @var Collection<int,XeroPhoneData>|null */
-        public ?Collection $Phones,
-        public string|Optional|null $ContactNumber,
-        public string|Optional|null $AccountNumber,
-        public string|Optional|null $BankAccountDetails,
-        public string|Optional|null $TaxNumber,
-        public string|Optional|null $CompanyNumber,
-        public string|Optional|null $AccountsReceivableTaxType,
-        public string|Optional|null $AccountsPayableTaxType,
-        public string|Optional|null $DefaultCurrency,
-        public string|Optional|null $XeroNetworkKey,
-        public string|Optional|null $MergedToContactID,
-        public string|Optional|null $SalesDefaultAccountCode,
-        public string|Optional|null $PurchasesDefaultAccountCode,
-        public string|Optional|null $TrackingCategoryName,
-        public string|Optional|null $TrackingCategoryOption,
-        public string|Optional|null $PaymentTerms,
-        public string|Optional|null $Website,
-        public string|Optional|null $BatchPayments,
-        public float|Optional|null $Discount,
-        public string|Optional|null $Balances,
-        public bool $HasAttachments,
+        public ?Collection $Phones = null,
+        public string|Optional|null $ContactNumber = null,
+        public string|Optional|null $AccountNumber = null,
+        public string|Optional|null $BankAccountDetails = null,
+        public string|Optional|null $TaxNumber = null,
+        public string|Optional|null $CompanyNumber = null,
+        public string|Optional|null $AccountsReceivableTaxType = null,
+        public string|Optional|null $AccountsPayableTaxType = null,
+        public string|Optional|null $DefaultCurrency = null,
+        public string|Optional|null $XeroNetworkKey = null,
+        public string|Optional|null $MergedToContactID = null,
+        public string|Optional|null $SalesDefaultAccountCode = null,
+        public string|Optional|null $PurchasesDefaultAccountCode = null,
+        public string|Optional|null $TrackingCategoryName = null,
+        public string|Optional|null $TrackingCategoryOption = null,
+        public string|Optional|null $PaymentTerms = null,
+        public string|Optional|null $Website = null,
+        public string|Optional|null $BatchPayments = null,
+        public float|Optional|null $Discount = null,
+        public string|Optional|null $Balances = null,
+        public bool $HasAttachments = false,
     ) {}
 
     /**
@@ -146,15 +147,5 @@ class XeroContactData extends AbstractXeroData implements XeroSyncable
             'Website' => data_get($this, 'Website'),
             'PaymentTerms' => data_get($this, 'PaymentTerms'),
         ];
-    }
-
-    public function mapToData(Model $model): array
-    {
-        return [];
-    }
-
-    public function mapToModel(): array
-    {
-        return [];
     }
 }

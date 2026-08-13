@@ -3,7 +3,6 @@
 namespace Dcodegroup\XeroIntegration\Data;
 
 use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
-use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\LineItem;
 use XeroPHP\Remote\Model as XeroModel;
@@ -14,6 +13,8 @@ use XeroPHP\Remote\Model as XeroModel;
 class XeroItemData extends AbstractXeroData
 {
     protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::ITEM;
+
+    protected string $key = 'LineItemID';
 
     protected array $searchFields = [
         'Description',
@@ -27,20 +28,20 @@ class XeroItemData extends AbstractXeroData
     protected array $relatedFields = [];
 
     public function __construct(
-        public string|Optional|null $LineItemID,
+        public string|Optional|null $LineItemID = null,
         public string $Description,
         public float $Quantity,
-        public float|Optional|null $UnitAmount,
+        public float|Optional|null $UnitAmount = null,
         public float $LineAmount,
-        public float|Optional|null $TaxAmount,
-        public float|Optional|null $DiscountAmount,
-        public string|Optional|null $ItemCode,
-        public string|Optional|null $AccountCode,
-        public string|Optional|null $AccountId,
-        public string|Optional|null $TaxType,
-        public string|Optional|null $DiscountRate,
-        public array|Optional|null $Tracking,
-        public string|Optional|null $RepeatingInvoiceID,
+        public float|Optional|null $TaxAmount = null,
+        public float|Optional|null $DiscountAmount = null,
+        public string|Optional|null $ItemCode = null,
+        public string|Optional|null $AccountCode = null,
+        public string|Optional|null $AccountId = null,
+        public string|Optional|null $TaxType = null,
+        public string|Optional|null $DiscountRate = null,
+        public array|Optional|null $Tracking = null,
+        public string|Optional|null $RepeatingInvoiceID = null,
     ) {}
 
     public function toXeroArray(): array
@@ -86,15 +87,5 @@ class XeroItemData extends AbstractXeroData
             Tracking: data_get($xeroLineItem, 'Tracking'),
             RepeatingInvoiceID: data_get($xeroLineItem, 'RepeatingInvoiceID'),
         );
-    }
-
-    public function mapToData(Model $model): array
-    {
-        return [];
-    }
-
-    public function mapToModel(): array
-    {
-        return [];
     }
 }

@@ -2,7 +2,9 @@
 
 namespace Dcodegroup\XeroIntegration\Data\Contracts;
 
+use Illuminate\Database\Eloquent\Model;
+
 interface XeroSyncable
 {
-    public function sendToXero(string $tenant): void;
+    public function sendToXero(): void;
 }

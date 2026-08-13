@@ -3,7 +3,6 @@
 namespace Dcodegroup\XeroIntegration\Data;
 
 use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
-use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelData\Optional;
 use XeroPHP\Remote\Model as XeroModel;
 
@@ -21,9 +20,9 @@ class XeroContactPersonData extends AbstractXeroData
     protected array $relatedFields = [];
 
     public function __construct(
-        public string|Optional|null $FirstName,
-        public string|Optional|null $LastName,
-        public string|Optional|null $EmailAddress,
+        public string|Optional|null $FirstName = null,
+        public string|Optional|null $LastName = null,
+        public string|Optional|null $EmailAddress = null,
         public bool $IncludeInEmails = false
     ) {}
 
@@ -50,15 +49,5 @@ class XeroContactPersonData extends AbstractXeroData
             EmailAddress: data_get($xeroContactPerson, 'EmailAddress'),
             IncludeInEmails: data_get($xeroContactPerson, 'IncludeInEmails'),
         );
-    }
-
-    public function mapToData(Model $model): array
-    {
-        return [];
-    }
-
-    public function mapToModel(): array
-    {
-        return [];
     }
 }

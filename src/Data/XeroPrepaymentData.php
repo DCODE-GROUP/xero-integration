@@ -2,13 +2,12 @@
 
 namespace Dcodegroup\XeroIntegration\Data;
 
+use Carbon\Carbon;
 use Dcodegroup\XeroIntegration\Data\Traits\XeroSyncTrait;
 use Dcodegroup\XeroIntegration\Enums\XeroLineAmountTypeEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroPrepaymentStatusEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroPrepaymentTypeEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
@@ -25,6 +24,8 @@ class XeroPrepaymentData extends AbstractXeroData
 
     protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::PREPAYMENT;
 
+    protected string $key = 'PrepaymentID';
+
     protected array $searchFields = [
         'PrepaymentID',
         'Status',
@@ -36,7 +37,7 @@ class XeroPrepaymentData extends AbstractXeroData
     ];
 
     public function __construct(
-        public string|Optional|null $PrepaymentID,
+        public string|Optional|null $PrepaymentID = null,
         public XeroContactData $Contact,
         /** @var Collection<int,XeroItemData> */
         public Collection $LineItems,
@@ -47,13 +48,13 @@ class XeroPrepaymentData extends AbstractXeroData
         public float $TotalTax,
         public float $Total,
         public XeroPrepaymentTypeEnum $Type,
-        public XeroLineAmountTypeEnum|Optional|null $LineAmountTypes,
-        public string|Optional|null $CurrencyCode,
-        public float|Optional|null $CurrencyRate,
-        public string|Optional|null $RemainingCredit,
-        public bool|Optional|null $HasAttachments,
+        public XeroLineAmountTypeEnum|Optional|null $LineAmountTypes = null,
+        public string|Optional|null $CurrencyCode = null,
+        public float|Optional|null $CurrencyRate = null,
+        public string|Optional|null $RemainingCredit = null,
+        public bool|Optional|null $HasAttachments = false,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
-        public Carbon|Optional|null $UpdatedDateUTC,
+        public Carbon|Optional|null $UpdatedDateUTC = null,
     ) {}
 
     /**
@@ -101,15 +102,5 @@ class XeroPrepaymentData extends AbstractXeroData
             'HasAttachments' => data_get($this, 'HasAttachments'),
             'UpdatedDateUTC' => data_get($this, 'UpdatedDateUTC'),
         ];
-    }
-
-    public function mapToData(Model $model): array
-    {
-        return [];
-    }
-
-    public function mapToModel(): array
-    {
-        return [];
     }
 }
