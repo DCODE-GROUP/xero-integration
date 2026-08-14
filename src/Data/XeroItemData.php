@@ -28,11 +28,11 @@ class XeroItemData extends AbstractXeroData
     protected array $relatedFields = [];
 
     public function __construct(
-        public string|Optional|null $LineItemID = null,
         public string $Description,
         public float $Quantity,
-        public float|Optional|null $UnitAmount = null,
         public float $LineAmount,
+        public string|Optional|null $LineItemID = null,
+        public float|Optional|null $UnitAmount = null,
         public float|Optional|null $TaxAmount = null,
         public float|Optional|null $DiscountAmount = null,
         public string|Optional|null $ItemCode = null,

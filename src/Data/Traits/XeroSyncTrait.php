@@ -4,6 +4,7 @@ namespace Dcodegroup\XeroIntegration\Data\Traits;
 
 use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
 use Dcodegroup\XeroIntegration\XeroApp;
+use Dcodegroup\XeroIntegration\XeroQuery;
 use Exception;
 use Illuminate\Support\Collection;
 use XeroPHP\Remote\Model as XeroModel;
@@ -39,12 +40,14 @@ trait XeroSyncTrait
         $this->saveXeroRecord($xeroRecord, true);
     }
 
-    protected static function searchForRecordInXero(): ?XeroModel
+    protected function searchForRecordInXero(?XeroQuery $query = null): ?XeroModel
     {
-        $query = app(XeroApp::class)->load(self::xeroRelationship->getModelClass());
+        if (empty($query)) {
+            $query = app(XeroApp::class)->load($this->xeroRelationship->getModelClass());
+        }
 
-        foreach (self::searchFields as $index => $field) {
-            $value = data_get(self, $field);
+        foreach ($this->searchFields as $index => $field) {
+            $value = data_get($this, $field);
 
             if (empty($value)) {
                 continue;

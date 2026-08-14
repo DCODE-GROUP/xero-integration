@@ -51,10 +51,10 @@ class XeroTokenFactory extends Factory
             'scope' => $this->tokenDetails['scope'],
         ]);
 
-        return base64_encode($header) . '.' . base64_encode($payload) . '.mock-signature';
+        return base64_encode($header).'.'.base64_encode($payload).'.mock-signature';
     }
 
-    public function createIdToken():string
+    public function createIdToken(): string
     {
         $header = json_encode(['alg' => 'RS256', 'typ' => 'JWT']);
         $payload = json_encode([
@@ -70,6 +70,6 @@ class XeroTokenFactory extends Factory
             'name' => $this->faker->word(),
         ]);
 
-        return base64_encode($header) . '.' . base64_encode($payload) . '.mock-signature';
+        return base64_encode($header).'.'.base64_encode($payload).'.mock-signature';
     }
 }

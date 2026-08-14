@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 use function Laravel\Prompts\suggest;
-use function Laravel\Prompts\select;    
 use function Laravel\Prompts\text;
 
 class MakeXeroDataCommand extends GeneratorCommand implements PromptsForMissingInput
@@ -29,13 +28,14 @@ class MakeXeroDataCommand extends GeneratorCommand implements PromptsForMissingI
     protected $description = 'Create a Xero Data class for a given model';
 
     protected $type = 'XeroData';
+
     protected function promptForMissingArgumentsUsing(): array
     {
         $dataClasses = $this->getClassesInDirectory(base_path('vendor/dcodegroup/xero-integration/src/Data'), 'Data');
         $models = $this->getClassesInDirectory(app_path('Models'));
 
         return [
-            'name' => fn() => text(
+            'name' => fn () => text(
                 label: 'What is the name of the Data class to extend a XeroData class?',
                 placeholder: 'e.g. InvoiceData',
                 validate: ['name' => ['sometimes', 'string', 'min:3', 'max:255', 'alphanum']],
@@ -45,7 +45,7 @@ class MakeXeroDataCommand extends GeneratorCommand implements PromptsForMissingI
                 options: fn (string $value) => $dataClasses->filter(fn (string $class) => Str::contains($class, $value, ignoreCase: true))->values()->all(),
                 validate: ['xero-data' => ['sometimes', 'string']],
             ),
-            'model' => fn() => suggest(
+            'model' => fn () => suggest(
                 label: 'What is the name of the Model?',
                 options: fn (string $value) => $models->filter(fn (string $class) => Str::contains($class, $value, ignoreCase: true))->values()->all(),
                 validate: ['model' => ['sometimes', 'string']],
@@ -73,8 +73,6 @@ class MakeXeroDataCommand extends GeneratorCommand implements PromptsForMissingI
 
     /**
      * Summary of replaceExtends
-     * @param string $stub
-     * @return self
      */
     protected function replaceExtends(string &$stub): self
     {
@@ -95,8 +93,8 @@ class MakeXeroDataCommand extends GeneratorCommand implements PromptsForMissingI
 
     /**
      * Summary of replaceModel
+     *
      * @para string $stub
-     * @return self
      */
     protected function replaceModel(string &$stub): self
     {
@@ -121,12 +119,12 @@ class MakeXeroDataCommand extends GeneratorCommand implements PromptsForMissingI
         return $this;
     }
 
-     /**
+    /**
      * Summary of getClassesInDirectory
-     * @param string $directory
+     *
      * @return Collection<string>
      */
-    protected function getClassesInDirectory(string $directory, string $suffix = null): Collection
+    protected function getClassesInDirectory(string $directory, ?string $suffix = null): Collection
     {
         return collect(File::allFiles($directory))
             ->reduce(function (Collection $files, $file) use ($suffix) {
@@ -148,7 +146,6 @@ class MakeXeroDataCommand extends GeneratorCommand implements PromptsForMissingI
 
     /**
      * Summary of getStub
-     * @return string
      */
     protected function getStub(): string
     {

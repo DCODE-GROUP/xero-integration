@@ -2,10 +2,10 @@
 
 namespace Dcodegroup\XeroIntegration\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Token\AccessTokenInterface;
@@ -46,12 +46,12 @@ class XeroToken extends Model
 
     public function getAuthEventId()
     {
-        $token = $this->toOAuth2Token()?->getToken();
+        $token = $this->toOAuth2Token()->getToken();
         $tokenParts = explode('.', $token);
         $payloadBase64 = str_replace(['-', '_'], ['+', '/'], $tokenParts[1]);
         $payloadJson = base64_decode($payloadBase64);
         $payload = json_decode($payloadJson, true);
-        
+
         return $payload['authentication_event_id'];
     }
 

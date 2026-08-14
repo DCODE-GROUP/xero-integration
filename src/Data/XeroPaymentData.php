@@ -41,13 +41,13 @@ class XeroPaymentData extends AbstractXeroData implements XeroSyncable
     ];
 
     public function __construct(
-        /** @var XeroInvoiceData|Optional|null */
-        public XeroInvoiceData|Optional|null $Invoice = null,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         public Carbon $Date,
         public float $Amount,
-        public string|Optional|null $Reference = null,
         public XeroPaymentTypesEnum $PaymentType,
+        /** @var XeroInvoiceData|Optional|null */
+        public XeroInvoiceData|Optional|null $Invoice = null,
+        public string|Optional|null $Reference = null,
         public string|Optional|null $PaymentID = null,
         /** @var XeroCreditNoteData|Optional|null */
         public XeroCreditNoteData|Optional|null $CreditNote = null,

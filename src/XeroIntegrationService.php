@@ -67,8 +67,6 @@ class XeroIntegrationService
 
     /**
      * Summary of setXeroTenant
-     * @param XeroToken $token
-     * @return bool
      */
     public function setXeroTenant(XeroToken $token): bool
     {
@@ -80,15 +78,14 @@ class XeroIntegrationService
             ]);
 
             return true;
-        }   
+        }
 
         return false;
     }
 
     /**
      * Summary of getXeroTenants
-     * @param XeroToken $token
-     * @param bool $useAuthEvent
+     *
      * @return XeroTenant[]
      */
     public function getXeroTenants(XeroToken $token, bool $useAuthEvent = false): ?array

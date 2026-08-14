@@ -37,7 +37,7 @@ class XeroPhoneData extends AbstractXeroData
     public function toXeroArray(): array
     {
         return [
-            'PhoneType' => data_get($this, 'PhoneType'),
+            'PhoneType' => data_get($this, 'PhoneType')?->getXeroValue(),
             'PhoneNumber' => data_get($this, 'PhoneNumber'),
             'PhoneAreaCode' => data_get($this, 'PhoneAreaCode'),
             'PhoneCountryCode' => data_get($this, 'PhoneCountryCode'),

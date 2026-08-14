@@ -37,7 +37,6 @@ class XeroPrepaymentData extends AbstractXeroData
     ];
 
     public function __construct(
-        public string|Optional|null $PrepaymentID = null,
         public XeroContactData $Contact,
         /** @var Collection<int,XeroItemData> */
         public Collection $LineItems,
@@ -48,11 +47,12 @@ class XeroPrepaymentData extends AbstractXeroData
         public float $TotalTax,
         public float $Total,
         public XeroPrepaymentTypeEnum $Type,
+        public string|Optional|null $PrepaymentID = null,
         public XeroLineAmountTypeEnum|Optional|null $LineAmountTypes = null,
         public string|Optional|null $CurrencyCode = null,
         public float|Optional|null $CurrencyRate = null,
         public string|Optional|null $RemainingCredit = null,
-        public bool|Optional|null $HasAttachments = false,
+        public bool|Optional|null $HasAttachments = null,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         public Carbon|Optional|null $UpdatedDateUTC = null,
     ) {}

@@ -13,7 +13,7 @@ abstract class AbstractXeroData implements HasXeroData
 {
     public function getLocalModel(): ?Model
     {
-        if (!property_exists($this, 'key') || empty($this->key)) {
+        if (! property_exists($this, 'key') || empty($this->key)) {
             return null;
         }
 
@@ -33,7 +33,7 @@ abstract class AbstractXeroData implements HasXeroData
         if (empty($items)) {
             return null;
         }
-        
+
         $collection = collect();
 
         foreach ($items as $item) {

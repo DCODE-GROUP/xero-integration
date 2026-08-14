@@ -2,10 +2,11 @@
 
 namespace Dcodegroup\XeroIntegration\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Carbon;
 
 /**
  * Tracks the mapping between local recordable models and their corresponding Xero records.
@@ -17,6 +18,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
+ * @property-read Model $recordable
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static> newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static> newQuery()
@@ -33,7 +35,7 @@ class XeroRecord extends Model
         'xero_id',
     ];
 
-    public function recordable()
+    public function recordable(): MorphTo
     {
         return $this->morphTo();
     }

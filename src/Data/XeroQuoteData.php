@@ -36,23 +36,23 @@ class XeroQuoteData extends AbstractXeroData implements XeroSyncable
     ];
 
     public function __construct(
-        /** @var XeroContactData|Optional|null $Contact */
-        public XeroContactData|Optional|null $Contact = null,
-        public XeroQuoteStatusEnum|Optional|null $Status = null,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         public Carbon $Date,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         public Carbon $ExpiryDate,
         /** @var Collection<int,XeroItemData> $LineItems */
         public Collection $LineItems,
+        #[WithCast(DateTimeInterfaceCast::class, format: DATE_ATOM, setTimeZone: 'UTC')]
+        public Carbon $UpdatedDateUTC,
+        public string $QuoteNumber,
+        /** @var XeroContactData|Optional|null $Contact */
+        public XeroContactData|Optional|null $Contact = null,
+        public XeroQuoteStatusEnum|Optional|null $Status = null,
         public float|Optional|null $SubTotal = null,
         public float|Optional|null $TotalTax = null,
         public float|Optional|null $Total = null,
         public float|Optional|null $TotalDiscount = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: DATE_ATOM, setTimeZone: 'UTC')]
-        public Carbon $UpdatedDateUTC,
         public string|Optional|null $QuoteID = null,
-        public string $QuoteNumber,
         public XeroLineAmountTypeEnum|Optional|null $LineAmountTypes = null,
         public string|Optional|null $CurrencyCode = null,
         public float|Optional|null $CurrencyRate = null,

@@ -2,9 +2,9 @@
 
 namespace Dcodegroup\XeroIntegration\Events;
 
-use Dcodegroup\XeroIntegration\Data\XeroCreditNoteData;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use XeroPHP\Models\Accounting\CreditNote as XeroCreditNote;
 
 class XeroCreditNoteUpdatedEvent
 {
@@ -13,5 +13,5 @@ class XeroCreditNoteUpdatedEvent
     /**
      * XeroCreditNoteUpdatedEvent constructor.
      */
-    public function __construct(public XeroCreditNoteData $data) {}
+    public function __construct(public XeroCreditNote $xeroCreditNote) {}
 }

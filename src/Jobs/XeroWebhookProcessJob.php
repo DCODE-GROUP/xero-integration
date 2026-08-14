@@ -13,13 +13,18 @@ class XeroWebhookProcessJob extends AbstractXeroWebhookJob
 
     public function handle(): void
     {
-        foreach ($this->webhook->getEvents() as $event) {
-            match ($event['eventCategory']) {
-                'CONTACT' => XeroWebhookContactProcessJob::dispatch($event),
-                'INVOICE' => XeroWebhookInvoiceProcessJob::dispatch($event),
-                'CREDITNOTE' => XeroWebhookCreditNoteProcessJob::dispatch($event),
-                default => null,
-            };
+        try {
+            foreach ($this->webhook->getEvents() as $event) {
+
+                match (data_get($event, 'eventCategory')) {
+                    'CONTACT' => XeroWebhookContactProcessJob::dispatch($event, $this->webhook),
+                    'INVOICE' => XeroWebhookInvoiceProcessJob::dispatch($event, $this->webhook),
+                    'CREDITNOTE' => XeroWebhookCreditNoteProcessJob::dispatch($event, $this->webhook),
+                    default => null,
+                };
+            }
+        } catch (\Throwable $th) {
+            $this->failed($th);
         }
     }
 }

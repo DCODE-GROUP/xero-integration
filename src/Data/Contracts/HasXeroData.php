@@ -2,7 +2,6 @@
 
 namespace Dcodegroup\XeroIntegration\Data\Contracts;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use XeroPHP\Remote\Collection as XeroCollection;
 

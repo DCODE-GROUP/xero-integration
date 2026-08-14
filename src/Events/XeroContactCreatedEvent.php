@@ -2,9 +2,9 @@
 
 namespace Dcodegroup\XeroIntegration\Events;
 
-use Dcodegroup\XeroIntegration\Data\XeroContactData;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use XeroPHP\Models\Accounting\Contact as XeroContact;
 
 class XeroContactCreatedEvent
 {
@@ -13,5 +13,5 @@ class XeroContactCreatedEvent
     /**
      * XeroContactCreatedEvent constructor.
      */
-    public function __construct(public XeroContactData $data) {}
+    public function __construct(public XeroContact $xeroContact) {}
 }

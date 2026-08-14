@@ -36,22 +36,23 @@ class XeroContactData extends AbstractXeroData implements XeroSyncable
     ];
 
     public function __construct(
-        public string|Optional|null $ContactID = null,
         public XeroContactStatusEnum $ContactStatus,
         public string $Name,
+        #[WithCast(DateTimeInterfaceCast::class, format: DATE_ATOM, setTimeZone: 'UTC')]
+        public Carbon $UpdatedDateUTC,
+        public bool $IsSupplier = false,
+        public bool $IsCustomer = false,
+        public bool $HasAttachments = false,
+        public string|Optional|null $ContactID = null,
         public string|Optional|null $FirstName = null,
         public string|Optional|null $LastName = null,
         public string|Optional|null $EmailAddress = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: DATE_ATOM, setTimeZone: 'UTC')]
-        public Carbon $UpdatedDateUTC,
-        /** @var Collection<int,XeroContactPersonData>|null */
-        public ?Collection $ContactPersons = null,
-        public bool $IsSupplier = false,
-        public bool $IsCustomer = true,
-        /** @var Collection<int,XeroAddressData>|null */
-        public ?Collection $Addresses = null,
-        /** @var Collection<int,XeroPhoneData>|null */
-        public ?Collection $Phones = null,
+        /** @var Collection<int,XeroContactPersonData>|Optional|null */
+        public Collection|Optional|null $ContactPersons = null,
+        /** @var Collection<int,XeroAddressData>|Optional|null */
+        public Collection|Optional|null $Addresses = null,
+        /** @var Collection<int,XeroPhoneData>|Optional|null */
+        public Collection|Optional|null $Phones = null,
         public string|Optional|null $ContactNumber = null,
         public string|Optional|null $AccountNumber = null,
         public string|Optional|null $BankAccountDetails = null,
@@ -71,7 +72,6 @@ class XeroContactData extends AbstractXeroData implements XeroSyncable
         public string|Optional|null $BatchPayments = null,
         public float|Optional|null $Discount = null,
         public string|Optional|null $Balances = null,
-        public bool $HasAttachments = false,
     ) {}
 
     /**

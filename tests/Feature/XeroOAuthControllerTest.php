@@ -9,7 +9,8 @@ use League\OAuth2\Client\Token\AccessToken;
 use Mockery\MockInterface;
 
 beforeEach(function () {
-    config()->set('xero-integration.routes.callback_success_route', 'dashboard');
+    config(['xero-integration.routes.callback_success_route' => 'dashboard']);
+    config(['xero-integration.oauth.state' => 'some-state']);
 });
 
 test('auth route redirects to xero for authorization', function () {
@@ -44,7 +45,7 @@ test('callback route saves token from authorization code and redirects', functio
 
     expect(XeroToken::count())->toBe(0);
 
-    $this->get('/xero/callback?code=auth_code_123')
+    $this->get('/xero/callback?code=auth_code_123&state=some-state')
         ->assertRedirect('dashboard');
 
     expect(XeroToken::count())->toBe(1);
@@ -68,7 +69,7 @@ test('callback route creates new token record with correct attributes', function
 
     expect(XeroToken::count())->toBe(0);
 
-    $this->get('/xero/callback?code=test_code');
+    $this->get('/xero/callback?code=test_code&state=some-state');
 
     expect(XeroToken::count())->toBe(1);
 
@@ -93,7 +94,7 @@ test('callback route redirects to configured success route', function () {
             ]));
     });
 
-    $this->get('/xero/callback?code=test_code')
+    $this->get('/xero/callback?code=test_code&state=some-state')
         ->assertRedirect('xero/dashboard');
 });
 
@@ -120,6 +121,6 @@ test('callback route handles valid request', function () {
             ]));
     });
 
-    $this->get('/xero/callback?code=valid_code')
+    $this->get('/xero/callback?code=valid_code&state=some-state')
         ->assertStatus(302);
 });

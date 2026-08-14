@@ -20,10 +20,10 @@ class XeroContactPersonData extends AbstractXeroData
     protected array $relatedFields = [];
 
     public function __construct(
+        public bool $IncludeInEmails = false,
         public string|Optional|null $FirstName = null,
         public string|Optional|null $LastName = null,
         public string|Optional|null $EmailAddress = null,
-        public bool $IncludeInEmails = false
     ) {}
 
     public function toXeroArray(): array

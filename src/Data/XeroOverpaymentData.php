@@ -38,7 +38,6 @@ class XeroOverpaymentData extends AbstractXeroData
     ];
 
     public function __construct(
-        public string|Optional|null $OverpaymentID = null,
         public XeroContactData $Contact,
         /** @var Collection<int,XeroItemData> */
         public Collection $LineItems,
@@ -49,6 +48,7 @@ class XeroOverpaymentData extends AbstractXeroData
         public float $TotalTax,
         public float $Total,
         public XeroOverpaymentTypeEnum $Type,
+        public string|Optional|null $OverpaymentID = null,
         public XeroLineAmountTypeEnum|Optional|null $LineAmountTypes = null,
         public string|Optional|null $CurrencyCode = null,
         public float|Optional|null $CurrencyRate = null,

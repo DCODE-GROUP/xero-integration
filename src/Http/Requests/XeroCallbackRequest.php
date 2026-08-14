@@ -2,9 +2,7 @@
 
 namespace Dcodegroup\XeroIntegration\Http\Requests;
 
-use Dcodegroup\XeroIntegration\XeroApp;
 use Illuminate\Foundation\Http\FormRequest;
-use XeroPHP\Webhook;
 
 class XeroCallbackRequest extends FormRequest
 {

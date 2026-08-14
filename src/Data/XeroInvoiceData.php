@@ -37,7 +37,6 @@ class XeroInvoiceData extends AbstractXeroData
     ];
 
     public function __construct(
-        public string|Optional|null $InvoiceID = null,
         public XeroContactData $Contact,
         /** @var Collection<int,XeroItemData> */
         public Collection $LineItems,
@@ -50,13 +49,14 @@ class XeroInvoiceData extends AbstractXeroData
         public float $Subtotal,
         public float $TaxAmount,
         public float $Total,
-        public float|Optional|null $TotalDiscount = null,
-        /** @var Collection<int,XeroPaymentData>|null */
-        public Collection|Optional|null $Payments = null,
         public float $AmountDue,
         public float $AmountPaid,
         public ?Carbon $UpdatedDateUTC,
         public XeroInvoiceTypeEnum $Type,
+        public string|Optional|null $InvoiceID = null,
+        public float|Optional|null $TotalDiscount = null,
+        /** @var Collection<int,XeroPaymentData>|null */
+        public Collection|Optional|null $Payments = null,
         public XeroLineAmountTypeEnum|Optional|null $LineAmountTypes = null,
         public string|Optional|null $Reference = null,
         public string|Optional|null $BrandingThemeID = null,
@@ -69,7 +69,7 @@ class XeroInvoiceData extends AbstractXeroData
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         public Carbon|Optional|null $PlannedPaymentDate = null,
         public string|Optional|null $RepeatingInvoiceID = null,
-        public bool|Optional|null $HasAttachments = false,
+        public bool|Optional|null $HasAttachments = null,
         /** @var Collection<int,XeroPrepaymentData>|null */
         public Collection|Optional|null $Prepayments = null,
         /** @var Collection<int,XeroOverpaymentData>|null */

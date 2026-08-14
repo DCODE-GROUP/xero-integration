@@ -38,7 +38,6 @@ class XeroCreditNoteData extends AbstractXeroData
     ];
 
     public function __construct(
-        public string|Optional|null $CreditNoteID = null,
         public XeroContactData $Contact,
         /** @var Collection<int,XeroItemData> */
         public Collection $LineItems,
@@ -49,6 +48,7 @@ class XeroCreditNoteData extends AbstractXeroData
         public float $TotalTax,
         public float $Total,
         public XeroCreditNoteTypeEnum $Type,
+        public string|Optional|null $CreditNoteID = null,
         public string|Optional|null $CreditNoteNumber = null,
         public XeroLineAmountTypeEnum|Optional|null $LineAmountTypes = null,
         public string|Optional|null $Reference = null,
