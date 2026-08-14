@@ -9,7 +9,6 @@ use League\OAuth2\Client\Token\AccessToken;
 use Mockery\MockInterface;
 
 beforeEach(function () {
-    config(['xero-integration.routes.callback_success_route' => 'dashboard']);
     config(['xero-integration.oauth.state' => 'some-state']);
 });
 
@@ -41,11 +40,15 @@ test('callback route saves token from authorization code and redirects', functio
                 'expires' => now()->addHours(1)->timestamp,
                 'scope' => 'openid email profile offline_access',
             ]));
+
+        $mock->shouldReceive('getTenants')
+            ->andReturn([['tenantId' => 'tenant-123', 'tenantName' => 'Test Org']]);
     });
 
     expect(XeroToken::count())->toBe(0);
 
-    $this->get('/xero/callback?code=auth_code_123&state=some-state')
+    $this->withSession([config('xero-integration.routes.success_url_session_name') => 'dashboard'])
+        ->get('/xero/callback?code=auth_code_123&state=some-state')
         ->assertRedirect('dashboard');
 
     expect(XeroToken::count())->toBe(1);
@@ -65,6 +68,9 @@ test('callback route creates new token record with correct attributes', function
                 'expires' => now()->addHours(1)->timestamp,
                 'scope' => 'openid email profile offline_access',
             ]));
+
+        $mock->shouldReceive('getTenants')
+            ->andReturn([['tenantId' => 'tenant-123', 'tenantName' => 'Test Org']]);
     });
 
     expect(XeroToken::count())->toBe(0);
@@ -80,8 +86,6 @@ test('callback route creates new token record with correct attributes', function
 });
 
 test('callback route redirects to configured success route', function () {
-    config()->set('xero-integration.routes.callback_success_route', 'xero/dashboard');
-
     $this->mock(Xero::class, function (MockInterface $mock) {
         $mock->shouldReceive('getAccessToken')
             ->andReturn(new AccessToken([
@@ -92,9 +96,13 @@ test('callback route redirects to configured success route', function () {
                 'expires' => now()->addHours(1)->timestamp,
                 'scope' => 'openid email profile offline_access',
             ]));
+
+        $mock->shouldReceive('getTenants')
+            ->andReturn([['tenantId' => 'tenant-123', 'tenantName' => 'Test Org']]);
     });
 
-    $this->get('/xero/callback?code=test_code&state=some-state')
+    $this->withSession([config('xero-integration.routes.success_url_session_name') => 'xero/dashboard'])
+        ->get('/xero/callback?code=test_code&state=some-state')
         ->assertRedirect('xero/dashboard');
 });
 
@@ -119,6 +127,9 @@ test('callback route handles valid request', function () {
                 'expires' => now()->addHours(1)->timestamp,
                 'scope' => 'openid',
             ]));
+
+        $mock->shouldReceive('getTenants')
+            ->andReturn([['tenantId' => 'tenant-123', 'tenantName' => 'Test Org']]);
     });
 
     $this->get('/xero/callback?code=valid_code&state=some-state')
