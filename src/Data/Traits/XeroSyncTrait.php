@@ -23,7 +23,9 @@ trait XeroSyncTrait
 
         $xeroRecord = null;
 
-        if (! empty($this->localModel->xeroRecord->xero_id)) {
+        $localModel = $this->getLocalModel();
+
+        if (! empty($localModel)) {
             $xeroRecord = $this->searchForRecordInXero($queryModel);
 
             if (! empty($xeroRecord) && ! empty($xeroRecord->getGUID())) {
@@ -76,7 +78,7 @@ trait XeroSyncTrait
 
     protected function updateXeroRecord(string $xeroId): void
     {
-        $this->localModel->xeroRecord()?->updateOrCreate( // @phpstan-ignore-line method.notFound
+        $this->getLocalModel()?->xeroRecord()?->updateOrCreate( // @phpstan-ignore-line method.notFound
             ['xero_id' => $xeroId],
             ['xero_id' => $xeroId]
         );

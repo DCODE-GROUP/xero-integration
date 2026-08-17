@@ -31,14 +31,14 @@ class MakeXeroDataCommand extends GeneratorCommand implements PromptsForMissingI
 
     protected function promptForMissingArgumentsUsing(): array
     {
-        $dataClasses = $this->getClassesInDirectory(base_path('vendor/dcodegroup/xero-integration/src/Data'), 'Data');
+        $dataClasses = $this->getClassesInDirectory(__DIR__.'/../Data', 'Data');
         $models = $this->getClassesInDirectory(app_path('Models'));
 
         return [
             'name' => fn () => text(
                 label: 'What is the name of the Data class to extend a XeroData class?',
-                placeholder: 'e.g. InvoiceData',
-                validate: ['name' => ['sometimes', 'string', 'min:3', 'max:255', 'alphanum']],
+                placeholder: 'e.g. XeroInvoiceData',
+                validate: ['name' => ['sometimes', 'string', 'min:3', 'max:255', 'regex:/^[a-zA-Z0-0\\\]+$/']],
             ),
             'xero-data' => fn () => suggest(
                 label: 'What is the name of the Xero Data to extend?',

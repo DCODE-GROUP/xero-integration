@@ -11,14 +11,24 @@ use XeroPHP\Remote\Model as XeroModel;
 
 abstract class AbstractXeroData implements HasXeroData
 {
+    protected Model $localModel;
+
     public function getLocalModel(): ?Model
     {
+        if (! empty($this->localModel)) {
+            return $this->localModel;
+        }
+
         if (! property_exists($this, 'key') || empty($this->key)) {
             return null;
         }
 
         $record = XeroRecord::where('xero_id', $this->{$this->key})
             ->first();
+
+        if (! empty($record) && ! empty($record->recordable)) {
+            $this->localModel = $record->recordable;
+        }
 
         return $record?->recordable;
     }
@@ -44,23 +54,23 @@ abstract class AbstractXeroData implements HasXeroData
     }
 
     /**
-     * Create a Xero collection from an array of Xero Data objects.
+     * Create a plain array of Xero records from a collection of Xero Data objects.
+     *
+     * `XeroModel::fromStringArray()` nulls-out array-typed properties whose value is
+     * not a plain `array` (an `ArrayObject` subclass like `XeroCollection` fails the
+     * `is_array()` check), so we MUST return a plain array here so nested collections
+     * (LineItems, ContactPersons, etc.) survive `validate()` and reach the API.
      *
      * @param  Collection<self>  $items
+     * @return array<int, array<string, mixed>>|null
      */
-    public static function toXeroCollection(Collection $items): ?XeroCollection
+    public static function toXeroCollection(Collection $items): ?array
     {
         if ($items->isEmpty()) {
             return null;
         }
 
-        $collection = new XeroCollection;
-
-        foreach ($items as $item) {
-            $collection->append($item->toXeroArray());
-        }
-
-        return $collection;
+        return $items->map(fn (self $item) => $item->toXeroArray())->values()->all();
     }
 
     abstract public function toXeroArray(): array;

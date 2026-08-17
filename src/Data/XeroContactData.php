@@ -81,7 +81,7 @@ class XeroContactData extends AbstractXeroData implements XeroSyncable
     {
         return new static(
             ContactID : data_get($xeroContact, 'ContactID'),
-            ContactStatus : data_get($xeroContact, 'ContactStatus') ?? XeroContactStatusEnum::ACTIVE,
+            ContactStatus : XeroContactStatusEnum::tryFrom(data_get($xeroContact, 'ContactStatus')) ?? XeroContactStatusEnum::ACTIVE,
             Name : data_get($xeroContact, 'Name'),
             FirstName : data_get($xeroContact, 'FirstName'),
             LastName : data_get($xeroContact, 'LastName'),
@@ -119,7 +119,7 @@ class XeroContactData extends AbstractXeroData implements XeroSyncable
     {
         return [
             'ContactID' => data_get($this, 'ContactID'),
-            'ContactStatus' => data_get($this, 'ContactStatus')?->value,
+            'ContactStatus' => data_get($this, 'ContactStatus')?->getXeroValue(),
             'Name' => data_get($this, 'Name'),
             'FirstName' => data_get($this, 'FirstName'),
             'LastName' => data_get($this, 'LastName'),
