@@ -44,7 +44,7 @@ class XeroToken extends Model
 
     public function toOAuth2Token(): AccessToken
     {
-        return new AccessToken($this->except(['id', 'tenant_id', 'created_at', 'updated_at']));
+        return new AccessToken($this->toArray());
     }
 
     public function getAuthEventId()

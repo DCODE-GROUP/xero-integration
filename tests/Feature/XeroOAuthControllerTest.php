@@ -144,5 +144,5 @@ test('callback route handles valid request', function () {
     });
 
     get('/xero/callback?code=valid_code&state=some-state')
-        ->assertStatus(302);
+        ->assertRedirect();
 });
