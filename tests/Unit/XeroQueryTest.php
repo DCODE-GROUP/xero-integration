@@ -7,9 +7,10 @@ use Dcodegroup\XeroIntegration\Models\XeroToken;
 use Dcodegroup\XeroIntegration\XeroApp;
 use Dcodegroup\XeroIntegration\XeroQuery;
 use Illuminate\Support\Facades\RateLimiter;
+use Workbench\App\Services\TenantResolverService;
 
 test('rate limiter key generated without tenancy', function () {
-    config()->set('xero-integration.tenancy.enabled', false);
+    config(['xero-integration.tenancy.enabled' => false]);
 
     $key = XeroQuery::getRateLimiterKey();
 
@@ -18,20 +19,12 @@ test('rate limiter key generated without tenancy', function () {
 });
 
 test('rate limiter key includes tenant when tenancy enabled', function () {
-    config()->set('xero-integration.tenancy.enabled', true);
-    config()->set('xero-integration.tenancy.method', function () {
-        return new class
-        {
-            public function getKey(): string
-            {
-                return 'test-tenant-id';
-            }
-        };
-    });
+    config(['xero-integration.tenancy.enabled' => true]);
+    config(['xero-integration.tenancy.tenant_resolver' => [TenantResolverService::class, 'getTenant']]);
 
     $key = XeroQuery::getRateLimiterKey();
 
-    expect($key)->toBe('Dcodegroup\XeroIntegration\XeroQuery:test-tenant-id');
+    expect($key)->toBe('Dcodegroup\XeroIntegration\XeroQuery:1');
 });
 
 test('xero query can be created from xero app', function () {

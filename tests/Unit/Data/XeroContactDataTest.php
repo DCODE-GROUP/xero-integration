@@ -107,7 +107,7 @@ test('fromXero maps xero model to XeroContactData', function () {
     $xeroContact = Mockery::mock(Contact::class);
     $xeroContact->shouldReceive('offsetGet')->andReturnUsing(fn ($key) => match ($key) {
         'ContactID' => 'contact-uuid-123',
-        'ContactStatus' => XeroContactStatusEnum::ACTIVE,
+        'ContactStatus' => XeroContactStatusEnum::ACTIVE->value,
         'Name' => 'Acme Corp',
         'FirstName' => 'John',
         'LastName' => 'Doe',
