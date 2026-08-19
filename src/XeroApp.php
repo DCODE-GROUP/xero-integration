@@ -23,6 +23,9 @@ use XeroPHP\Application;
  * @method XeroIntegration prepayment()
  * @method XeroIntegration quote()
  * @method XeroIntegration timesheet_au()
+ * @method XeroIntegration timesheet_line_au()
+ * @method XeroIntegration leave_application_au()
+ * @method XeroIntegration leave_period_au()
  */
 class XeroApp extends Application
 {

@@ -70,9 +70,9 @@ class XeroTimesheetData extends AbstractXeroData
             'EmployeeID' => data_get($this, 'EmployeeID'),
             'StartDate' => data_get($this, 'StartDate'),
             'EndDate' => data_get($this, 'EndDate'),
-            'TimesheetLines' => data_get($this, 'TimesheetLines')->map(fn ($line) => $line->toXeroArray())->toArray(),
+            'TimesheetLines' => XeroTimesheetLineData::toXeroCollection(data_get($this, 'TimesheetLines')),
             'TimesheetID' => data_get($this, 'TimesheetID'),
-            'Status' => data_get($this, 'Status')?->toXeroAUvalue(),
+            'Status' => data_get($this, 'Status')?->toXeroAUValue(),
             'Hours' => data_get($this, 'Hours'),
             'UpdatedDateUTC' => data_get($this, 'UpdatedDateUTC'),
         ];

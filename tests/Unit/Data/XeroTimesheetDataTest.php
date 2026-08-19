@@ -4,14 +4,19 @@ namespace Dcodegroup\XeroIntegration\Tests\Unit\Data;
 
 use Carbon\Carbon;
 use Dcodegroup\XeroIntegration\Data\PayrollAU\XeroTimesheetData;
+use Dcodegroup\XeroIntegration\Data\PayrollAU\XeroTimesheetLineData;
 use Dcodegroup\XeroIntegration\Enums\XeroTimesheetStatusEnum;
+use Illuminate\Support\Collection;
 use Mockery;
 use XeroPHP\Models\PayrollAU\Timesheet;
+use XeroPHP\Models\PayrollAU\Timesheet\TimesheetLine;
 
 test('can instantiate XeroTimesheetData with required fields', function () {
     $startDate = Carbon::parse('2024-01-01');
     $endDate = Carbon::parse('2024-01-07');
-    $lines = (object) ['TimesheetLine' => []];
+    $lines = new Collection([
+        new XeroTimesheetLineData(EarningsRateID: 'earnings-rate-uuid', NumberOfUnits: [7.6]),
+    ]);
 
     $data = new XeroTimesheetData(
         EmployeeID: 'employee-uuid',
@@ -31,7 +36,7 @@ test('optional fields default to null', function () {
         EmployeeID: 'employee-uuid',
         StartDate: Carbon::parse('2024-01-01'),
         EndDate: Carbon::parse('2024-01-07'),
-        TimesheetLines: (object) ['TimesheetLine' => []],
+        TimesheetLines: new Collection,
     );
 
     expect($data->TimesheetID)->toBeNull()
@@ -45,7 +50,7 @@ test('toXeroArray returns correct keys', function () {
         EmployeeID: 'employee-uuid',
         StartDate: Carbon::parse('2024-01-01'),
         EndDate: Carbon::parse('2024-01-07'),
-        TimesheetLines: (object) ['TimesheetLine' => []],
+        TimesheetLines: new Collection,
     );
 
     expect($data->toXeroArray())->toHaveKeys([
@@ -58,13 +63,13 @@ test('toXeroArray returns correct values', function () {
     $startDate = Carbon::parse('2024-01-01');
     $endDate = Carbon::parse('2024-01-07');
     $updated = Carbon::parse('2024-01-08T10:00:00Z');
-    $lines = (object) ['TimesheetLine' => []];
+    $line = new XeroTimesheetLineData(EarningsRateID: 'earnings-rate-uuid', NumberOfUnits: [7.6]);
 
     $data = new XeroTimesheetData(
         EmployeeID: 'employee-uuid',
         StartDate: $startDate,
         EndDate: $endDate,
-        TimesheetLines: $lines,
+        TimesheetLines: new Collection([$line]),
         TimesheetID: 'timesheet-uuid',
         Status: XeroTimesheetStatusEnum::APPROVED,
         Hours: 38,
@@ -76,38 +81,34 @@ test('toXeroArray returns correct values', function () {
     expect($array['EmployeeID'])->toBe('employee-uuid')
         ->and($array['StartDate'])->toBe($startDate)
         ->and($array['EndDate'])->toBe($endDate)
-        ->and($array['TimesheetLines'])->toBe($lines)
+        ->and($array['TimesheetLines'])->toBe([$line->toXeroArray()])
         ->and($array['TimesheetID'])->toBe('timesheet-uuid')
         ->and($array['Hours'])->toBe(38)
         ->and($array['UpdatedDateUTC'])->toBe($updated);
 });
 
-test('toXeroArray maps Status enum to Xero AU value', function () {
-    $map = [
-        [XeroTimesheetStatusEnum::DRAFT, Timesheet::STATUS_DRAFT],
-        [XeroTimesheetStatusEnum::PROCESSED, Timesheet::STATUS_PROCESSED],
-        [XeroTimesheetStatusEnum::APPROVED, Timesheet::STATUS_APPROVED],
-    ];
+test('toXeroArray maps Status enum to Xero AU value', function ($status, $expected) {
+    $data = new XeroTimesheetData(
+        EmployeeID: 'employee-uuid',
+        StartDate: Carbon::parse('2024-01-01'),
+        EndDate: Carbon::parse('2024-01-07'),
+        TimesheetLines: new Collection,
+        Status: $status,
+    );
 
-    foreach ($map as [$status, $expected]) {
-        $data = new XeroTimesheetData(
-            EmployeeID: 'employee-uuid',
-            StartDate: Carbon::parse('2024-01-01'),
-            EndDate: Carbon::parse('2024-01-07'),
-            TimesheetLines: (object) ['TimesheetLine' => []],
-            Status: $status,
-        );
-
-        expect($data->toXeroArray()['Status'])->toBe($expected);
-    }
-});
+    expect($data->toXeroArray()['Status'])->toBe($expected);
+})->with([
+    [XeroTimesheetStatusEnum::DRAFT, Timesheet::STATUS_DRAFT],
+    [XeroTimesheetStatusEnum::PROCESSED, Timesheet::STATUS_PROCESSED],
+    [XeroTimesheetStatusEnum::APPROVED, Timesheet::STATUS_APPROVED],
+]);
 
 test('toXeroArray returns null Status when not set', function () {
     $data = new XeroTimesheetData(
         EmployeeID: 'employee-uuid',
         StartDate: Carbon::parse('2024-01-01'),
         EndDate: Carbon::parse('2024-01-07'),
-        TimesheetLines: (object) ['TimesheetLine' => []],
+        TimesheetLines: new Collection,
     );
 
     expect($data->toXeroArray()['Status'])->toBeNull();
@@ -117,14 +118,22 @@ test('fromXero maps xero model to XeroTimesheetData', function () {
     $startDate = Carbon::parse('2024-01-01');
     $endDate = Carbon::parse('2024-01-07');
     $updated = Carbon::parse('2024-01-08T10:00:00Z');
-    $lines = (object) ['TimesheetLine' => []];
+
+    $xeroLine = Mockery::mock(TimesheetLine::class);
+    $xeroLine->shouldReceive('offsetGet')->andReturnUsing(fn ($key) => match ($key) {
+        'EarningsRateID' => 'earnings-rate-uuid',
+        'NumberOfUnits' => [7.6],
+        'UpdatedDateUTC' => null,
+        default => null,
+    });
+    $xeroLine->shouldReceive('offsetExists')->andReturn(true);
 
     $xeroTimesheet = Mockery::mock(Timesheet::class);
     $xeroTimesheet->shouldReceive('offsetGet')->andReturnUsing(fn ($key) => match ($key) {
         'EmployeeID' => 'employee-uuid',
         'StartDate' => $startDate,
         'EndDate' => $endDate,
-        'TimesheetLines' => $lines,
+        'TimesheetLines' => new Collection([$xeroLine]),
         'TimesheetID' => 'timesheet-uuid-123',
         'Status' => XeroTimesheetStatusEnum::APPROVED,
         'Hours' => 38,
@@ -140,5 +149,8 @@ test('fromXero maps xero model to XeroTimesheetData', function () {
         ->and($data->TimesheetID)->toBe('timesheet-uuid-123')
         ->and($data->Status)->toBe(XeroTimesheetStatusEnum::APPROVED)
         ->and($data->Hours)->toBe(38)
-        ->and($data->UpdatedDateUTC)->toBe($updated);
+        ->and($data->UpdatedDateUTC)->toBe($updated)
+        ->and($data->TimesheetLines)->toHaveCount(1)
+        ->and($data->TimesheetLines->first())->toBeInstanceOf(XeroTimesheetLineData::class)
+        ->and($data->TimesheetLines->first()->EarningsRateID)->toBe('earnings-rate-uuid');
 });
