@@ -28,7 +28,7 @@ class XeroWebhookContactProcessJob extends AbstractXeroWebhookEventJob
 
         $data = XeroContactData::fromXero($model);
 
-        match ($this->event->getEventType()) {
+        match ($this->event->event_type) {
             'CREATE' => XeroContactCreatedEvent::dispatch($data),
             'UPDATE' => XeroContactUpdatedEvent::dispatch($data),
             default => null,

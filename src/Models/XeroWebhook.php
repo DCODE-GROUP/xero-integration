@@ -17,13 +17,14 @@ use Illuminate\Database\Eloquent\Collection;
  * Logs incoming webhooks and their processing status
  *
  * @property int $id
- * @property string $payload
+ * @property string|array $payload
  * @property XeroWebhookStatusEnum $status
  * @property string $message
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  * @property-read Webhook $xero_webhook
+ * @property-read Webhook $xeroWebhook 
  * @property-read Collection<int, \Dcodegroup\XeroIntegration\Models\XeroWebhookEvent> $events
  * @property-read int|null $events_count
  *

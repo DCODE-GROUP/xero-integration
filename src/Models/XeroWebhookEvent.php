@@ -3,13 +3,9 @@
 namespace Dcodegroup\XeroIntegration\Models;
 
 use Dcodegroup\XeroIntegration\Enums\XeroWebhookStatusEnum;
-use Dcodegroup\XeroIntegration\XeroApp;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
-use XeroPHP\Webhook;
 
 /**
  * Logs incoming webhook events and their processing status
@@ -28,7 +24,8 @@ use XeroPHP\Webhook;
  * @property Carbon|null $deleted_at
  * @property XeroWebhookStatusEnum $status
  * @property string $message
- * @property-read Webhook $xero_webhook
+ * @property-read XeroWebhook $xero_webhook
+ * @property-read XeroWebhook $xeroWebhook
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static> newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static> newQuery()

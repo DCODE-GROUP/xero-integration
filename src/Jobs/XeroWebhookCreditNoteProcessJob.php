@@ -28,7 +28,7 @@ class XeroWebhookCreditNoteProcessJob extends AbstractXeroWebhookEventJob
 
         $data = XeroCreditNoteData::fromXero($model);
 
-        match ($this->event->getEventType()) {
+        match ($this->event->event_type) {
             'CREATE' => XeroCreditNoteCreatedEvent::dispatch($data),
             'UPDATE' => XeroCreditNoteUpdatedEvent::dispatch($data),
             default => null,

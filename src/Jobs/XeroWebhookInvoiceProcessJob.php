@@ -28,7 +28,7 @@ class XeroWebhookInvoiceProcessJob extends AbstractXeroWebhookEventJob
 
         $data = XeroInvoiceData::fromXero($model);
 
-        match ($this->event->getEventType()) {
+        match ($this->event->event_type) {
             'CREATE' => XeroInvoiceCreatedEvent::dispatch($data),
             'UPDATE' => XeroInvoiceUpdatedEvent::dispatch($data),
             default => null,
