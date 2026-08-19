@@ -18,13 +18,13 @@ return new class extends Migration
             $table->increments('id');
             $table->foreignIdFor(XeroWebhook::class);
             $table->string('resource_url')->nullable();
-            $table->string('resource_id')->nullable();    
+            $table->string('resource_id')->nullable();
             $table->dateTime('event_date');
             $table->string('event_type');
             $table->string('event_category');
             $table->string('xero_tenant_id');
             $table->string('xero_tenant_type');
-            $table->string('status');
+            $table->string('status')->default('pending');
             $table->text('message')->nullable();
             $table->softDeletes();
             $table->timestamps();

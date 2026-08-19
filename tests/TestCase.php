@@ -33,6 +33,7 @@ class TestCase extends Orchestra
         config()->set('xero-integration.routes.callback_success_route', 'dashboard');
         config()->set('app.key', 'base64:AckfSECXIvnK5r28GVIWUAxmbBSjTsmFVb/gGnlNyNE=');
         config()->set('app.cipher', 'AES-256-CBC');
+        config()->set('xero-integration.webhooks.secret', 'webhook-test-secret');
 
         // Configure tenancy model so migrations can create tenant_id column
         config()->set('xero-integration.tenancy.model', 'Workbench\\App\\Models\\Tenant');

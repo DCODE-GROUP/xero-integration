@@ -56,6 +56,13 @@ class XeroWebhookEvent extends Model
         'status' => XeroWebhookStatusEnum::class
     ];
 
+    protected static function booted(): void
+    {
+        static::creating(function (self $event) {
+            $event->status ??= XeroWebhookStatusEnum::PENDING;
+        });
+    }
+
     public function xeroWebhook()
     {
         return $this->belongsTo(XeroWebhook::class);

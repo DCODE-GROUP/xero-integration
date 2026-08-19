@@ -17,14 +17,14 @@ class XeroWebhookController
         $xeroWebhook = new XeroWebHook(app(XeroApp::class), (string) $request->getContent());
 
         $modelData = [
-            'payload' => $request->getContent(),
+            'payload' => (string) $request->getContent(),
         ];
         if (config('xero-integration.tenancy.enabled')) {
             $modelData['tenant_id'] = null;
             $sessionName = config('xero-integration.tenancy.session_name');
             if (! empty($sessionName) && Session::has($sessionName)) {
                 $tenantId = Session::get($sessionName);
-                $data['tenant_id'] = $tenantId;
+                $modelData['tenant_id'] = $tenantId;
             }
         }
         $webhookModel = XeroWebhookModel::create($modelData);

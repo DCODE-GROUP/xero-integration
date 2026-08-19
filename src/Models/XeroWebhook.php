@@ -50,8 +50,12 @@ class XeroWebhook extends Model
     protected function xeroWebhook(): Attribute
     {
         return Attribute::make(function () {
-            return new WebHook(app(XeroApp::class), (string) $this->payload);
-        });
+            $payload = is_string($this->payload)
+                ? $this->payload
+                : json_encode($this->payload, JSON_THROW_ON_ERROR);
+
+            return new WebHook(app(XeroApp::class), $payload);
+        })->shouldCache();
     }
 
     /**
@@ -64,10 +68,14 @@ class XeroWebhook extends Model
 
     protected static function booted(): void
     {
+        static::creating(function (self $xeroWebhook) {
+            $xeroWebhook->status ??= XeroWebhookStatusEnum::PENDING;
+        });
+
         // Create all the child records from the Xero event data
         static::created(function (self $xeroWebhook) {
             /** @var Event $event */
-            foreach ($xeroWebhook->xeroWebhook->events() as $event) {
+            foreach ($xeroWebhook->xeroWebhook->getEvents() as $event) {
                 XeroWebhookEvent::create([
                     'xero_webhook_id' => $xeroWebhook->id,
                     'resource_url' => $event->getResourceUrl(),
