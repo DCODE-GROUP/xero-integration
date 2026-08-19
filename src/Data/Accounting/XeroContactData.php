@@ -1,8 +1,12 @@
 <?php
 
-namespace Dcodegroup\XeroIntegration\Data;
+namespace Dcodegroup\XeroIntegration\Data\Accounting;
 
 use Carbon\Carbon;
+use Dcodegroup\XeroIntegration\Data\AbstractXeroData;
+use Dcodegroup\XeroIntegration\Data\Accounting\XeroAddressData;
+use Dcodegroup\XeroIntegration\Data\Accounting\XeroContactPersonData;
+use Dcodegroup\XeroIntegration\Data\Accounting\XeroPhoneData;
 use Dcodegroup\XeroIntegration\Data\Contracts\XeroSyncable;
 use Dcodegroup\XeroIntegration\Data\Traits\XeroSyncTrait;
 use Dcodegroup\XeroIntegration\Enums\XeroContactStatusEnum;

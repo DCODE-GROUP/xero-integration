@@ -1,8 +1,9 @@
 <?php
 
-namespace Dcodegroup\XeroIntegration\Data;
+namespace Dcodegroup\XeroIntegration\Data\Accounting;
 
 use Carbon\Carbon;
+use Dcodegroup\XeroIntegration\Data\AbstractXeroData;
 use Dcodegroup\XeroIntegration\Data\Traits\XeroSyncTrait;
 use Dcodegroup\XeroIntegration\Enums\XeroInvoiceStatusEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroInvoiceTypeEnum;
