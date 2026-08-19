@@ -8,6 +8,7 @@ use Dcodegroup\XeroIntegration\Events\XeroCreditNoteCreatedEvent;
 use Dcodegroup\XeroIntegration\Events\XeroCreditNoteUpdatedEvent;
 use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
 use Dcodegroup\XeroIntegration\Facades\XeroIntegration;
+use Dcodegroup\XeroIntegration\Models\XeroWebhookEvent;
 use XeroPHP\Webhook\Event;
 
 /**
@@ -16,7 +17,7 @@ use XeroPHP\Webhook\Event;
  */
 class XeroWebhookCreditNoteProcessJob extends AbstractXeroWebhookJob
 {
-    public function __construct(protected Event $event)
+    public function __construct(protected XeroWebhookEvent $event)
     {
         parent::__construct();
     }
@@ -28,10 +29,10 @@ class XeroWebhookCreditNoteProcessJob extends AbstractXeroWebhookJob
         /** @var \Dcodegroup\XeroIntegration\XeroIntegration $xero */
         $xero = XeroIntegration::make($this->xeroApp, $query);
 
-        $model = $xero->find($this->event->getResourceId());
+        $model = $xero->find($this->event->resource_id);
 
         if (empty($model)) {
-            report(new XeroIntegrationException("Xero Credit Note with ID {$this->event->getResourceId()} not found."));
+            report(new XeroIntegrationException("Xero Credit Note with ID {$this->event->resource_id} not found."));
 
             return;
         }

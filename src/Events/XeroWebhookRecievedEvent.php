@@ -2,7 +2,7 @@
 
 namespace Dcodegroup\XeroIntegration\Events;
 
-use Dcodegroup\XeroIntegration\Http\Requests\XeroWebhookRequest;
+use Dcodegroup\XeroIntegration\Models\XeroWebhook;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -13,5 +13,5 @@ class XeroWebhookRecievedEvent
     /**
      * XeroWebhookRecievedEvent constructor.
      */
-    public function __construct(public XeroWebhookRequest $request) {}
+    public function __construct(public XeroWebhook $request) {}
 }

@@ -2,19 +2,19 @@
 
 namespace Dcodegroup\XeroIntegration\Jobs;
 
-use XeroPHP\Webhook;
+use Dcodegroup\XeroIntegration\Models\XeroWebhook;
 
 class XeroWebhookProcessJob extends AbstractXeroWebhookJob
 {
-    public function __construct(protected Webhook $webhook)
+    public function __construct(protected XeroWebhook $webhook)
     {
         parent::__construct();
     }
 
     public function handle(): void
     {
-        foreach ($this->webhook->getEvents() as $event) {
-            match ($event['eventCategory']) {
+        foreach ($this->webhook->events as $event) {
+            match ($event->event_category) {
                 'CONTACT' => XeroWebhookContactProcessJob::dispatch($event),
                 'INVOICE' => XeroWebhookInvoiceProcessJob::dispatch($event),
                 'CREDITNOTE' => XeroWebhookCreditNoteProcessJob::dispatch($event),

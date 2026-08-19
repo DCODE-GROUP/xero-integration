@@ -8,6 +8,7 @@ use Dcodegroup\XeroIntegration\Events\XeroContactCreatedEvent;
 use Dcodegroup\XeroIntegration\Events\XeroContactUpdatedEvent;
 use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
 use Dcodegroup\XeroIntegration\Facades\XeroIntegration;
+use Dcodegroup\XeroIntegration\Models\XeroWebhookEvent;
 use Illuminate\Foundation\Bus\PendingDispatch;
 use XeroPHP\Webhook\Event;
 
@@ -17,7 +18,7 @@ use XeroPHP\Webhook\Event;
  */
 class XeroWebhookContactProcessJob extends AbstractXeroWebhookJob
 {
-    public function __construct(protected Event $event)
+    public function __construct(protected XeroWebhookEvent $event)
     {
         parent::__construct();
     }
@@ -29,10 +30,10 @@ class XeroWebhookContactProcessJob extends AbstractXeroWebhookJob
         /** @var \Dcodegroup\XeroIntegration\XeroIntegration $xero */
         $xero = XeroIntegration::make($this->xeroApp, $query);
 
-        $model = $xero->find($this->event->getResourceId());
+        $model = $xero->find($this->event->resource_id);
 
         if (empty($model)) {
-            report(new XeroIntegrationException("Xero Contact with ID {$this->event->getResourceId()} not found."));
+            report(new XeroIntegrationException("Xero Contact with ID {$this->event->resource_id} not found."));
 
             return;
         }

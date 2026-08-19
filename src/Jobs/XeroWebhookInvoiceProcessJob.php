@@ -8,6 +8,7 @@ use Dcodegroup\XeroIntegration\Events\XeroInvoiceCreatedEvent;
 use Dcodegroup\XeroIntegration\Events\XeroInvoiceUpdatedEvent;
 use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
 use Dcodegroup\XeroIntegration\Facades\XeroIntegration;
+use Dcodegroup\XeroIntegration\Models\XeroWebhookEvent;
 use Illuminate\Foundation\Bus\PendingDispatch;
 use XeroPHP\Webhook\Event;
 
@@ -17,7 +18,7 @@ use XeroPHP\Webhook\Event;
  */
 class XeroWebhookInvoiceProcessJob extends AbstractXeroWebhookJob
 {
-    public function __construct(protected Event $event)
+    public function __construct(protected XeroWebhookEvent $event)
     {
         parent::__construct();
     }
@@ -29,10 +30,10 @@ class XeroWebhookInvoiceProcessJob extends AbstractXeroWebhookJob
         /** @var \Dcodegroup\XeroIntegration\XeroIntegration $xero */
         $xero = XeroIntegration::make($this->xeroApp, $query);
 
-        $model = $xero->find($this->event->getResourceId());
+        $model = $xero->find($this->event->resource_id);
 
         if (empty($model)) {
-            report(new XeroIntegrationException("Xero Invoice with ID {$this->event->getResourceId()} not found."));
+            report(new XeroIntegrationException("Xero Invoice with ID {$this->event->resource_id} not found."));
 
             return;
         }
