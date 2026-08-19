@@ -5,13 +5,13 @@ namespace Dcodegroup\XeroIntegration\Models;
 use Dcodegroup\XeroIntegration\Enums\XeroWebhookStatusEnum;
 use Dcodegroup\XeroIntegration\XeroApp;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use XeroPHP\Webhook;
 use XeroPHP\Webhook\Event;
-use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Logs incoming webhooks and their processing status
@@ -24,8 +24,8 @@ use Illuminate\Database\Eloquent\Collection;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  * @property-read Webhook $xero_webhook
- * @property-read Webhook $xeroWebhook 
- * @property-read Collection<int, \Dcodegroup\XeroIntegration\Models\XeroWebhookEvent> $events
+ * @property-read Webhook $xeroWebhook
+ * @property-read Collection<int, XeroWebhookEvent> $events
  * @property-read int|null $events_count
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static> newModelQuery()
@@ -40,12 +40,12 @@ class XeroWebhook extends Model
         'tenant_id',
         'payload',
         'status',
-        'message'
+        'message',
     ];
 
     protected $casts = [
         'payload' => 'json',
-        'status' => XeroWebhookStatusEnum::class
+        'status' => XeroWebhookStatusEnum::class,
     ];
 
     protected function xeroWebhook(): Attribute
@@ -55,7 +55,7 @@ class XeroWebhook extends Model
                 ? $this->payload
                 : json_encode($this->payload, JSON_THROW_ON_ERROR);
 
-            return new WebHook(app(XeroApp::class), $payload);
+            return new Webhook(app(XeroApp::class), $payload);
         })->shouldCache();
     }
 

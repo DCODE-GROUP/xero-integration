@@ -11,7 +11,7 @@ use Illuminate\Support\Carbon;
  * Logs incoming webhook events and their processing status
  *
  * @property int $id
- * @property int $xero_webhook_id 
+ * @property int $xero_webhook_id
  * @property string $resource_url
  * @property string $resource_id
  * @property string $event_type
@@ -46,11 +46,11 @@ class XeroWebhookEvent extends Model
         'xero_tenant_type',
         'tenant_id',
         'status',
-        'message'
+        'message',
     ];
 
     protected $casts = [
-        'status' => XeroWebhookStatusEnum::class
+        'status' => XeroWebhookStatusEnum::class,
     ];
 
     protected static function booted(): void

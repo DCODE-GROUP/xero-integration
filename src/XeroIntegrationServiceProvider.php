@@ -36,7 +36,7 @@ class XeroIntegrationServiceProvider extends PackageServiceProvider
                 'create_xero_tokens_table',
                 'create_xero_record_table',
                 'create_xero_webhooks_table',
-                'create_xero_webhook_events_table'
+                'create_xero_webhook_events_table',
             ])
             ->hasCommand(MakeXeroDataCommand::class)
             ->hasRoute('xero');

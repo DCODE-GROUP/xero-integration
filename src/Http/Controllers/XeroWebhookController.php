@@ -5,10 +5,10 @@ namespace Dcodegroup\XeroIntegration\Http\Controllers;
 use Dcodegroup\XeroIntegration\Events\XeroWebhookRecievedEvent;
 use Dcodegroup\XeroIntegration\Http\Requests\XeroWebhookRequest;
 use Dcodegroup\XeroIntegration\Jobs\XeroWebhookProcessJob;
+use Dcodegroup\XeroIntegration\Models\XeroWebhook as XeroWebhookModel;
 use Dcodegroup\XeroIntegration\XeroApp;
 use Illuminate\Support\Facades\Session;
 use XeroPHP\Webhook as XeroWebHook;
-use Dcodegroup\XeroIntegration\Models\XeroWebhook as XeroWebhookModel;
 
 class XeroWebhookController
 {
