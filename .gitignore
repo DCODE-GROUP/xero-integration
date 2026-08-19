@@ -31,3 +31,5 @@ testbench.yaml
 /docs
 /coverage
 /.opencode
+/.omo
+**/.env.testing

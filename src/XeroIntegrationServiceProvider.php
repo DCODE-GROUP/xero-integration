@@ -2,28 +2,46 @@
 
 namespace Dcodegroup\XeroIntegration;
 
+use Calcinai\OAuth2\Client\Provider\Xero;
 use Dcodegroup\XeroIntegration\Commands\MakeXeroDataCommand;
-use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
+use Dcodegroup\XeroIntegration\Exceptions\XeroConfigException;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class XeroIntegrationServiceProvider extends PackageServiceProvider
 {
-    public function register()
+    public function boot()
     {
-        parent::register();
+        parent::boot();
 
-        $webhookSecret = config('xero-integration.webhooks.secret');
+        if (empty(config('xero-integration.oauth.client_id'))) {
+            report(new XeroConfigException('Xero Client ID is required. Please set the XERO_CLIENT_ID environment variable.'));
+        }
 
-        if (empty($webhookSecret)) {
-            report(new XeroIntegrationException('Xero webhook secret is not configured. Please set the XERO_WEBHOOK_SECRET environment variable.'));
+        if (empty(config('xero-integration.oauth.client_secret'))) {
+            report(new XeroConfigException('Xero Client Secret is required. Please set the XERO_CLIENT_SECRET environment variable.'));
+        }
 
-            return;
+        $this->app->singleton(Xero::class, function () {
+            return new Xero([
+                'clientId' => config('xero-integration.oauth.client_id'),
+                'clientSecret' => config('xero-integration.oauth.client_secret'),
+                'redirectUri' => route('xero.callback'),
+            ]);
+        });
+
+        if (empty(config('xero-integration.webhooks.secret'))) {
+            report(new XeroConfigException('Xero webhook secret is not configured. Please set the XERO_WEBHOOK_SECRET environment variable.'));
         }
 
         $this->app->singleton(XeroApp::class, function () {
             return new XeroApp;
         });
+    }
+
+    public function register()
+    {
+        parent::register();
     }
 
     public function configurePackage(Package $package): void
@@ -34,7 +52,7 @@ class XeroIntegrationServiceProvider extends PackageServiceProvider
             ->hasViews()
             ->hasMigrations([
                 'create_xero_tokens_table',
-                'create_xero_record_table',
+                'create_xero_records_table',
                 'create_xero_webhooks_table',
                 'create_xero_webhook_events_table',
             ])

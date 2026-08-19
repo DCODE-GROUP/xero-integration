@@ -2,13 +2,12 @@
 
 namespace Dcodegroup\XeroIntegration\Data;
 
+use Carbon\Carbon;
 use Dcodegroup\XeroIntegration\Data\Traits\XeroSyncTrait;
 use Dcodegroup\XeroIntegration\Enums\XeroCreditNoteTypeEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroInvoiceStatusEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroLineAmountTypeEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
@@ -25,6 +24,8 @@ class XeroCreditNoteData extends AbstractXeroData
 
     protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::CREDIT_NOTE;
 
+    protected string $key = 'CreditNoteID';
+
     protected array $searchFields = [
         'CreditNoteID',
         'CreditNoteNumber',
@@ -37,7 +38,6 @@ class XeroCreditNoteData extends AbstractXeroData
     ];
 
     public function __construct(
-        public string|Optional|null $CreditNoteID,
         public XeroContactData $Contact,
         /** @var Collection<int,XeroItemData> */
         public Collection $LineItems,
@@ -48,19 +48,20 @@ class XeroCreditNoteData extends AbstractXeroData
         public float $TotalTax,
         public float $Total,
         public XeroCreditNoteTypeEnum $Type,
-        public string|Optional|null $CreditNoteNumber,
-        public XeroLineAmountTypeEnum|Optional|null $LineAmountTypes,
-        public string|Optional|null $Reference,
-        public bool|Optional|null $SentToContact,
-        public string|Optional|null $CurrencyCode,
-        public float|Optional|null $CurrencyRate,
-        public string|Optional|null $RemainingCredit,
-        public string|Optional|null $BrandingThemeID,
-        public bool|Optional|null $HasAttachments,
+        public string|Optional|null $CreditNoteID = null,
+        public string|Optional|null $CreditNoteNumber = null,
+        public XeroLineAmountTypeEnum|Optional|null $LineAmountTypes = null,
+        public string|Optional|null $Reference = null,
+        public bool|Optional|null $SentToContact = null,
+        public string|Optional|null $CurrencyCode = null,
+        public float|Optional|null $CurrencyRate = null,
+        public string|Optional|null $RemainingCredit = null,
+        public string|Optional|null $BrandingThemeID = null,
+        public bool|Optional|null $HasAttachments = null,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
-        public Carbon|Optional|null $FullyPaidOnDate,
+        public Carbon|Optional|null $FullyPaidOnDate = null,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
-        public Carbon|Optional|null $UpdatedDateUTC,
+        public Carbon|Optional|null $UpdatedDateUTC = null,
     ) {}
 
     /**
@@ -116,15 +117,5 @@ class XeroCreditNoteData extends AbstractXeroData
             'FullyPaidOnDate' => data_get($this, 'FullyPaidOnDate'),
             'UpdatedDateUTC' => data_get($this, 'UpdatedDateUTC'),
         ];
-    }
-
-    public function mapToData(Model $model): array
-    {
-        return [];
-    }
-
-    public function mapToModel(): array
-    {
-        return [];
     }
 }

@@ -2,10 +2,12 @@
 
 namespace Dcodegroup\XeroIntegration\Models;
 
+use Carbon\Carbon;
+use Dcodegroup\XeroIntegration\Database\Factories\XeroTokenFactory;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Token\AccessTokenInterface;
@@ -23,6 +25,7 @@ use League\OAuth2\Client\Token\AccessTokenInterface;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
+#[UseFactory(XeroTokenFactory::class)]
 class XeroToken extends Model
 {
     use HasFactory;
@@ -42,6 +45,22 @@ class XeroToken extends Model
     public function toOAuth2Token(): AccessToken
     {
         return new AccessToken($this->toArray());
+    }
+
+    public function getAuthEventId()
+    {
+        $token = $this->toOAuth2Token()->getToken();
+        $tokenParts = explode('.', $token);
+
+        if (count($tokenParts) < 3) {
+            return null;
+        }
+
+        $payloadBase64 = str_replace(['-', '_'], ['+', '/'], $tokenParts[1]);
+        $payloadJson = base64_decode($payloadBase64);
+        $payload = json_decode($payloadJson, true);
+
+        return $payload['authentication_event_id'] ?? null;
     }
 
     public static function isValidTokenFormat(AccessTokenInterface $token): bool

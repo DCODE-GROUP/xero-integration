@@ -2,6 +2,7 @@
 
 namespace Dcodegroup\XeroIntegration\Jobs;
 
+use Dcodegroup\XeroIntegration\Events\XeroWebhookProcessingFailedEvent;
 use Dcodegroup\XeroIntegration\XeroApp;
 use Dcodegroup\XeroIntegration\XeroQuery;
 use Illuminate\Bus\Queueable;
@@ -10,6 +11,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\RateLimiter;
+use Throwable;
 
 abstract class AbstractXeroWebhookJob implements ShouldQueue
 {
@@ -48,5 +50,15 @@ abstract class AbstractXeroWebhookJob implements ShouldQueue
         $this->delay = $delay;
 
         return $this;
+    }
+
+    public function failed(Throwable $exception)
+    {
+        if (property_exists($this, 'webhook')) {
+            XeroWebhookProcessingFailedEvent::dispatch($this->webhook, $exception->getMessage());
+        }
+
+        report($exception);
+
     }
 }

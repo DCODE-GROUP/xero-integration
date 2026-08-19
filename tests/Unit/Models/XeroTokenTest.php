@@ -30,6 +30,14 @@ test('can convert xero token to oauth2 token', function () {
         ->and($oauth2Token->getRefreshToken())->toBe($token->refresh_token);
 });
 
+test('can get access token details', function () {
+    $token = XeroToken::factory()->create();
+    $authEventId = $token->getAuthEventId();
+
+    expect($authEventId)->not()->toBeNull()
+        ->toBeUuid();
+});
+
 test('can validate token format', function () {
     $token = XeroToken::factory()->create();
     $oauth2Token = $token->toOAuth2Token();

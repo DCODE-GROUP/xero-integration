@@ -33,7 +33,7 @@ class XeroApp extends Application
         parent::__construct($oauthToken, $tokenModel->current_tenant_id);
 
         $this->config['webhook'] = [
-            'signing_key' => config('xero-integration.webhooks.signing_key'),
+            'signing_key' => config('xero-integration.webhooks.secret'),
         ];
     }
 

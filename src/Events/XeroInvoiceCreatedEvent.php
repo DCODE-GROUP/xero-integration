@@ -2,9 +2,9 @@
 
 namespace Dcodegroup\XeroIntegration\Events;
 
-use Dcodegroup\XeroIntegration\Data\XeroInvoiceData;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use XeroPHP\Models\Accounting\Invoice as XeroInvoice;
 
 class XeroInvoiceCreatedEvent
 {
@@ -13,5 +13,5 @@ class XeroInvoiceCreatedEvent
     /**
      * XeroInvoiceCreatedEvent constructor.
      */
-    public function __construct(public XeroInvoiceData $data) {}
+    public function __construct(public XeroInvoice $xeroInvoice) {}
 }

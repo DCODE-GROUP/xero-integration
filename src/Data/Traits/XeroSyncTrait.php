@@ -13,7 +13,7 @@ trait XeroSyncTrait
 {
     protected ?XeroApp $xeroApp = null;
 
-    public function sendToXero(string $tenant): void
+    public function sendToXero(): void
     {
         $xeroApp = $this->getXeroApp();
 
@@ -23,7 +23,9 @@ trait XeroSyncTrait
 
         $xeroRecord = null;
 
-        if (! empty($this->localModel->xeroRecord->xero_id)) {
+        $localModel = $this->getLocalModel();
+
+        if (! empty($localModel)) {
             $xeroRecord = $this->searchForRecordInXero($queryModel);
 
             if (! empty($xeroRecord) && ! empty($xeroRecord->getGUID())) {
@@ -40,9 +42,11 @@ trait XeroSyncTrait
         $this->saveXeroRecord($xeroRecord, true);
     }
 
-    protected function searchForRecordInXero(XeroQuery $xeroQuery): ?XeroModel
+    protected function searchForRecordInXero(?XeroQuery $query = null): ?XeroModel
     {
-        $query = $xeroQuery;
+        if (empty($query)) {
+            $query = app(XeroApp::class)->load($this->xeroRelationship->getModelClass());
+        }
 
         foreach ($this->searchFields as $index => $field) {
             $value = data_get($this, $field);
@@ -74,7 +78,7 @@ trait XeroSyncTrait
 
     protected function updateXeroRecord(string $xeroId): void
     {
-        $this->localModel->xeroRecord()?->updateOrCreate( // @phpstan-ignore-line method.notFound
+        $this->getLocalModel()?->xeroRecord()?->updateOrCreate( // @phpstan-ignore-line method.notFound
             ['xero_id' => $xeroId],
             ['xero_id' => $xeroId]
         );
@@ -115,14 +119,14 @@ trait XeroSyncTrait
 
         $this->updateXeroRecord($xeroId);
 
-        if ($related && ! empty($this->searchFields)) {
+        if ($related && ! empty($this->relatedFields)) {
             $this->updateRelatedXeroRecords($xeroRecord);
         }
     }
 
     protected function updateRelatedXeroRecords(XeroModel $xeroRecord)
     {
-        foreach ($this->searchFields as $key => $relClass) {
+        foreach ($this->relatedFields as $key => $relClass) {
             $related = data_get($this, $key);
 
             if (empty($related)) {

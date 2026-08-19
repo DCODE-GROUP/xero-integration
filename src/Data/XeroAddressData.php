@@ -3,7 +3,6 @@
 namespace Dcodegroup\XeroIntegration\Data;
 
 use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
-use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\Address as XeroAddress;
 use XeroPHP\Remote\Model as XeroModel;
@@ -26,16 +25,16 @@ class XeroAddressData extends AbstractXeroData
     protected array $relatedFields = [];
 
     public function __construct(
-        public string|Optional|null $AddressType,
-        public string|Optional|null $AddressLine1,
-        public string|Optional|null $AddressLine2,
-        public string|Optional|null $AddressLine3,
-        public string|Optional|null $AddressLine4,
-        public string|Optional|null $City,
-        public string|Optional|null $Region,
-        public string|Optional|null $PostalCode,
-        public string|Optional|null $Country,
-        public string|Optional|null $AttentionTo,
+        public string|Optional|null $AddressType = null,
+        public string|Optional|null $AddressLine1 = null,
+        public string|Optional|null $AddressLine2 = null,
+        public string|Optional|null $AddressLine3 = null,
+        public string|Optional|null $AddressLine4 = null,
+        public string|Optional|null $City = null,
+        public string|Optional|null $Region = null,
+        public string|Optional|null $PostalCode = null,
+        public string|Optional|null $Country = null,
+        public string|Optional|null $AttentionTo = null,
     ) {}
 
     public function toXeroArray(): array
@@ -73,15 +72,5 @@ class XeroAddressData extends AbstractXeroData
             Country: data_get($xeroAddress, 'Country'),
             AttentionTo: data_get($xeroAddress, 'AttentionTo'),
         );
-    }
-
-    public function mapToData(Model $model): array
-    {
-        return [];
-    }
-
-    public function mapToModel(): array
-    {
-        return [];
     }
 }

@@ -2,12 +2,12 @@
 
 namespace Dcodegroup\XeroIntegration\Jobs;
 
-use Dcodegroup\XeroIntegration\Data\XeroCreditNoteData;
 use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
 use Dcodegroup\XeroIntegration\Events\XeroCreditNoteCreatedEvent;
 use Dcodegroup\XeroIntegration\Events\XeroCreditNoteUpdatedEvent;
 use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
 use Dcodegroup\XeroIntegration\Facades\XeroIntegration;
+use XeroPHP\Models\Accounting\CreditNote;
 
 class XeroWebhookCreditNoteProcessJob extends AbstractXeroWebhookEventJob
 {
@@ -18,19 +18,18 @@ class XeroWebhookCreditNoteProcessJob extends AbstractXeroWebhookEventJob
         /** @var \Dcodegroup\XeroIntegration\XeroIntegration $xero */
         $xero = XeroIntegration::make($this->xeroApp, $query);
 
+        /** @var CreditNote|null $model */
         $model = $xero->find($this->event->resource_id);
 
         if (empty($model)) {
-            report(new XeroIntegrationException("Xero Credit Note with ID {$this->event->resource_id} not found."));
+            $this->failed(new XeroIntegrationException("Xero Credit Note with ID {$this->event->resource_id} not found."));
 
             return;
         }
 
-        $data = XeroCreditNoteData::fromXero($model);
-
         match ($this->event->event_type) {
-            'CREATE' => XeroCreditNoteCreatedEvent::dispatch($data),
-            'UPDATE' => XeroCreditNoteUpdatedEvent::dispatch($data),
+            'CREATE' => XeroCreditNoteCreatedEvent::dispatch($model),
+            'UPDATE' => XeroCreditNoteUpdatedEvent::dispatch($model),
             default => null,
         };
     }

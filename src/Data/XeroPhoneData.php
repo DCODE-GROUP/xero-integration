@@ -4,7 +4,6 @@ namespace Dcodegroup\XeroIntegration\Data;
 
 use Dcodegroup\XeroIntegration\Enums\XeroPhoneTypeEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
-use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\Phone as XeroPhone;
 use XeroPHP\Remote\Model as XeroModel;
@@ -29,16 +28,16 @@ class XeroPhoneData extends AbstractXeroData
      * Summary of __construct
      */
     public function __construct(
-        public XeroPhoneTypeEnum|Optional|null $PhoneType,
-        public string|Optional|null $PhoneNumber,
-        public string|Optional|null $PhoneAreaCode,
-        public string|Optional|null $PhoneCountryCode,
+        public XeroPhoneTypeEnum|Optional|null $PhoneType = null,
+        public string|Optional|null $PhoneNumber = null,
+        public string|Optional|null $PhoneAreaCode = null,
+        public string|Optional|null $PhoneCountryCode = null,
     ) {}
 
     public function toXeroArray(): array
     {
         return [
-            'PhoneType' => data_get($this, 'PhoneType'),
+            'PhoneType' => data_get($this, 'PhoneType')?->getXeroValue(),
             'PhoneNumber' => data_get($this, 'PhoneNumber'),
             'PhoneAreaCode' => data_get($this, 'PhoneAreaCode'),
             'PhoneCountryCode' => data_get($this, 'PhoneCountryCode'),
@@ -53,20 +52,10 @@ class XeroPhoneData extends AbstractXeroData
     public static function fromXero(XeroModel|XeroPhone $xeroPhone): self
     {
         return new static(
-            PhoneType: data_get($xeroPhone, 'PhoneType')?->getXeroValue(),
+            PhoneType: XeroPhoneTypeEnum::tryFrom(data_get($xeroPhone, 'PhoneType')),
             PhoneNumber: data_get($xeroPhone, 'PhoneNumber'),
             PhoneAreaCode: data_get($xeroPhone, 'PhoneAreaCode'),
             PhoneCountryCode: data_get($xeroPhone, 'PhoneCountryCode'),
         );
-    }
-
-    public function mapToData(Model $model): array
-    {
-        return [];
-    }
-
-    public function mapToModel(): array
-    {
-        return [];
     }
 }
