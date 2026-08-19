@@ -2,12 +2,12 @@
 
 namespace Dcodegroup\XeroIntegration\Jobs;
 
-use Dcodegroup\XeroIntegration\Data\XeroContactData;
 use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
 use Dcodegroup\XeroIntegration\Events\XeroContactCreatedEvent;
 use Dcodegroup\XeroIntegration\Events\XeroContactUpdatedEvent;
 use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
 use Dcodegroup\XeroIntegration\Facades\XeroIntegration;
+use XeroPHP\Models\Accounting\Contact;
 
 class XeroWebhookContactProcessJob extends AbstractXeroWebhookEventJob
 {
@@ -18,18 +18,18 @@ class XeroWebhookContactProcessJob extends AbstractXeroWebhookEventJob
         /** @var \Dcodegroup\XeroIntegration\XeroIntegration $xero */
         $xero = XeroIntegration::make($this->xeroApp, $query);
 
+        /** @var Contact|null $model */
         $model = $xero->find($this->event->resource_id);
 
         if (empty($model)) {
             $this->failed(new XeroIntegrationException("Xero Contact with ID {$this->event->resource_id} not found."));
+
             return;
         }
 
-        $data = XeroContactData::fromXero($model);
-
         match ($this->event->event_type) {
-            'CREATE' => XeroContactCreatedEvent::dispatch($data),
-            'UPDATE' => XeroContactUpdatedEvent::dispatch($data),
+            'CREATE' => XeroContactCreatedEvent::dispatch($model),
+            'UPDATE' => XeroContactUpdatedEvent::dispatch($model),
             default => null,
         };
     }

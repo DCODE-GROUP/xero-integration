@@ -2,12 +2,12 @@
 
 namespace Dcodegroup\XeroIntegration\Jobs;
 
-use Dcodegroup\XeroIntegration\Data\XeroInvoiceData;
 use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
 use Dcodegroup\XeroIntegration\Events\XeroInvoiceCreatedEvent;
 use Dcodegroup\XeroIntegration\Events\XeroInvoiceUpdatedEvent;
 use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
 use Dcodegroup\XeroIntegration\Facades\XeroIntegration;
+use XeroPHP\Models\Accounting\Invoice;
 
 class XeroWebhookInvoiceProcessJob extends AbstractXeroWebhookEventJob
 {
@@ -18,18 +18,18 @@ class XeroWebhookInvoiceProcessJob extends AbstractXeroWebhookEventJob
         /** @var \Dcodegroup\XeroIntegration\XeroIntegration $xero */
         $xero = XeroIntegration::make($this->xeroApp, $query);
 
+        /** @var Invoice|null $model */
         $model = $xero->find($this->event->resource_id);
 
         if (empty($model)) {
             $this->failed(new XeroIntegrationException("Xero Invoice with ID {$this->event->resource_id} not found."));
+
             return;
         }
 
-        $data = XeroInvoiceData::fromXero($model);
-
         match ($this->event->event_type) {
-            'CREATE' => XeroInvoiceCreatedEvent::dispatch($data),
-            'UPDATE' => XeroInvoiceUpdatedEvent::dispatch($data),
+            'CREATE' => XeroInvoiceCreatedEvent::dispatch($model),
+            'UPDATE' => XeroInvoiceUpdatedEvent::dispatch($model),
             default => null,
         };
     }
