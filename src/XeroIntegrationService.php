@@ -1,10 +1,10 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration;
+namespace Dcodegroup\XeroIntegration;
 
 use Calcinai\OAuth2\Client\Provider\Xero;
-use DcodeGroup\XeroIntegration\Exceptions\UnauthorizedXero;
-use DcodeGroup\XeroIntegration\Models\XeroToken;
+use Dcodegroup\XeroIntegration\Exceptions\UnauthorizedXero;
+use Dcodegroup\XeroIntegration\Models\XeroToken;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;

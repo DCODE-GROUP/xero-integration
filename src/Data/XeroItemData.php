@@ -1,7 +1,9 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Data;
+namespace Dcodegroup\XeroIntegration\Data;
 
+use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\LineItem;
 use XeroPHP\Remote\Model as XeroModel;
@@ -9,9 +11,9 @@ use XeroPHP\Remote\Model as XeroModel;
 /**
  * @phpstan-consistent-constructor
  */
-abstract class XeroItemData extends AbstractXeroData
+class XeroItemData extends AbstractXeroData
 {
-    protected string $xeroRelationship = 'line-item';
+    protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::ITEM;
 
     protected array $searchFields = [
         'Description',
@@ -66,7 +68,7 @@ abstract class XeroItemData extends AbstractXeroData
      *
      * @param  LineItem  $xeroLineItem
      */
-    protected static function fromXero(XeroModel|LineItem $xeroLineItem): self
+    public static function fromXero(XeroModel|LineItem $xeroLineItem): self
     {
         return new static(
             LineItemID: data_get($xeroLineItem, 'LineItemID'),
@@ -84,5 +86,15 @@ abstract class XeroItemData extends AbstractXeroData
             Tracking: data_get($xeroLineItem, 'Tracking'),
             RepeatingInvoiceID: data_get($xeroLineItem, 'RepeatingInvoiceID'),
         );
+    }
+
+    public function mapToData(Model $model): array
+    {
+        return [];
+    }
+
+    public function mapToModel(): array
+    {
+        return [];
     }
 }

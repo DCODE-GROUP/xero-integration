@@ -1,8 +1,8 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Database\Factories;
+namespace Dcodegroup\XeroIntegration\Database\Factories;
 
-use DcodeGroup\XeroIntegration\Models\XeroToken;
+use Dcodegroup\XeroIntegration\Models\XeroToken;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class XeroTokenFactory extends Factory

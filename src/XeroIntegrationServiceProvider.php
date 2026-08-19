@@ -1,8 +1,9 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration;
+namespace Dcodegroup\XeroIntegration;
 
-use DcodeGroup\XeroIntegration\Commands\MakeXeroDataCommand;
+use Dcodegroup\XeroIntegration\Commands\MakeXeroDataCommand;
+use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -11,6 +12,14 @@ class XeroIntegrationServiceProvider extends PackageServiceProvider
     public function register()
     {
         parent::register();
+
+        $webhookSecret = config('xero-integration.webhooks.secret');
+
+        if (empty($webhookSecret)) {
+            report(new XeroIntegrationException('Xero webhook secret is not configured. Please set the XERO_WEBHOOK_SECRET environment variable.'));
+
+            return;
+        }
 
         $this->app->singleton(XeroApp::class, function () {
             return new XeroApp;
@@ -23,7 +32,12 @@ class XeroIntegrationServiceProvider extends PackageServiceProvider
             ->name('xero-integration')
             ->hasConfigFile()
             ->hasViews()
-            ->hasMigration('create_xero_tokens_table')
+            ->hasMigrations([
+                'create_xero_tokens_table',
+                'create_xero_record_table',
+                'create_xero_webhooks_table',
+                'create_xero_webhook_events_table',
+            ])
             ->hasCommand(MakeXeroDataCommand::class)
             ->hasRoute('xero');
     }

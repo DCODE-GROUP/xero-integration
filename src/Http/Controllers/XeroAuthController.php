@@ -1,8 +1,8 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Http\Controllers;
+namespace Dcodegroup\XeroIntegration\Http\Controllers;
 
-use DcodeGroup\XeroIntegration\Facades\XeroIntegrationService;
+use Dcodegroup\XeroIntegration\Facades\XeroIntegrationService;
 use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\Response;
 

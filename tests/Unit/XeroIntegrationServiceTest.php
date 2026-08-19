@@ -1,11 +1,11 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Tests\Unit;
+namespace Dcodegroup\XeroIntegration\Tests\Unit;
 
 use Calcinai\OAuth2\Client\Provider\Xero;
-use DcodeGroup\XeroIntegration\Exceptions\UnauthorizedXero;
-use DcodeGroup\XeroIntegration\Models\XeroToken;
-use DcodeGroup\XeroIntegration\XeroIntegrationService;
+use Dcodegroup\XeroIntegration\Exceptions\UnauthorizedXero;
+use Dcodegroup\XeroIntegration\Models\XeroToken;
+use Dcodegroup\XeroIntegration\XeroIntegrationService;
 use League\OAuth2\Client\Token\AccessToken;
 use Mockery\MockInterface;
 

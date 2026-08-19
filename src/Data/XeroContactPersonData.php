@@ -1,16 +1,18 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Data;
+namespace Dcodegroup\XeroIntegration\Data;
 
+use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelData\Optional;
 use XeroPHP\Remote\Model as XeroModel;
 
 /**
  * @phpstan-consistent-constructor
  */
-abstract class XeroContactPersonData extends AbstractXeroData
+class XeroContactPersonData extends AbstractXeroData
 {
-    protected string $xeroRelationship = 'contact-person';
+    protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::CONTACT_PERSON;
 
     protected array $searchFields = [
         'EmailAddress',
@@ -40,7 +42,7 @@ abstract class XeroContactPersonData extends AbstractXeroData
      *
      * @param  array  $xeroContactPerson
      */
-    protected static function fromXero(XeroModel|array $xeroContactPerson): self
+    public static function fromXero(XeroModel|array $xeroContactPerson): self
     {
         return new static(
             FirstName: data_get($xeroContactPerson, 'FirstName'),
@@ -48,5 +50,15 @@ abstract class XeroContactPersonData extends AbstractXeroData
             EmailAddress: data_get($xeroContactPerson, 'EmailAddress'),
             IncludeInEmails: data_get($xeroContactPerson, 'IncludeInEmails'),
         );
+    }
+
+    public function mapToData(Model $model): array
+    {
+        return [];
+    }
+
+    public function mapToModel(): array
+    {
+        return [];
     }
 }

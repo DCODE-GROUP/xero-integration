@@ -1,7 +1,7 @@
 <?php
 
-use DcodeGroup\XeroIntegration\Http\Controllers\XeroAuthController;
-use DcodeGroup\XeroIntegration\Http\Controllers\XeroCallbackController;
+use Dcodegroup\XeroIntegration\Http\Controllers\XeroAuthController;
+use Dcodegroup\XeroIntegration\Http\Controllers\XeroCallbackController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {

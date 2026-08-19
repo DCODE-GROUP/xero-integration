@@ -1,6 +1,6 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Exceptions;
+namespace Dcodegroup\XeroIntegration\Exceptions;
 
 use Exception;
 

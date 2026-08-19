@@ -1,8 +1,8 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Data;
+namespace Dcodegroup\XeroIntegration\Data;
 
-use DcodeGroup\XeroIntegration\Data\Contracts\HasXeroData;
+use Dcodegroup\XeroIntegration\Data\Contracts\HasXeroData;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use XeroPHP\Remote\Collection as XeroCollection;
@@ -25,11 +25,11 @@ abstract class AbstractXeroData implements HasXeroData
     }
 
     /**
-     * Create a Collection of Xero Data objects from an array of Xero Entities.
+     * Create a Collection of Xero Data objects from an array or XeroCollection of Xero Entities.
      *
-     * @param  array<Model>  $items
+     * @param  array<XeroModel>|XeroCollection|null  $items
      */
-    public static function toCollection(array $items): ?Collection
+    public static function toCollection(array|XeroCollection|null $items): ?Collection
     {
         if (empty($items)) {
             return null;
@@ -38,7 +38,7 @@ abstract class AbstractXeroData implements HasXeroData
         $collection = collect();
 
         foreach ($items as $item) {
-            $collection->push(self::fromModel($item)); // @phpstan-ignore-line staticMethod.callToAbstract
+            $collection->push(static::fromXero($item));
         }
 
         return $collection;
@@ -66,14 +66,14 @@ abstract class AbstractXeroData implements HasXeroData
 
     protected function syncToLocalModel(): void
     {
-        $this->localModel->update($this->mapToModel());
+        $this->localModel->fill($this->mapToModel())->save();
     }
 
-    abstract protected function toXeroArray(): array;
+    abstract public function toXeroArray(): array;
 
-    abstract protected static function fromXero(XeroModel $xeroObject): self;
+    abstract public static function fromXero(XeroModel $xeroObject): self;
 
-    abstract protected function mapToData(Model $model): array;
+    abstract public function mapToData(Model $model): array;
 
-    abstract protected function mapToModel(): array;
+    abstract public function mapToModel(): array;
 }

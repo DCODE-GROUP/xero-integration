@@ -1,11 +1,13 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Data;
+namespace Dcodegroup\XeroIntegration\Data;
 
-use DcodeGroup\XeroIntegration\Data\Contracts\XeroSyncable;
-use DcodeGroup\XeroIntegration\Data\Traits\XeroSyncTrait;
-use DcodeGroup\XeroIntegration\Enums\XeroPaymentStatusEnum;
-use DcodeGroup\XeroIntegration\Enums\XeroPaymentTypesEnum;
+use Dcodegroup\XeroIntegration\Data\Contracts\XeroSyncable;
+use Dcodegroup\XeroIntegration\Data\Traits\XeroSyncTrait;
+use Dcodegroup\XeroIntegration\Enums\XeroPaymentStatusEnum;
+use Dcodegroup\XeroIntegration\Enums\XeroPaymentTypesEnum;
+use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
@@ -16,11 +18,11 @@ use XeroPHP\Remote\Model as XeroModel;
 /**
  * @phpstan-consistent-constructor
  */
-abstract class XeroPaymentData extends AbstractXeroData implements XeroSyncable
+class XeroPaymentData extends AbstractXeroData implements XeroSyncable
 {
     use XeroSyncTrait;
 
-    protected string $xeroRelationship = 'payment';
+    protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::PAYMENT;
 
     protected array $searchFields = [
         'Reference',
@@ -66,7 +68,7 @@ abstract class XeroPaymentData extends AbstractXeroData implements XeroSyncable
      *
      * @param  XeroPayment  $xeroPayment
      */
-    protected static function fromXero(XeroModel|XeroPayment $xeroPayment): self
+    public static function fromXero(XeroModel|XeroPayment $xeroPayment): self
     {
         return new static(
             Invoice: XeroInvoiceData::fromXero(data_get($xeroPayment, 'Invoice')),
@@ -106,5 +108,15 @@ abstract class XeroPaymentData extends AbstractXeroData implements XeroSyncable
             'PaymentType' => data_get($this, 'PaymentType')?->getXeroValue(),
             'UpdatedDateUTC' => data_get($this, 'UpdatedDateUTC'),
         ];
+    }
+
+    public function mapToData(Model $model): array
+    {
+        return [];
+    }
+
+    public function mapToModel(): array
+    {
+        return [];
     }
 }

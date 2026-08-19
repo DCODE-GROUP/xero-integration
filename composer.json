@@ -1,5 +1,5 @@
 {
-    "name": "dcode-group/xero-integration",
+    "name": "dcodegroup/xero-integration",
     "description": "An opininated Xero integration package for Laravel that allows for fluent quering of Xero records and mapping of Xero Entities",
     "keywords": [
         "Dcode Group",
@@ -25,17 +25,16 @@
     "require": {
         "php": "^8.3",
         "calcinai/xero-php": "^2.8",
-        "illuminate/contracts": "^11.0||^12.0||^13.0",
-        "illuminate/support": "^11.0||^12.0||^13.0",
+        "laravel/framework": "^11.0||^12.0||^13.0",
         "laravel/prompts": "^0.2||^0.3",
         "league/oauth2-client": "^2.9",
         "spatie/laravel-data": "^4.23",
         "spatie/laravel-package-tools": "^1.16"
     },
     "require-dev": {
+        "larastan/larastan": "^3.0",
         "laravel/pint": "^1.14",
         "nunomaduro/collision": "^8.8",
-        "larastan/larastan": "^3.0",
         "orchestra/testbench": "^9.0.0||^10.0.0||^11.0.0",
         "pestphp/pest": "^4.0",
         "pestphp/pest-plugin-arch": "^4.0",
@@ -46,13 +45,13 @@
     },
     "autoload": {
         "psr-4": {
-            "DcodeGroup\\XeroIntegration\\": "src/",
-            "DcodeGroup\\XeroIntegration\\Database\\Factories\\": "database/factories/"
+            "Dcodegroup\\XeroIntegration\\": "src/",
+            "Dcodegroup\\XeroIntegration\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "DcodeGroup\\XeroIntegration\\Tests\\": "tests/",
+            "Dcodegroup\\XeroIntegration\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/",
             "Workbench\\Database\\Factories\\": "workbench/database/factories/",
             "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
@@ -91,10 +90,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "DcodeGroup\\XeroIntegration\\XeroIntegrationServiceProvider"
+                "Dcodegroup\\XeroIntegration\\XeroIntegrationServiceProvider"
             ],
             "aliases": {
-                "XeroIntegration": "DcodeGroup\\XeroIntegration\\Facades\\XeroIntegration"
+                "XeroIntegration": "Dcodegroup\\XeroIntegration\\Facades\\XeroIntegration"
             }
         }
     },

@@ -1,7 +1,9 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Data;
+namespace Dcodegroup\XeroIntegration\Data;
 
+use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\Address as XeroAddress;
 use XeroPHP\Remote\Model as XeroModel;
@@ -9,9 +11,9 @@ use XeroPHP\Remote\Model as XeroModel;
 /**
  * @phpstan-consistent-constructor
  */
-abstract class XeroAddressData extends AbstractXeroData
+class XeroAddressData extends AbstractXeroData
 {
-    protected string $xeroRelationship = 'address';
+    protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::ADDRESS;
 
     protected array $searchFields = [
         'AddressType',
@@ -36,7 +38,7 @@ abstract class XeroAddressData extends AbstractXeroData
         public string|Optional|null $AttentionTo,
     ) {}
 
-    protected function toXeroArray(): array
+    public function toXeroArray(): array
     {
         return [
             'AddressType' => data_get($this, 'AddressType'),
@@ -57,7 +59,7 @@ abstract class XeroAddressData extends AbstractXeroData
      *
      * @param  XeroAddress  $xeroAddress
      */
-    protected static function fromXero(XeroModel|XeroAddress $xeroAddress): self
+    public static function fromXero(XeroModel|XeroAddress $xeroAddress): self
     {
         return new static(
             AddressType: data_get($xeroAddress, 'AddressType'),
@@ -71,5 +73,15 @@ abstract class XeroAddressData extends AbstractXeroData
             Country: data_get($xeroAddress, 'Country'),
             AttentionTo: data_get($xeroAddress, 'AttentionTo'),
         );
+    }
+
+    public function mapToData(Model $model): array
+    {
+        return [];
+    }
+
+    public function mapToModel(): array
+    {
+        return [];
     }
 }

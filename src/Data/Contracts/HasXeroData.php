@@ -1,6 +1,6 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Data\Contracts;
+namespace Dcodegroup\XeroIntegration\Data\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -10,7 +10,7 @@ interface HasXeroData
 {
     public function fromModel(Model $model): self;
 
-    public static function toCollection(array $items): ?Collection;
+    public static function toCollection(array|XeroCollection|null $items): ?Collection;
 
     public static function toXeroCollection(Collection $items): ?XeroCollection;
 }

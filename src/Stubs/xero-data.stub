@@ -3,8 +3,8 @@
 namespace {{ namespace }};
 
 use App\Models\{{ model }};
-use DcodeGroup\XeroIntegration\Data\{{ xero-data }} as Package{{ xero-data }};
-use DcodeGroup\XeroIntegration\Data\Contracts\XeroSyncable;
+use Dcodegroup\XeroIntegration\Data\{{ xero-data }} as Package{{ xero-data }};
+use Dcodegroup\XeroIntegration\Data\Contracts\XeroSyncable;
 use Illuminate\Database\Eloquent\Model;
 
 class {{ class }} extends Package{{ xero-data }}

@@ -1,8 +1,10 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Data;
+namespace Dcodegroup\XeroIntegration\Data;
 
-use DcodeGroup\XeroIntegration\Enums\XeroPhoneTypeEnum;
+use Dcodegroup\XeroIntegration\Enums\XeroPhoneTypeEnum;
+use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\Phone as XeroPhone;
 use XeroPHP\Remote\Model as XeroModel;
@@ -10,9 +12,9 @@ use XeroPHP\Remote\Model as XeroModel;
 /**
  * @phpstan-consistent-constructor
  */
-abstract class XeroPhoneData extends AbstractXeroData
+class XeroPhoneData extends AbstractXeroData
 {
-    protected string $xeroRelationship = 'phone';
+    protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::PHONE;
 
     protected array $searchFields = [
         'PhoneType',
@@ -48,7 +50,7 @@ abstract class XeroPhoneData extends AbstractXeroData
      *
      * @param  XeroPhone  $xeroPhone
      */
-    protected static function fromXero(XeroModel|XeroPhone $xeroPhone): self
+    public static function fromXero(XeroModel|XeroPhone $xeroPhone): self
     {
         return new static(
             PhoneType: data_get($xeroPhone, 'PhoneType')?->getXeroValue(),
@@ -56,5 +58,15 @@ abstract class XeroPhoneData extends AbstractXeroData
             PhoneAreaCode: data_get($xeroPhone, 'PhoneAreaCode'),
             PhoneCountryCode: data_get($xeroPhone, 'PhoneCountryCode'),
         );
+    }
+
+    public function mapToData(Model $model): array
+    {
+        return [];
+    }
+
+    public function mapToModel(): array
+    {
+        return [];
     }
 }

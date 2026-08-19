@@ -1,11 +1,13 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Data;
+namespace Dcodegroup\XeroIntegration\Data;
 
-use DcodeGroup\XeroIntegration\Data\Traits\XeroSyncTrait;
-use DcodeGroup\XeroIntegration\Enums\XeroCreditNoteTypeEnum;
-use DcodeGroup\XeroIntegration\Enums\XeroInvoiceStatusEnum;
-use DcodeGroup\XeroIntegration\Enums\XeroLineAmountTypeEnum;
+use Dcodegroup\XeroIntegration\Data\Traits\XeroSyncTrait;
+use Dcodegroup\XeroIntegration\Enums\XeroCreditNoteTypeEnum;
+use Dcodegroup\XeroIntegration\Enums\XeroInvoiceStatusEnum;
+use Dcodegroup\XeroIntegration\Enums\XeroLineAmountTypeEnum;
+use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Attributes\WithCast;
@@ -17,11 +19,11 @@ use XeroPHP\Remote\Model as XeroModel;
 /**
  * @phpstan-consistent-constructor
  */
-abstract class XeroCreditNoteData extends AbstractXeroData
+class XeroCreditNoteData extends AbstractXeroData
 {
     use XeroSyncTrait;
 
-    protected string $xeroRelationship = 'creditnote';
+    protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::CREDIT_NOTE;
 
     protected array $searchFields = [
         'CreditNoteID',
@@ -63,10 +65,8 @@ abstract class XeroCreditNoteData extends AbstractXeroData
 
     /**
      * Create from Xero Model
-     *
-     * @param  XeroCreditNote  $xeroCreditNote
      */
-    protected static function fromXero(XeroModel|XeroCreditNote $xeroCreditNote): self
+    public static function fromXero(XeroModel|XeroCreditNote $xeroCreditNote): self
     {
         return new static(
             CreditNoteID: data_get($xeroCreditNote, 'CreditNoteID'),
@@ -116,5 +116,15 @@ abstract class XeroCreditNoteData extends AbstractXeroData
             'FullyPaidOnDate' => data_get($this, 'FullyPaidOnDate'),
             'UpdatedDateUTC' => data_get($this, 'UpdatedDateUTC'),
         ];
+    }
+
+    public function mapToData(Model $model): array
+    {
+        return [];
+    }
+
+    public function mapToModel(): array
+    {
+        return [];
     }
 }

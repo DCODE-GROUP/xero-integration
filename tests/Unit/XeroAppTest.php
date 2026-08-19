@@ -1,12 +1,12 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Tests\Unit;
+namespace Dcodegroup\XeroIntegration\Tests\Unit;
 
-use DcodeGroup\XeroIntegration\Exceptions\XeroIntegrationException;
-use DcodeGroup\XeroIntegration\Models\XeroToken;
-use DcodeGroup\XeroIntegration\XeroApp;
-use DcodeGroup\XeroIntegration\XeroIntegration;
-use DcodeGroup\XeroIntegration\XeroQuery;
+use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
+use Dcodegroup\XeroIntegration\Models\XeroToken;
+use Dcodegroup\XeroIntegration\XeroApp;
+use Dcodegroup\XeroIntegration\XeroIntegration;
+use Dcodegroup\XeroIntegration\XeroQuery;
 
 test('can load relationship model', function () {
     XeroToken::factory()->create();
@@ -54,19 +54,6 @@ test('can call method on app via call method', function () {
 test('can throw exception when no token found', function () {
     expect(fn () => new XeroApp)
         ->toThrow(XeroIntegrationException::class, 'No Xero token found');
-});
-
-test('can get available relationships', function () {
-    XeroToken::factory()->create();
-
-    $app = new XeroApp;
-
-    $reflection = new \ReflectionMethod($app, 'getAvailableRelationships');
-    $reflection->setAccessible(true);
-    $relationships = $reflection->invoke($app);
-
-    expect($relationships)->toHaveCount(3)
-        ->and($relationships->toArray())->toEqual(['contacts', 'invoices', 'quotes']);
 });
 
 test('__call throws exception for invalid relationship', function () {

@@ -1,6 +1,6 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Commands;
+namespace Dcodegroup\XeroIntegration\Commands;
 
 use Illuminate\Console\Concerns\ConfiguresPrompts;
 use Illuminate\Console\Concerns\CreatesMatchingTest;

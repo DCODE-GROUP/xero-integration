@@ -1,10 +1,10 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Tests\Unit;
+namespace Dcodegroup\XeroIntegration\Tests\Unit;
 
-use DcodeGroup\XeroIntegration\Models\XeroToken;
-use DcodeGroup\XeroIntegration\XeroApp;
-use DcodeGroup\XeroIntegration\XeroIntegration;
+use Dcodegroup\XeroIntegration\Models\XeroToken;
+use Dcodegroup\XeroIntegration\XeroApp;
+use Dcodegroup\XeroIntegration\XeroIntegration;
 
 test('xero integration returns self when calling query builder methods', function () {
     XeroToken::factory()->create();

@@ -1,9 +1,9 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration\Http\Controllers;
+namespace Dcodegroup\XeroIntegration\Http\Controllers;
 
-use DcodeGroup\XeroIntegration\Exceptions\UnauthorizedXero;
-use DcodeGroup\XeroIntegration\Facades\XeroIntegrationService;
+use Dcodegroup\XeroIntegration\Exceptions\UnauthorizedXero;
+use Dcodegroup\XeroIntegration\Facades\XeroIntegrationService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Validator;

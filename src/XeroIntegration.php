@@ -1,8 +1,8 @@
 <?php
 
-namespace DcodeGroup\XeroIntegration;
+namespace Dcodegroup\XeroIntegration;
 
-use DcodeGroup\XeroIntegration\Exceptions\XeroIntegrationException;
+use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
 use Illuminate\Support\Collection;
 use XeroPHP\Remote\Model;
 
@@ -13,7 +13,7 @@ class XeroIntegration
         protected XeroQuery $query
     ) {}
 
-    public function make(XeroApp $app, XeroQuery $query): self
+    public static function make(XeroApp $app, XeroQuery $query): self
     {
         return new self($app, $query);
     }
