@@ -8,22 +8,10 @@ use Dcodegroup\XeroIntegration\Events\XeroContactCreatedEvent;
 use Dcodegroup\XeroIntegration\Events\XeroContactUpdatedEvent;
 use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
 use Dcodegroup\XeroIntegration\Facades\XeroIntegration;
-use Dcodegroup\XeroIntegration\Models\XeroWebhookEvent;
-use Illuminate\Foundation\Bus\PendingDispatch;
-use XeroPHP\Webhook\Event;
 
-/**
- * @method static PendingDispatch dispatch(Event $event)
- * @method static void dispatch(Event $event)
- */
-class XeroWebhookContactProcessJob extends AbstractXeroWebhookJob
+class XeroWebhookContactProcessJob extends AbstractXeroWebhookEventJob
 {
-    public function __construct(protected XeroWebhookEvent $event)
-    {
-        parent::__construct();
-    }
-
-    public function handle(): void
+    public function handleEvent(): void
     {
         $query = $this->xeroApp->load(XeroRelationshipsEnum::CONTACT->getModelClass());
 

@@ -60,4 +60,25 @@ class XeroWebhookEvent extends Model
     {
         return $this->belongsTo(XeroWebhook::class);
     }
+
+    public function setStatus(XeroWebhookStatusEnum $newStatus)
+    {
+        $this->update(['status' => $newStatus->value]);
+        $this->loadMissing('xeroWebhook');
+        switch ($newStatus) {
+            case XeroWebhookStatusEnum::FAILURE:
+                $this->xeroWebhook->update(['status' => $newStatus->value]);
+                break;
+            case XeroWebhookStatusEnum::SUCCESSFUL:
+                if ($this->xeroWebhook->events()->where('status', $newStatus->value)->count() == $this->xeroWebhook->events()->count()) {
+                    $this->xeroWebhook->update(['status' => $newStatus->value]);
+                }
+                break;
+            case XeroWebhookStatusEnum::PROCESSING:
+                if ($this->xeroWebhook->status == XeroWebhookStatusEnum::PENDING) {
+                    $this->xeroWebhook->update(['status' => $newStatus->value]);
+                }
+                break;
+        }
+    }
 }

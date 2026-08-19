@@ -8,21 +8,10 @@ use Dcodegroup\XeroIntegration\Events\XeroCreditNoteCreatedEvent;
 use Dcodegroup\XeroIntegration\Events\XeroCreditNoteUpdatedEvent;
 use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
 use Dcodegroup\XeroIntegration\Facades\XeroIntegration;
-use Dcodegroup\XeroIntegration\Models\XeroWebhookEvent;
-use XeroPHP\Webhook\Event;
 
-/**
- * @method static \Illuminate\Foundation\Bus\PendingDispatch dispatch(Event $event)
- * @method static void dispatch(Event $event)
- */
-class XeroWebhookCreditNoteProcessJob extends AbstractXeroWebhookJob
+class XeroWebhookCreditNoteProcessJob extends AbstractXeroWebhookEventJob
 {
-    public function __construct(protected XeroWebhookEvent $event)
-    {
-        parent::__construct();
-    }
-
-    public function handle(): void
+    public function handleEvent(): void
     {
         $query = $this->xeroApp->load(XeroRelationshipsEnum::CREDIT_NOTE->getModelClass());
 
