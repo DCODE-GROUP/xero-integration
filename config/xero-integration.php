@@ -9,6 +9,7 @@ return [
         'enabled' => env('XERO_TENANCY_ENABLED', false),
         'model' => env('XERO_TENANCY_MODEL'),
         'tenant_resolver' => env('XERO_TENANCY_TENANT_RESOLVER'),
+        'slug_name' => env('XERO_TENANCY_SLUG'),
         'session_name' => env('XERO_TENANCY_SESSION_NAME', 'xero_current_tenant_id'),
     ],
 
