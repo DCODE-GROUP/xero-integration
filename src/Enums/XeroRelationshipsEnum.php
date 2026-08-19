@@ -14,6 +14,7 @@ use XeroPHP\Models\Accounting\Phone;
 use XeroPHP\Models\Accounting\Prepayment;
 use XeroPHP\Models\Accounting\Quote;
 use XeroPHP\Models\PayrollAU\Timesheet as TimesheetAU;
+use XeroPHP\Models\PayrollAU\Timesheet\TimesheetLine as TimesheetLineAU;
 
 enum XeroRelationshipsEnum: string
 {
@@ -29,6 +30,7 @@ enum XeroRelationshipsEnum: string
     case PREPAYMENT = 'prepayment';
     case QUOTE = 'quote';
     case TIMESHEET_AU = 'timesheet_au';
+    case TIMESHEET_LINE_AU = 'timesheet_line_au';
 
     public function getModelClass(): string
     {
@@ -44,7 +46,8 @@ enum XeroRelationshipsEnum: string
             self::PHONE => Phone::class,
             self::PREPAYMENT => Prepayment::class,
             self::QUOTE => Quote::class,
-            self::TIMESHEET_AU => TimesheetAU::class
+            self::TIMESHEET_AU => TimesheetAU::class,
+            self::TIMESHEET_LINE_AU => TimesheetLineAU::class,
         };
     }
 

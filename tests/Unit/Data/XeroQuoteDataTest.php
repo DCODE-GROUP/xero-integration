@@ -3,8 +3,8 @@
 namespace Dcodegroup\XeroIntegration\Tests\Unit\Data;
 
 use Carbon\Carbon;
-use Dcodegroup\XeroIntegration\Data\XeroItemData;
-use Dcodegroup\XeroIntegration\Data\XeroQuoteData;
+use Dcodegroup\XeroIntegration\Data\Accounting\XeroItemData;
+use Dcodegroup\XeroIntegration\Data\Accounting\XeroQuoteData;
 use Dcodegroup\XeroIntegration\Enums\XeroQuoteStatusEnum;
 
 test('can instantiate XeroQuoteData with required fields', function () {

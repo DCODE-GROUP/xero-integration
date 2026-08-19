@@ -3,8 +3,8 @@
 namespace Dcodegroup\XeroIntegration\Tests\Unit\Data;
 
 use Carbon\Carbon;
-use Dcodegroup\XeroIntegration\Data\XeroContactData;
-use Dcodegroup\XeroIntegration\Data\XeroPrepaymentData;
+use Dcodegroup\XeroIntegration\Data\Accounting\XeroContactData;
+use Dcodegroup\XeroIntegration\Data\Accounting\XeroPrepaymentData;
 use Dcodegroup\XeroIntegration\Enums\XeroContactStatusEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroPrepaymentStatusEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroPrepaymentTypeEnum;

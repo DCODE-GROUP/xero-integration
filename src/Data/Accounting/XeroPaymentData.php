@@ -4,10 +4,6 @@ namespace Dcodegroup\XeroIntegration\Data\Accounting;
 
 use Carbon\Carbon;
 use Dcodegroup\XeroIntegration\Data\AbstractXeroData;
-use Dcodegroup\XeroIntegration\Data\Accounting\XeroCreditNoteData;
-use Dcodegroup\XeroIntegration\Data\Accounting\XeroInvoiceData;
-use Dcodegroup\XeroIntegration\Data\Accounting\XeroOverpaymentData;
-use Dcodegroup\XeroIntegration\Data\Accounting\XeroPrepaymentData;
 use Dcodegroup\XeroIntegration\Data\Contracts\XeroSyncable;
 use Dcodegroup\XeroIntegration\Data\Traits\XeroSyncTrait;
 use Dcodegroup\XeroIntegration\Enums\XeroPaymentStatusEnum;

@@ -3,7 +3,7 @@
 namespace Dcodegroup\XeroIntegration\Tests\Unit\Data;
 
 use Carbon\Carbon;
-use Dcodegroup\XeroIntegration\Data\XeroPaymentData;
+use Dcodegroup\XeroIntegration\Data\Accounting\XeroPaymentData;
 use Dcodegroup\XeroIntegration\Enums\XeroPaymentStatusEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroPaymentTypesEnum;
 

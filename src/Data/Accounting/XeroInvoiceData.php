@@ -52,8 +52,8 @@ class XeroInvoiceData extends AbstractXeroData
         public float $Total,
         public float $AmountDue,
         public float $AmountPaid,
-        public ?Carbon $UpdatedDateUTC,
         public XeroInvoiceTypeEnum $Type,
+        public Carbon|Optional|null $UpdatedDateUTC = null,
         public string|Optional|null $InvoiceID = null,
         public float|Optional|null $TotalDiscount = null,
         /** @var Collection<int,XeroPaymentData>|null */

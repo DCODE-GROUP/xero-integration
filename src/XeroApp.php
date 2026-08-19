@@ -22,6 +22,7 @@ use XeroPHP\Application;
  * @method XeroIntegration phone()
  * @method XeroIntegration prepayment()
  * @method XeroIntegration quote()
+ * @method XeroIntegration timesheet_au()
  */
 class XeroApp extends Application
 {

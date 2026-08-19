@@ -2,7 +2,7 @@
 
 namespace Dcodegroup\XeroIntegration\Tests\Unit\Data;
 
-use Dcodegroup\XeroIntegration\Data\XeroPhoneData;
+use Dcodegroup\XeroIntegration\Data\Accounting\XeroPhoneData;
 use Dcodegroup\XeroIntegration\Enums\XeroPhoneTypeEnum;
 use XeroPHP\Models\Accounting\Phone;
 
