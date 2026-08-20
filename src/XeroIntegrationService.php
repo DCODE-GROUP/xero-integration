@@ -37,7 +37,20 @@ class XeroIntegrationService
                 throw new UnauthorizedXero('Token is invalid or the provided token has invalid format!');
             }
 
-            XeroToken::create(array_merge($oauth2Token->jsonSerialize(), ['current_tenant_id' => $token->current_tenant_id]));
+            $creationData = array_merge($oauth2Token->jsonSerialize(), [
+                'current_tenant_id' => $token->current_tenant_id
+            ]);
+            if (config('xero-integration.tenancy.enabled')) {
+                $data['tenant_id'] = null;
+                $sessionName = config('xero-integration.tenancy.session_name');
+                if (! empty($sessionName) && Session::has($sessionName)) {
+                    $tenantId = Session::get($sessionName);
+                    $data['tenant_id'] = $tenantId;
+                }
+            }
+
+
+            XeroToken::create($creationData);
         }
 
         return $oauth2Token;
@@ -75,6 +88,8 @@ class XeroIntegrationService
         if (count($xeroTenants) === 1) {
             $token->update([
                 'current_tenant_id' => data_get($xeroTenants[0], 'tenantId'),
+                'xero_tenant_type' => data_get($xeroTenants[0], 'tenantType'),
+                'xero_tenant_name' => data_get($xeroTenants[0], 'tenantName'),
             ]);
 
             return true;
@@ -101,7 +116,7 @@ class XeroIntegrationService
         return resolve(Xero::class)->getTenants($authToken);
     }
 
-    public function changeXeroTenant(string $tenantId): ?XeroToken
+    public function changeXeroTenant(XeroTenant $tenant): ?XeroToken
     {
         $token = $this->getTokenModel();
 
@@ -110,7 +125,9 @@ class XeroIntegrationService
         }
 
         $token->update([
-            'current_tenant_id' => $tenantId,
+            'current_tenant_id' => $tenant->tenantId,
+            'xero_tenant_type' =>  $tenant->tenantType,
+            'xero_tenant_name' =>  $tenant->tenantName,
         ]);
 
         return $token;

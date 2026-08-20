@@ -3,11 +3,13 @@
 namespace Dcodegroup\XeroIntegration\Data\Traits;
 
 use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
+use Dcodegroup\XeroIntegration\Exceptions\XeroValidationException;
 use Dcodegroup\XeroIntegration\XeroApp;
 use Dcodegroup\XeroIntegration\XeroQuery;
 use Exception;
 use Illuminate\Support\Collection;
 use XeroPHP\Remote\Model as XeroModel;
+use Illuminate\Support\Str;
 
 trait XeroSyncTrait
 {
@@ -87,17 +89,24 @@ trait XeroSyncTrait
     protected function buildXeroRecord(XeroModel $xeroRecord): XeroModel
     {
         $xeroArray = $this->toXeroArray();
+        $remoteData = $xeroRecord->toStringArray();
 
-        $xeroRecord->fromStringArray($xeroArray);
+        $props = $xeroRecord->getProperties();
+        $dirtyField = [];
+        foreach ($xeroArray as $field => $value) {
+            if (data_get($remoteData, $field) !== $value) {
+                $remoteData[$field] = $value;
+                $dirtyField[] = $field;
+            }
+        }
+        $xeroRecord->fromStringArray($remoteData, true);
 
         if (! $xeroRecord->validate()) {
             throw new XeroIntegrationException('Xero Record is not valid');
         }
 
-        foreach ($xeroArray as $field => $value) {
-            if (is_null($value)) {
-                $xeroRecord->setDirty($field);
-            }
+        foreach ($dirtyField as $field) {
+            $xeroRecord->setDirty($field);
         }
 
         return $xeroRecord;
@@ -108,7 +117,13 @@ trait XeroSyncTrait
         try {
             $this->xeroApp->save($xeroRecord, true);
         } catch (Exception $e) {
-            throw new XeroIntegrationException('Failed to save Xero Record', 0, $e);
+            $message = Str::of($e->getMessage());
+            if ($message->startsWith("A validation exception occurred")) {
+                $validationMessage = $message->after("(")->beforeLast(")");
+                throw new XeroValidationException($validationMessage, 0, $e);
+            } else {
+                throw new XeroIntegrationException('Failed to save Xero Record', 0, $e);
+            }
         }
 
         $xeroId = $xeroRecord->getGUID();
