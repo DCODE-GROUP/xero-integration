@@ -6,7 +6,7 @@ use Dcodegroup\XeroIntegration\Data\AbstractXeroData;
 use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Optional;
-use XeroPHP\Models\Accounting\Address as XeroAddress;
+use XeroPHP\Models\Accounting\TaxRate as XeroTaxRate;
 use XeroPHP\Remote\Model as XeroModel;
 
 /**
@@ -61,23 +61,23 @@ class XeroTaxRateData extends AbstractXeroData
     /**
      * Create from Xero Model
      *
-     * @param  XeroAddress  $xeroAddress
+     * @param  XeroTaxRate  $xeroTaxRate
      */
-    public static function fromXero(XeroModel|XeroAddress $xeroAddress): self
+    public static function fromXero(XeroModel|XeroTaxRate $xeroTaxRate): self
     {
         return new static(
-            Name: data_get($xeroAddress, 'Name'),
-            TaxType: data_get($xeroAddress, 'TaxType'),
-            TaxComponents: data_get($xeroAddress, 'TaxComponents'),
-            Status: data_get($xeroAddress, 'Status'),
-            ReportTaxTypes: data_get($xeroAddress, 'ReportTaxTypes'),
-            CanApplyToAssets: data_get($xeroAddress, 'CanApplyToAssets'),
-            CanApplyToEquity: data_get($xeroAddress, 'CanApplyToEquity'),
-            CanApplyToExpenses: data_get($xeroAddress, 'CanApplyToExpenses'),
-            CanApplyToLiabilities: data_get($xeroAddress, 'CanApplyToLiabilities'),
-            CanApplyToRevenue: data_get($xeroAddress, 'CanApplyToRevenue'),
-            DisplayTaxRate: data_get($this, 'DisplayTaxRate'),
-            EffectiveRate: data_get($this, 'EffectiveRate')
+            Name: data_get($xeroTaxRate, 'Name'),
+            TaxType: data_get($xeroTaxRate, 'TaxType'),
+            TaxComponents: data_get($xeroTaxRate, 'TaxComponents'),
+            Status: data_get($xeroTaxRate, 'Status'),
+            ReportTaxTypes: data_get($xeroTaxRate, 'ReportTaxTypes'),
+            CanApplyToAssets: data_get($xeroTaxRate, 'CanApplyToAssets'),
+            CanApplyToEquity: data_get($xeroTaxRate, 'CanApplyToEquity'),
+            CanApplyToExpenses: data_get($xeroTaxRate, 'CanApplyToExpenses'),
+            CanApplyToLiabilities: data_get($xeroTaxRate, 'CanApplyToLiabilities'),
+            CanApplyToRevenue: data_get($xeroTaxRate, 'CanApplyToRevenue'),
+            DisplayTaxRate: data_get($xeroTaxRate, 'DisplayTaxRate'),
+            EffectiveRate: data_get($xeroTaxRate, 'EffectiveRate')
         );
     }
 }
