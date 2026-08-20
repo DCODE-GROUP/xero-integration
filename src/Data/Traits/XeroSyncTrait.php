@@ -8,8 +8,8 @@ use Dcodegroup\XeroIntegration\XeroApp;
 use Dcodegroup\XeroIntegration\XeroQuery;
 use Exception;
 use Illuminate\Support\Collection;
-use XeroPHP\Remote\Model as XeroModel;
 use Illuminate\Support\Str;
+use XeroPHP\Remote\Model as XeroModel;
 
 trait XeroSyncTrait
 {
@@ -118,8 +118,8 @@ trait XeroSyncTrait
             $this->xeroApp->save($xeroRecord, true);
         } catch (Exception $e) {
             $message = Str::of($e->getMessage());
-            if ($message->startsWith("A validation exception occurred")) {
-                $validationMessage = $message->after("(")->beforeLast(")");
+            if ($message->startsWith('A validation exception occurred')) {
+                $validationMessage = $message->after('(')->beforeLast(')');
                 throw new XeroValidationException($validationMessage, 0, $e);
             } else {
                 throw new XeroIntegrationException('Failed to save Xero Record', 0, $e);

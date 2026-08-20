@@ -38,7 +38,7 @@ class XeroIntegrationService
             }
 
             $creationData = array_merge($oauth2Token->jsonSerialize(), [
-                'current_tenant_id' => $token->current_tenant_id
+                'current_tenant_id' => $token->current_tenant_id,
             ]);
             if (config('xero-integration.tenancy.enabled')) {
                 $data['tenant_id'] = null;
@@ -48,7 +48,6 @@ class XeroIntegrationService
                     $data['tenant_id'] = $tenantId;
                 }
             }
-
 
             XeroToken::create($creationData);
         }
@@ -126,8 +125,8 @@ class XeroIntegrationService
 
         $token->update([
             'current_tenant_id' => $tenant->tenantId,
-            'xero_tenant_type' =>  $tenant->tenantType,
-            'xero_tenant_name' =>  $tenant->tenantName,
+            'xero_tenant_type' => $tenant->tenantType,
+            'xero_tenant_name' => $tenant->tenantName,
         ]);
 
         return $token;
