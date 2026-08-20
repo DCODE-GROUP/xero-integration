@@ -17,12 +17,7 @@ Route::group([
         ->name('callback');
 });
 
-$webhookPath = '/xero';
-if (config('xero-integration.tenancy.enabled') && ! empty(config('xero-integration.tenancy.slug_name'))) {
-    $webhookPath .= '/'.config('xero-integration.tenancy.slug_name');
-}
-
-Route::post($webhookPath, XeroWebhookController::class)
+Route::post('/xero', XeroWebhookController::class)
     ->name('webhooks.xero')
     ->prefix(config('xero-integration.webhooks.prefix', 'webhooks'))
     ->middleware(config('xero-integration.webhooks.middleware'));
