@@ -5,6 +5,10 @@ use Dcodegroup\XeroIntegration\Http\Controllers\XeroCallbackController;
 
 // config for DcodeGroup/XeroIntegration
 return [
+    'tax_rates' => [
+        'accounts_payable' => 'INPUT', // Default, system rates in Xero
+        'accounts_receivable' => 'OUTPUT',
+    ],
     'tenancy' => [
         'enabled' => env('XERO_TENANCY_ENABLED', false),
         'model' => env('XERO_TENANCY_MODEL'),

@@ -32,6 +32,7 @@
         "spatie/laravel-package-tools": "^1.16"
     },
     "require-dev": {
+        "dcode-group/composer-git-hooks": "dev-master",
         "larastan/larastan": "^3.0",
         "laravel/boost": "^2.5",
         "laravel/pint": "^1.14",
@@ -42,8 +43,15 @@
         "pestphp/pest-plugin-laravel": "^4.0",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan-deprecation-rules": "^2.0",
-        "phpstan/phpstan-phpunit": "^2.0"
+        "phpstan/phpstan-phpunit": "^2.0",
+        "stevebauman/autodoc-facades": "^1.3"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/DCODE-GROUP/composer-git-hooks.git"
+        }
+      ],
     "autoload": {
         "psr-4": {
             "Dcodegroup\\XeroIntegration\\": "src/",
@@ -97,6 +105,37 @@
             "aliases": {
                 "XeroIntegration": "Dcodegroup\\XeroIntegration\\Facades\\XeroIntegration"
             }
+        },
+        "hooks": {
+            "config": {
+                "stop-on-failure": [
+                    "pre-push"
+                ]
+            },
+            "pre-commit": [
+                "echo '\n\n\\033[0;36mcghooks - Pre-Commit: \\033[0m \n'",
+                "echo 'Committing as: \\033[0;32m'$(git config user.name) '('$(git config user.email)') \\033[0m\n'",
+                "echo '\n\\033[0;35mRunning Facade Autodoc: \\033[0m\n'",
+                "echo '    - php artisan autodoc:facades app/Facades'",
+                "php artisan autodoc:facades app/Facades",
+                "echo '\n'",
+                "echo '\n\\033[0;35mRunning Pint (PHP CS Fixer): \\033[0m\n'",
+                "vendor/bin/pint",
+                "echo '\n\\033[0;35mRunning ESLint: \\033[0m\n'",
+                "echo '    - pnpm run lint:fix'",
+                "echo '\n'"
+            ],
+            "pre-push": [
+                "echo '\n\n\\033[0;36mcghooks - Pre-Push: \\033[0m \n'",
+                "echo '\n\\033[0;35mRunning PHPStan: \\033[0m\n'",
+                "vendor/bin/phpstan --error-format=github",
+                "echo '\n\\033[0;35mRunning Architecture Tests: \\033[0m\n'",
+                "vendor/bin/pest --testsuite Architecture --colors -c phpunit.xml.dist",
+                "echo '\n'"
+            ],
+            "post-merge": [
+                ".dev/post-merge"
+            ]     
         }
     },
     "minimum-stability": "dev",

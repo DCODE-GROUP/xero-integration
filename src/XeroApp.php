@@ -26,6 +26,7 @@ use XeroPHP\Application;
  * @method XeroIntegration timesheet_line_au()
  * @method XeroIntegration leave_application_au()
  * @method XeroIntegration leave_period_au()
+ * @method XeroIntegration tax_rates()
  */
 class XeroApp extends Application
 {
