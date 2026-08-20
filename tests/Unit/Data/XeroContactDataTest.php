@@ -3,7 +3,7 @@
 namespace Dcodegroup\XeroIntegration\Tests\Unit\Data;
 
 use Carbon\Carbon;
-use Dcodegroup\XeroIntegration\Data\XeroContactData;
+use Dcodegroup\XeroIntegration\Data\Accounting\XeroContactData;
 use Dcodegroup\XeroIntegration\Enums\XeroContactStatusEnum;
 use Mockery;
 use XeroPHP\Models\Accounting\Contact;

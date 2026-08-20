@@ -2,7 +2,7 @@
 
 namespace Dcodegroup\XeroIntegration\Tests\Unit\Data;
 
-use Dcodegroup\XeroIntegration\Data\XeroContactPersonData;
+use Dcodegroup\XeroIntegration\Data\Accounting\XeroContactPersonData;
 
 test('can instantiate XeroContactPersonData with all fields', function () {
     $data = new XeroContactPersonData(

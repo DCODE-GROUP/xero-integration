@@ -2,6 +2,21 @@
 
 namespace Dcodegroup\XeroIntegration\Enums;
 
+use XeroPHP\Models\Accounting\Address;
+use XeroPHP\Models\Accounting\Contact;
+use XeroPHP\Models\Accounting\Contact\ContactPerson;
+use XeroPHP\Models\Accounting\CreditNote;
+use XeroPHP\Models\Accounting\Invoice;
+use XeroPHP\Models\Accounting\LineItem;
+use XeroPHP\Models\Accounting\Overpayment;
+use XeroPHP\Models\Accounting\Payment;
+use XeroPHP\Models\Accounting\Phone;
+use XeroPHP\Models\Accounting\Prepayment;
+use XeroPHP\Models\Accounting\Quote;
+use XeroPHP\Models\PayrollAU\LeaveApplication as LeaveApplicationAU;
+use XeroPHP\Models\PayrollAU\Timesheet as TimesheetAU;
+use XeroPHP\Models\PayrollAU\Timesheet\TimesheetLine as TimesheetLineAU;
+
 enum XeroRelationshipsEnum: string
 {
     case ADDRESS = 'address';
@@ -15,21 +30,28 @@ enum XeroRelationshipsEnum: string
     case PHONE = 'phone';
     case PREPAYMENT = 'prepayment';
     case QUOTE = 'quote';
+    case TIMESHEET_AU = 'timesheet_au';
+    case TIMESHEET_LINE_AU = 'timesheet_line_au';
+
+    case LEAVE_APPLICATION_AU = 'leave_application_au';
 
     public function getModelClass(): string
     {
         return match ($this) {
-            self::ADDRESS => 'XeroPHP\Models\Accounting\Address',
-            self::CONTACT => 'XeroPHP\Models\Accounting\Contact',
-            self::CONTACT_PERSON => 'XeroPHP\Models\Accounting\ContactPerson',
-            self::CREDIT_NOTE => 'XeroPHP\Models\Accounting\CreditNote',
-            self::INVOICE => 'XeroPHP\Models\Accounting\Invoice',
-            self::ITEM => 'XeroPHP\Models\Accounting\LineItem',
-            self::OVERPAYMENT => 'XeroPHP\Models\Accounting\Overpayment',
-            self::PAYMENT => 'XeroPHP\Models\Accounting\Payment',
-            self::PHONE => 'XeroPHP\Models\Accounting\Phone',
-            self::PREPAYMENT => 'XeroPHP\Models\Accounting\Prepayment',
-            self::QUOTE => 'XeroPHP\Models\Accounting\Quote',
+            self::ADDRESS => Address::class,
+            self::CONTACT => Contact::class,
+            self::CONTACT_PERSON => ContactPerson::class,
+            self::CREDIT_NOTE => CreditNote::class,
+            self::INVOICE => Invoice::class,
+            self::ITEM => LineItem::class,
+            self::OVERPAYMENT => Overpayment::class,
+            self::PAYMENT => Payment::class,
+            self::PHONE => Phone::class,
+            self::PREPAYMENT => Prepayment::class,
+            self::QUOTE => Quote::class,
+            self::TIMESHEET_AU => TimesheetAU::class,
+            self::TIMESHEET_LINE_AU => TimesheetLineAU::class,
+            self::LEAVE_APPLICATION_AU => LeaveApplicationAU::class,
         };
     }
 

@@ -2,7 +2,7 @@
 
 namespace Dcodegroup\XeroIntegration\Tests\Unit\Data;
 
-use Dcodegroup\XeroIntegration\Data\XeroItemData;
+use Dcodegroup\XeroIntegration\Data\Accounting\XeroItemData;
 use Mockery;
 use XeroPHP\Models\Accounting\LineItem;
 

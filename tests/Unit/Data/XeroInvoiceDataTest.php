@@ -3,9 +3,9 @@
 namespace Dcodegroup\XeroIntegration\Tests\Unit\Data;
 
 use Carbon\Carbon;
-use Dcodegroup\XeroIntegration\Data\XeroContactData;
-use Dcodegroup\XeroIntegration\Data\XeroInvoiceData;
-use Dcodegroup\XeroIntegration\Data\XeroItemData;
+use Dcodegroup\XeroIntegration\Data\Accounting\XeroContactData;
+use Dcodegroup\XeroIntegration\Data\Accounting\XeroInvoiceData;
+use Dcodegroup\XeroIntegration\Data\Accounting\XeroItemData;
 use Dcodegroup\XeroIntegration\Enums\XeroContactStatusEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroInvoiceStatusEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroInvoiceTypeEnum;

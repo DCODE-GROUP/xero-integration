@@ -2,7 +2,7 @@
 
 namespace Dcodegroup\XeroIntegration\Tests\Unit\Data;
 
-use Dcodegroup\XeroIntegration\Data\XeroAddressData;
+use Dcodegroup\XeroIntegration\Data\Accounting\XeroAddressData;
 use Mockery;
 use XeroPHP\Models\Accounting\Address as XeroAddress;
 

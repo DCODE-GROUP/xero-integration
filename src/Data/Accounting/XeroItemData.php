@@ -1,7 +1,8 @@
 <?php
 
-namespace Dcodegroup\XeroIntegration\Data;
+namespace Dcodegroup\XeroIntegration\Data\Accounting;
 
+use Dcodegroup\XeroIntegration\Data\AbstractXeroData;
 use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
 use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\LineItem;

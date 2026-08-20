@@ -1,8 +1,9 @@
 <?php
 
-namespace Dcodegroup\XeroIntegration\Data;
+namespace Dcodegroup\XeroIntegration\Data\Accounting;
 
 use Carbon\Carbon;
+use Dcodegroup\XeroIntegration\Data\AbstractXeroData;
 use Dcodegroup\XeroIntegration\Data\Traits\XeroSyncTrait;
 use Dcodegroup\XeroIntegration\Enums\XeroInvoiceStatusEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroInvoiceTypeEnum;
@@ -51,8 +52,8 @@ class XeroInvoiceData extends AbstractXeroData
         public float $Total,
         public float $AmountDue,
         public float $AmountPaid,
-        public ?Carbon $UpdatedDateUTC,
         public XeroInvoiceTypeEnum $Type,
+        public Carbon|Optional|null $UpdatedDateUTC = null,
         public string|Optional|null $InvoiceID = null,
         public float|Optional|null $TotalDiscount = null,
         /** @var Collection<int,XeroPaymentData>|null */
