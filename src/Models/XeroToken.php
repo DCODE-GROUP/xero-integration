@@ -21,6 +21,8 @@ use League\OAuth2\Client\Token\AccessTokenInterface;
  * @property string|null $refresh_token
  * @property string|null $scope
  * @property string|null $current_tenant_id
+ * @property string|null $xero_tenant_type
+ * @property string|null $xero_tenant_name
  * @property int|null $expires
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at

@@ -28,6 +28,8 @@ return new class extends Migration
             $table->text('refresh_token')->nullable();
             $table->text('scope')->nullable();
             $table->string('current_tenant_id')->nullable();
+            $table->string('xero_tenant_type')->nullable();
+            $table->string('xero_tenant_name')->nullable();
             $table->integer('expires')->nullable();
             $table->timestamps();
         });
