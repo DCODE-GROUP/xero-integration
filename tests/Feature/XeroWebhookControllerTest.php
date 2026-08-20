@@ -58,12 +58,37 @@ function postWebhook($test, array $payload, string $secret)
     return $response;
 }
 
+function postWebhookRoute($test, array $payload, string $signature)
+{
+    $body = json_encode($payload, JSON_THROW_ON_ERROR);
+
+    return $test->call('POST', '/webhooks/xero', [], [], [], [
+        'CONTENT_TYPE' => 'application/json',
+        'HTTP_X_XERO_SIGNATURE' => $signature,
+    ], $body);
+}
+
+test('returns 200 for a webhook with a valid signature', function () {
+    Queue::fake();
+
+    $body = json_encode(webhookPayload(), JSON_THROW_ON_ERROR);
+    $signature = base64_encode(hash_hmac('sha256', $body, $this->webhookSecret, true));
+
+    postWebhookRoute($this, webhookPayload(), $signature)
+        ->assertStatus(200);
+});
+
+test('returns 401 for a webhook with an invalid signature', function () {
+    postWebhookRoute($this, webhookPayload(), 'invalid-signature')
+        ->assertStatus(401);
+});
+
 test('persists a webhook and its events without tenancy', function () {
     Queue::fake();
 
     $response = postWebhook($this, webhookPayload(), $this->webhookSecret);
 
-    expect($response->status())->toBe(201);
+    expect($response->status())->toBe(200);
 
     $webhook = XeroWebhook::first();
     expect($webhook)->not->toBeNull()
@@ -83,7 +108,7 @@ test('persists a webhook for the current tenant when tenancy is enabled', functi
 
     $response = postWebhook($this, webhookPayload(), $this->webhookSecret);
 
-    expect($response->status())->toBe(201);
+    expect($response->status())->toBe(200);
     expect(XeroWebhook::first()->tenant_id)->toBe($tenant->id);
 });
 

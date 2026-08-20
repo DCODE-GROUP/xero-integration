@@ -2,8 +2,8 @@
 
 namespace Dcodegroup\XeroIntegration\Http\Requests;
 
-use Dcodegroup\XeroIntegration\XeroApp;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Log;
 use XeroPHP\Application;
 use XeroPHP\Webhook;
@@ -15,7 +15,7 @@ class XeroWebhookRequest extends FormRequest
         $tempApp = new Application('pending', 'pending', false);
         $tempApp->setConfig(
             [
-                'webhook' => ['signing_key' => config('xero-integration.webhooks.secret')]
+                'webhook' => ['signing_key' => config('xero-integration.webhooks.secret')],
             ]
         );
         $webhook = new Webhook($tempApp, (string) $this->getContent());
@@ -23,7 +23,8 @@ class XeroWebhookRequest extends FormRequest
         $signature = $this->header('X-Xero-Signature');
 
         if (empty($signature)) {
-            Log::info("Empty sig");
+            Log::info('Empty sig');
+
             return false;
         }
 
@@ -33,7 +34,14 @@ class XeroWebhookRequest extends FormRequest
     public function rules(): array
     {
         return [
-            '*' => ['required', 'array'],
+            'events' => ['required', 'array'],
+            'firstEventSequence' => ['required', 'integer'],
+            'lastEventSequence' => ['required', 'integer'],
         ];
+    }
+
+    protected function failedAuthorization(): void
+    {
+        throw new HttpResponseException(response()->json(['message' => 'Unauthenticated.'], 401));
     }
 }
