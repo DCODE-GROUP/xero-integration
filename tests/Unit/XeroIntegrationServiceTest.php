@@ -3,6 +3,7 @@
 namespace Dcodegroup\XeroIntegration\Tests\Unit;
 
 use Calcinai\OAuth2\Client\Provider\Xero;
+use Calcinai\OAuth2\Client\XeroTenant;
 use Dcodegroup\XeroIntegration\Exceptions\UnauthorizedXero;
 use Dcodegroup\XeroIntegration\Models\XeroToken;
 use Dcodegroup\XeroIntegration\XeroIntegrationService;
@@ -135,7 +136,16 @@ test('can change xero tenant', function () {
     $token = XeroToken::factory()->create();
 
     $service = new XeroIntegrationService;
-    $updatedToken = $service->changeXeroTenant('new-tenant-id');
+    $tenant = XeroTenant::fromArray([
+        'id' => 'new-tenant-id-1',
+        'authEventId' => 'abc',
+        'tenantId' => 'new-tenant-id',
+        'tenantType' => 'Organisation',
+        'tenantName' => 'ACME Co',
+        'createdDateUtc' => now()->__toString(),
+        'updatedDateUtc' => now()->__toString(),
+    ]);
+    $updatedToken = $service->changeXeroTenant($tenant);
 
     expect($updatedToken)->toBeInstanceOf(XeroToken::class)
         ->and($updatedToken->current_tenant_id)->toBe('new-tenant-id');

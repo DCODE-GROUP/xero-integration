@@ -7,6 +7,7 @@ use Dcodegroup\XeroIntegration\Http\Controllers\XeroWebhookController;
 use Dcodegroup\XeroIntegration\Http\Requests\XeroWebhookRequest;
 use Dcodegroup\XeroIntegration\Jobs\AbstractXeroWebhookEventJob;
 use Dcodegroup\XeroIntegration\Jobs\XeroWebhookProcessJob;
+use Dcodegroup\XeroIntegration\Models\XeroToken;
 use Dcodegroup\XeroIntegration\Models\XeroWebhook;
 use Dcodegroup\XeroIntegration\XeroApp;
 use Illuminate\Support\Facades\Queue;
@@ -102,14 +103,27 @@ test('persists a webhook and its events without tenancy', function () {
 
 test('persists a webhook for the current tenant when tenancy is enabled', function () {
     config()->set('xero-integration.tenancy.enabled', true);
-    $tenant = Tenant::factory()->create();
-    session()->put('xero_current_tenant_id', $tenant->id);
+    $targetTenant = Tenant::factory()->create();
+    XeroToken::create([
+        'tenant_id' => $targetTenant->id,
+        'id_token' => fake()->text(),
+        'access_token' => fake()->text(),
+        'current_tenant_id' => 'xero-tenant-1',
+    ]);
+
+    $irrelevantTenant = Tenant::factory()->create();
+    XeroToken::create([
+        'tenant_id' => $irrelevantTenant->id,
+        'id_token' => fake()->text(),
+        'access_token' => fake()->text(),
+        'current_tenant_id' => 'xero-tenant-2',
+    ]);
     Queue::fake();
 
     $response = postWebhook($this, webhookPayload(), $this->webhookSecret);
 
     expect($response->status())->toBe(200);
-    expect(XeroWebhook::first()->tenant_id)->toBe($tenant->id);
+    expect(XeroWebhook::first()->tenant_id)->toBe($targetTenant->id);
 });
 
 test('event processing moves the event and webhook from pending to successful', function () {
