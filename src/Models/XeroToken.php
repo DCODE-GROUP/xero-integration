@@ -4,6 +4,7 @@ namespace Dcodegroup\XeroIntegration\Models;
 
 use Carbon\Carbon;
 use Dcodegroup\XeroIntegration\Database\Factories\XeroTokenFactory;
+use Dcodegroup\XeroIntegration\Facades\XeroIntegrationService;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -93,12 +94,11 @@ class XeroToken extends Model
     {
         if (config('xero-integration.tenancy.enabled')) {
             static::addGlobalScope('tenant', function ($builder) {
-                $tenantSessionName = config('xero-integration.tenancy.session_name');
-
-                if (empty($tenantSessionName)) {
-                    $tenantId = -1;
+                $tenant = XeroIntegrationService::getApplicationTenant();
+                if ($tenant) {
+                    $tenantId = $tenant->getKey();
                 } else {
-                    $tenantId = session($tenantSessionName, -1);
+                    $tenantId = session(config('xero-integration.tenancy.session_name'), -1);
                 }
 
                 $builder->where('tenant_id', $tenantId);

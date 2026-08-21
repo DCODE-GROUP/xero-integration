@@ -3,13 +3,13 @@
 namespace Dcodegroup\XeroIntegration\Models;
 
 use Dcodegroup\XeroIntegration\Enums\XeroWebhookStatusEnum;
-use Dcodegroup\XeroIntegration\XeroApp;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use XeroPHP\Application;
 use XeroPHP\Webhook;
 use XeroPHP\Webhook\Event;
 
@@ -55,7 +55,12 @@ class XeroWebhook extends Model
                 ? $this->payload
                 : json_encode($this->payload, JSON_THROW_ON_ERROR);
 
-            return new Webhook(app(XeroApp::class), $payload);
+            $tempApp = new Application('pending', 'pending', false);
+            $tempApp->setConfig([
+                'webhook' => ['signing_key' => config('xero-integration.webhooks.secret')],
+            ]);
+
+            return new Webhook($tempApp, $payload);
         })->shouldCache();
     }
 

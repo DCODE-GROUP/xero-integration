@@ -36,4 +36,16 @@ enum XeroInvoiceStatusEnum: string
             self::VOIDED => XeroInvoice::INVOICE_STATUS_VOIDED,
         };
     }
+
+    public static function fromXero(string $xeroValue)
+    {
+        return match ($xeroValue) {
+            XeroInvoice::INVOICE_STATUS_DRAFT => self::DRAFT,
+            XeroInvoice::INVOICE_STATUS_SUBMITTED => self::SUBMITTED,
+            XeroInvoice::INVOICE_STATUS_DELETED => self::DELETED,
+            XeroInvoice::INVOICE_STATUS_AUTHORISED => self::AUTHORISED,
+            XeroInvoice::INVOICE_STATUS_PAID => self::PAID,
+            XeroInvoice::INVOICE_STATUS_VOIDED => self::VOIDED,
+        };
+    }
 }

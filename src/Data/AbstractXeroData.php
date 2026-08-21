@@ -6,10 +6,11 @@ use Dcodegroup\XeroIntegration\Data\Contracts\HasXeroData;
 use Dcodegroup\XeroIntegration\Models\XeroRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Spatie\LaravelData\Data;
 use XeroPHP\Remote\Collection as XeroCollection;
 use XeroPHP\Remote\Model as XeroModel;
 
-abstract class AbstractXeroData implements HasXeroData
+abstract class AbstractXeroData extends Data implements HasXeroData
 {
     protected Model $localModel;
 

@@ -2,9 +2,9 @@
 
 namespace Dcodegroup\XeroIntegration\Events;
 
+use Dcodegroup\XeroIntegration\Models\XeroWebhook;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use XeroPHP\Webhook\Event;
 
 class XeroWebhookProcessingFailedEvent
 {
@@ -14,7 +14,7 @@ class XeroWebhookProcessingFailedEvent
      * XeroWebhookProcessingFailedEvent constructor.
      */
     public function __construct(
-        public Event $webhook,
+        public XeroWebhook $webhook,
         public string $message
     ) {}
 }

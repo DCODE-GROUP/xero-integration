@@ -160,4 +160,15 @@ trait XeroSyncTrait
             }
         }
     }
+
+    public static function find(string $xeroId)
+    {
+        $xeroApp = app(XeroApp::class);
+        $query = $xeroApp->load($this->xeroRelationship->getModelClass());
+
+        /** @var \Dcodegroup\XeroIntegration\XeroIntegration $xero */
+        $xero = XeroIntegration::make($xeroApp, $query);
+
+        return $xero->find($xeroId);
+    }
 }

@@ -24,4 +24,12 @@ enum XeroInvoiceTypeEnum: string
             self::ACCREC => XeroInvoice::INVOICE_TYPE_ACCREC,
         };
     }
+
+    public static function fromXero(string $xeroValue)
+    {
+        return match ($xeroValue) {
+            XeroInvoice::INVOICE_TYPE_ACCPAY => self::ACCPAY,
+            XeroInvoice::INVOICE_TYPE_ACCREC => self::ACCREC,
+        };
+    }
 }

@@ -26,13 +26,13 @@ test('tokens are scoped to the current tenant when tenancy is enabled', function
     // Create a token for tenant 2
     $token2 = XeroToken::factory()->create(['tenant_id' => $tenant2->id]);
 
-    // Query tokens while in tenant 1 context
-    session()->put('xero_current_tenant_id', $tenant1->id);
+    // Query tokens while in tenant 2 context
+    session()->put('xero_current_tenant_id', $tenant2->id);
     $tokens = XeroToken::all();
 
     expect($tokens)->toHaveCount(1)
-        ->and($tokens->first()->id)->toBe($token1->id)
-        ->and($tokens->first()->tenant_id)->toBe($tenant1->id);
+        ->and($tokens->first()->id)->toBe($token2->id)
+        ->and($tokens->first()->tenant_id)->toBe($tenant2->id);
 });
 
 test('tokens for different tenants are not accessible from other tenant contexts', function () {

@@ -4,7 +4,7 @@ namespace Dcodegroup\XeroIntegration;
 
 use Dcodegroup\XeroIntegration\Exceptions\XeroConfigException;
 use Dcodegroup\XeroIntegration\Exceptions\XeroRateLimitExceededException;
-use Illuminate\Database\Eloquent\Model;
+use Dcodegroup\XeroIntegration\Facades\XeroIntegrationService;
 use Illuminate\Support\Facades\RateLimiter;
 use Override;
 use XeroPHP\Remote\Collection;
@@ -51,7 +51,7 @@ class XeroQuery extends Query
     public static function getRateLimiterKey(): string
     {
         if (config('xero-integration.tenancy.enabled') && ! empty(config('xero-integration.tenancy.tenant_resolver'))) {
-            $tenant = self::getTenant();
+            $tenant = XeroIntegrationService::getApplicationTenant();
 
             if (empty($tenant)) {
                 throw new XeroConfigException('Xero integration tenancy is enabled, but no tenant could be resolved. Please check your configuration.');
@@ -61,21 +61,6 @@ class XeroQuery extends Query
         }
 
         return self::class;
-    }
-
-    public static function getTenant(): ?Model
-    {
-        if (empty(config('xero-integration.tenancy.tenant_resolver'))) {
-            return null;
-        }
-
-        $config = config('xero-integration.tenancy.tenant_resolver');
-
-        if (! is_callable($config)) {
-            return null;
-        }
-
-        return app()->call($config);
     }
 
     protected function parentExecute()
