@@ -23,7 +23,10 @@ class XeroCreditNoteData extends AbstractXeroData
 {
     use XeroSyncTrait;
 
-    protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::CREDIT_NOTE;
+    public static function getXeroRelationship(): XeroRelationshipsEnum
+    {
+        return XeroRelationshipsEnum::CREDIT_NOTE;
+    }
 
     protected string $key = 'CreditNoteID';
 

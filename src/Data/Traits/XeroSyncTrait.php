@@ -19,7 +19,7 @@ trait XeroSyncTrait
     {
         $xeroApp = $this->getXeroApp();
 
-        $xeroModel = $this->xeroRelationship->getModelClass();
+        $xeroModel = static::getXeroRelationship()->getModelClass();
 
         $queryModel = $xeroApp->load($xeroModel);
 
@@ -47,7 +47,7 @@ trait XeroSyncTrait
     protected function searchForRecordInXero(?XeroQuery $query = null): ?XeroModel
     {
         if (empty($query)) {
-            $query = app(XeroApp::class)->load($this->xeroRelationship->getModelClass());
+            $query = app(XeroApp::class)->load(static::getXeroRelationship()->getModelClass());
         }
 
         foreach ($this->searchFields as $index => $field) {
@@ -164,7 +164,7 @@ trait XeroSyncTrait
     public static function find(string $xeroId)
     {
         $xeroApp = app(XeroApp::class);
-        $query = $xeroApp->load($this->xeroRelationship->getModelClass());
+        $query = $xeroApp->load(static::getXeroRelationship()->getModelClass());
 
         /** @var \Dcodegroup\XeroIntegration\XeroIntegration $xero */
         $xero = XeroIntegration::make($xeroApp, $query);

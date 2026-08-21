@@ -23,7 +23,10 @@ class XeroInvoiceData extends AbstractXeroData
 {
     use XeroSyncTrait;
 
-    protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::INVOICE;
+    public static function getXeroRelationship(): XeroRelationshipsEnum
+    {
+        return XeroRelationshipsEnum::INVOICE;
+    }
 
     protected string $key = 'InvoiceID';
 

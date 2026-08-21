@@ -22,7 +22,10 @@ class XeroPaymentData extends AbstractXeroData implements XeroSyncable
 {
     use XeroSyncTrait;
 
-    protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::PAYMENT;
+    public static function getXeroRelationship(): XeroRelationshipsEnum
+    {
+        return XeroRelationshipsEnum::PAYMENT;
+    }
 
     protected string $key = 'PaymentID';
 

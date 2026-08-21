@@ -13,7 +13,10 @@ use XeroPHP\Remote\Model as XeroModel;
 
 class XeroTimesheetLineData extends AbstractXeroData
 {
-    protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::TIMESHEET_LINE_AU;
+    public static function getXeroRelationship(): XeroRelationshipsEnum
+    {
+        return XeroRelationshipsEnum::TIMESHEET_LINE_AU;
+    }
 
     protected array $searchFields = [
         'EarningsRateID',

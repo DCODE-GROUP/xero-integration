@@ -22,7 +22,10 @@ class XeroContactData extends AbstractXeroData implements XeroSyncable
 {
     use XeroSyncTrait;
 
-    protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::CONTACT;
+    public static function getXeroRelationship(): XeroRelationshipsEnum
+    {
+        return XeroRelationshipsEnum::CONTACT;
+    }
 
     protected string $key = 'ContactID';
 

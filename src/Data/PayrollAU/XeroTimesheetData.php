@@ -19,7 +19,10 @@ class XeroTimesheetData extends AbstractXeroData
 {
     use XeroSyncTrait;
 
-    protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::TIMESHEET_AU;
+    public static function getXeroRelationship(): XeroRelationshipsEnum
+    {
+        return XeroRelationshipsEnum::TIMESHEET_AU;
+    }
 
     protected string $key = 'TimesheetID';
 

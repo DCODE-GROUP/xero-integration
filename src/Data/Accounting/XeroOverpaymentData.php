@@ -23,7 +23,10 @@ class XeroOverpaymentData extends AbstractXeroData
 {
     use XeroSyncTrait;
 
-    protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::OVERPAYMENT;
+    public static function getXeroRelationship(): XeroRelationshipsEnum
+    {
+        return XeroRelationshipsEnum::OVERPAYMENT;
+    }
 
     protected string $key = 'OverpaymentID';
 

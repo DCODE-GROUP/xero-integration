@@ -23,7 +23,10 @@ class XeroPrepaymentData extends AbstractXeroData
 {
     use XeroSyncTrait;
 
-    protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::PREPAYMENT;
+    public static function getXeroRelationship(): XeroRelationshipsEnum
+    {
+        return XeroRelationshipsEnum::PREPAYMENT;
+    }
 
     protected string $key = 'PrepaymentID';
 

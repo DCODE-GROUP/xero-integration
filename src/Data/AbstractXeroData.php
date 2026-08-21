@@ -3,6 +3,7 @@
 namespace Dcodegroup\XeroIntegration\Data;
 
 use Dcodegroup\XeroIntegration\Data\Contracts\HasXeroData;
+use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
 use Dcodegroup\XeroIntegration\Models\XeroRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -13,6 +14,8 @@ use XeroPHP\Remote\Model as XeroModel;
 abstract class AbstractXeroData extends Data implements HasXeroData
 {
     protected Model $localModel;
+
+    abstract public static function getXeroRelationship(): XeroRelationshipsEnum;
 
     public function getLocalModel(): ?Model
     {
