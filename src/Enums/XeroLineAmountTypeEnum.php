@@ -34,6 +34,7 @@ enum XeroLineAmountTypeEnum: string
             XeroLineItem::TYPE_EXCLUSIVE => self::EXCLUSIVE,
             XeroLineItem::TYPE_INCLUSIVE => self::INCLUSIVE,
             XeroLineItem::TYPE_NOTAX => self::NO_TAX,
+            default => null
         };
     }
 }

@@ -46,6 +46,7 @@ enum XeroInvoiceStatusEnum: string
             XeroInvoice::INVOICE_STATUS_AUTHORISED => self::AUTHORISED,
             XeroInvoice::INVOICE_STATUS_PAID => self::PAID,
             XeroInvoice::INVOICE_STATUS_VOIDED => self::VOIDED,
+            default => null
         };
     }
 }

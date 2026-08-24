@@ -26,7 +26,7 @@ class XeroWebhookController
         if (config('xero-integration.tenancy.enabled')) {
             $tenantId = collect($xeroWebhook->getEvents())->first()?->getTenantId();
             if ($tenantId) {
-                $currentToken = XeroToken::withoutGlobalScopes()->where('current_tenant_id', $tenantId)->orderBy('updated_at', 'DESC')->first();
+                $currentToken = XeroToken::withoutGlobalScopes()->where('current_tenant_id', $tenantId)->orderBy('updated_at', 'desc')->first();
 
                 $modelData['tenant_id'] = $currentToken?->tenant_id;
             }

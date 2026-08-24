@@ -54,6 +54,7 @@ enum XeroPaymentTypesEnum: string
             XeroPayment::PAYMENT_TYPE_ARPREPAYMENTPAYMENT => self::ACCOUNTS_RECEIVABLE_PREPAYMENT_PAYMENT,
             XeroPayment::PAYMENT_TYPE_APPREPAYMENTPAYMENT => self::ACCOUNTS_PAYABLE_PREPAYMENT_PAYMENT,
             XeroPayment::PAYMENT_TYPE_APOVERPAYMENTPAYMENT => self::ACCOUNTS_PAYABLE_OVERPAYMENT_PAYMENT,
+            default => null
         };
     }
 }

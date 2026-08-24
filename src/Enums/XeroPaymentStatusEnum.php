@@ -30,6 +30,7 @@ enum XeroPaymentStatusEnum: string
         return match ($xeroValue) {
             XeroPayment::PAYMENT_STATUS_AUTHORISED => self::AUTHORISED,
             XeroPayment::PAYMENT_STATUS_DELETED => self::DELETED,
+            default => null
         };
     }
 }

@@ -11,6 +11,8 @@ use Illuminate\Foundation\Bus\PendingDispatch;
 /**
  * @method static PendingDispatch dispatch(XeroWebhookEvent $event)
  * @method static void dispatch(XeroWebhookEvent $event)
+ *
+ * @property XeroApp $xeroApp
  */
 abstract class AbstractXeroWebhookEventJob extends AbstractXeroWebhookJob
 {
