@@ -23,7 +23,10 @@ class XeroQuoteData extends AbstractXeroData implements XeroSyncable
 {
     use XeroSyncTrait;
 
-    protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::QUOTE;
+    public static function getXeroRelationship(): XeroRelationshipsEnum
+    {
+        return XeroRelationshipsEnum::QUOTE;
+    }
 
     protected string $key = 'QuoteID';
 

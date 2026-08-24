@@ -126,7 +126,7 @@ test('toXeroArray returns correct keys', function () {
 
     expect($array)->toHaveKeys([
         'Type', 'Contact', 'LineItems', 'Date', 'DueDate',
-        'InvoiceNumber', 'Status', 'Subtotal', 'TotalTax', 'Total',
+        'InvoiceNumber', 'Status', 'SubTotal', 'TotalTax', 'Total',
         'AmountDue', 'AmountPaid', 'InvoiceID',
     ]);
 });
@@ -171,6 +171,6 @@ test('toXeroArray returns correct values', function () {
 
     expect($array['InvoiceNumber'])->toBe('INV-001')
         ->and($array['InvoiceID'])->toBe('inv-uuid-123')
-        ->and($array['Subtotal'])->toBe(100.00)
+        ->and($array['SubTotal'])->toBe(100.00)
         ->and($array['Total'])->toBe(115.00);
 });

@@ -7,8 +7,8 @@ use Calcinai\OAuth2\Client\XeroTenant;
 use Dcodegroup\XeroIntegration\Exceptions\UnauthorizedXero;
 use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
 use Dcodegroup\XeroIntegration\Models\XeroToken;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Session;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Token\AccessTokenInterface;
@@ -41,12 +41,7 @@ class XeroIntegrationService
                 'current_tenant_id' => $token->current_tenant_id,
             ]);
             if (config('xero-integration.tenancy.enabled')) {
-                $data['tenant_id'] = null;
-                $sessionName = config('xero-integration.tenancy.session_name');
-                if (! empty($sessionName) && Session::has($sessionName)) {
-                    $tenantId = Session::get($sessionName);
-                    $data['tenant_id'] = $tenantId;
-                }
+                $data['tenant_id'] = XeroIntegrationService::getApplicationTenant()?->getKey();
             }
 
             XeroToken::create($creationData);
@@ -176,14 +171,26 @@ class XeroIntegrationService
         $data = $token->jsonSerialize();
 
         if (config('xero-integration.tenancy.enabled')) {
-            $data['tenant_id'] = null;
-            $sessionName = config('xero-integration.tenancy.session_name');
-            if (! empty($sessionName) && Session::has($sessionName)) {
-                $tenantId = Session::get($sessionName);
-                $data['tenant_id'] = $tenantId;
-            }
+            $currentTenant = XeroIntegrationService::getApplicationTenant()?->getKey();
+            $tenantId = $currentTenant ? $currentTenant->id : session(config('xero-integration.tenancy.session_name'));
+            $data['tenant_id'] = $tenantId;
         }
 
         return XeroToken::create($data);
+    }
+
+    public function getApplicationTenant(): ?Model
+    {
+        if (empty(config('xero-integration.tenancy.tenant_resolver'))) {
+            return null;
+        }
+
+        $config = config('xero-integration.tenancy.tenant_resolver');
+
+        if (! is_callable($config)) {
+            return null;
+        }
+
+        return app()->call($config);
     }
 }

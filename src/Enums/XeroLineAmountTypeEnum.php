@@ -27,4 +27,14 @@ enum XeroLineAmountTypeEnum: string
             self::NO_TAX => XeroLineItem::TYPE_NOTAX,
         };
     }
+
+    public static function fromXero(string $xeroValue)
+    {
+        return match ($xeroValue) {
+            XeroLineItem::TYPE_EXCLUSIVE => self::EXCLUSIVE,
+            XeroLineItem::TYPE_INCLUSIVE => self::INCLUSIVE,
+            XeroLineItem::TYPE_NOTAX => self::NO_TAX,
+            default => null
+        };
+    }
 }

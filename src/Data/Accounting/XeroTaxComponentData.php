@@ -3,6 +3,7 @@
 namespace Dcodegroup\XeroIntegration\Data\Accounting;
 
 use Dcodegroup\XeroIntegration\Data\AbstractXeroData;
+use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
 use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\TaxRate\TaxComponent as XeroTaxComponent;
 use XeroPHP\Remote\Model as XeroModel;
@@ -12,6 +13,11 @@ use XeroPHP\Remote\Model as XeroModel;
  */
 class XeroTaxComponentData extends AbstractXeroData
 {
+    public static function getXeroRelationship(): XeroRelationshipsEnum
+    {
+        return XeroRelationshipsEnum::TAX_RATE;
+    }
+
     protected array $searchFields = [
         'Name',
     ];

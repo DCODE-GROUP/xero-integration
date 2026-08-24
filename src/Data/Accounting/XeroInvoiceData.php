@@ -23,7 +23,10 @@ class XeroInvoiceData extends AbstractXeroData
 {
     use XeroSyncTrait;
 
-    protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::INVOICE;
+    public static function getXeroRelationship(): XeroRelationshipsEnum
+    {
+        return XeroRelationshipsEnum::INVOICE;
+    }
 
     protected string $key = 'InvoiceID';
 
@@ -87,24 +90,24 @@ class XeroInvoiceData extends AbstractXeroData
      */
     public static function fromXero(XeroModel|XeroInvoice $xeroInvoice): self
     {
-        return new static(
+        $data = new static(
             InvoiceID: data_get($xeroInvoice, 'InvoiceID'),
             Contact: XeroContactData::fromXero(data_get($xeroInvoice, 'Contact')),
             LineItems: XeroItemData::toCollection(data_get($xeroInvoice, 'LineItems')),
             InvoiceDate: Carbon::instance(data_get($xeroInvoice, 'Date')),
             DueDate: Carbon::instance(data_get($xeroInvoice, 'DueDate')),
             InvoiceNumber: data_get($xeroInvoice, 'InvoiceNumber'),
-            Status: XeroInvoiceStatusEnum::TryFrom(data_get($xeroInvoice, 'Status')),
+            Status: XeroInvoiceStatusEnum::fromXero(data_get($xeroInvoice, 'Status')),
             Subtotal: data_get($xeroInvoice, 'SubTotal'),
             TaxAmount: data_get($xeroInvoice, 'TotalTax'),
             Total: data_get($xeroInvoice, 'Total'),
             TotalDiscount: data_get($xeroInvoice, 'TotalDiscount'),
-            Payments: XeroPaymentData::toCollection(data_get($xeroInvoice, 'Payments')),
+            Payments: collect(),
             AmountDue: data_get($xeroInvoice, 'AmountDue'),
             AmountPaid: data_get($xeroInvoice, 'AmountPaid'),
             UpdatedDateUTC: Carbon::instance(data_get($xeroInvoice, 'UpdatedDateUTC')),
-            Type: XeroInvoiceTypeEnum::TryFrom(data_get($xeroInvoice, 'Type', XeroInvoice::INVOICE_TYPE_ACCREC)),
-            LineAmountTypes: XeroLineAmountTypeEnum::TryFrom(data_get($xeroInvoice, 'LineAmountTypes')),
+            Type: XeroInvoiceTypeEnum::fromXero(data_get($xeroInvoice, 'Type', XeroInvoice::INVOICE_TYPE_ACCREC)),
+            LineAmountTypes: XeroLineAmountTypeEnum::fromXero(data_get($xeroInvoice, 'LineAmountTypes')),
             Reference: data_get($xeroInvoice, 'Reference'),
             BrandingThemeID: data_get($xeroInvoice, 'BrandingThemeID'),
             Url: data_get($xeroInvoice, 'Url'),
@@ -121,6 +124,19 @@ class XeroInvoiceData extends AbstractXeroData
             AmountCredited: data_get($xeroInvoice, 'AmountCredited'),
             CreditNotes: XeroCreditNoteData::toCollection(data_get($xeroInvoice, 'CreditNotes')),
         );
+
+        $payments = data_get($xeroInvoice, 'Payments');
+        $xeroInvoiceArray = $data->toXeroArray();
+        $xeroInvoiceArray['Payments'] = [];
+        $blankXeroInvoice = new XeroInvoice;
+        $blankXeroInvoice->fromStringArray($xeroInvoiceArray);
+        foreach ($payments as $payment) {
+            $payment['Invoice'] = $blankXeroInvoice;
+            $newPayment = XeroPaymentData::fromXero($payment);
+            $data->Payments->add($newPayment);
+        }
+
+        return $data;
     }
 
     public function toXeroArray(): array
@@ -128,20 +144,20 @@ class XeroInvoiceData extends AbstractXeroData
         return [
             'Type' => data_get($this, 'Type')?->getXeroValue(),
             'Contact' => data_get($this, 'Contact')?->toXeroArray(),
-            'LineItems' => XeroItemData::toXeroCollection(data_get($this, 'LineItems')),
-            'Date' => data_get($this, 'InvoiceDate'),
-            'DueDate' => data_get($this, 'DueDate'),
+            'LineItems' => XeroItemData::toXeroCollection(data_get($this, 'LineItems', collect())),
+            'Date' => $this->InvoiceDate->format('Y-m-d'),
+            'DueDate' => $this->DueDate->format('Y-m-d'),
             'InvoiceNumber' => data_get($this, 'InvoiceNumber'),
             'Status' => data_get($this, 'Status')?->getXeroValue(),
-            'Subtotal' => data_get($this, 'Subtotal'),
+            'SubTotal' => data_get($this, 'Subtotal'),
             'TotalTax' => data_get($this, 'TaxAmount'),
             'Total' => data_get($this, 'Total'),
             'TotalDiscount' => data_get($this, 'TotalDiscount'),
-            'Payments' => XeroPaymentData::toXeroCollection(data_get($this, 'Payments')),
+            'Payments' => XeroPaymentData::toXeroCollection(data_get($this, 'Payments', collect())),
             'AmountDue' => data_get($this, 'AmountDue'),
             'AmountPaid' => data_get($this, 'AmountPaid'),
             'InvoiceID' => data_get($this, 'InvoiceID'),
-            'UpdatedDateUTC' => data_get($this, 'UpdatedDateUTC'),
+            'UpdatedDateUTC' => $this->UpdatedDateUTC->format('Y-m-d\TH:i:s\Z'),
             'LineAmountTypes' => data_get($this, 'LineAmountTypes')?->getXeroValue(),
             'Reference' => data_get($this, 'Reference'),
             'BrandingThemeID' => data_get($this, 'BrandingThemeID'),
@@ -149,15 +165,15 @@ class XeroInvoiceData extends AbstractXeroData
             'CurrencyCode' => data_get($this, 'CurrencyCode'),
             'CurrencyRate' => data_get($this, 'CurrencyRate'),
             'SentToContact' => data_get($this, 'SentToContact'),
-            'ExpectedPaymentDate' => data_get($this, 'ExpectedPaymentDate'),
-            'PlannedPaymentDate' => data_get($this, 'PlannedPaymentDate'),
+            'ExpectedPaymentDate' => $this->ExpectedPaymentDate?->format('Y-m-d'),
+            'PlannedPaymentDate' => $this->PlannedPaymentDate?->format('Y-m-d'),
             'RepeatingInvoiceID' => data_get($this, 'RepeatingInvoiceID'),
             'HasAttachments' => data_get($this, 'HasAttachments'),
-            'Prepayments' => XeroPrepaymentData::toXeroCollection(data_get($this, 'Prepayments')),
-            'Overpayments' => XeroOverpaymentData::toXeroCollection(data_get($this, 'Overpayments')),
-            'FullyPaidOnDate' => data_get($this, 'FullyPaidOnDate'),
+            'Prepayments' => XeroPrepaymentData::toXeroCollection(data_get($this, 'Prepayments', collect())),
+            'Overpayments' => XeroOverpaymentData::toXeroCollection(data_get($this, 'Overpayments', collect())),
+            'FullyPaidOnDate' => $this->FullyPaidOnDate?->format('Y-m-d'),
             'AmountCredited' => data_get($this, 'AmountCredited'),
-            'CreditNotes' => XeroCreditNoteData::toXeroCollection(data_get($this, 'CreditNotes')),
+            'CreditNotes' => XeroCreditNoteData::toXeroCollection(data_get($this, 'CreditNotes', collect())),
         ];
     }
 }

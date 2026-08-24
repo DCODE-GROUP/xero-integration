@@ -3,7 +3,6 @@
 namespace Dcodegroup\XeroIntegration\Jobs;
 
 use Dcodegroup\XeroIntegration\Events\XeroWebhookProcessingFailedEvent;
-use Dcodegroup\XeroIntegration\XeroApp;
 use Dcodegroup\XeroIntegration\XeroQuery;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -20,13 +19,9 @@ abstract class AbstractXeroWebhookJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    protected XeroApp $xeroApp;
-
     public function __construct()
     {
         $this->onQueue(config('xero-integration.webhooks.queue'));
-
-        $this->xeroApp = app(XeroApp::class);
     }
 
     public function backoff(): array
@@ -59,6 +54,5 @@ abstract class AbstractXeroWebhookJob implements ShouldQueue
         }
 
         report($exception);
-
     }
 }

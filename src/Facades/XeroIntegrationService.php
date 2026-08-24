@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string getAuthUrl()
  * @method static \League\OAuth2\Client\Token\AccessTokenInterface getAccessTokenFromCode(string $code)
  * @method static \Dcodegroup\XeroIntegration\Models\XeroToken saveAccessTokenFromCode(string $code)
+ * @method static \Illuminate\Database\Eloquent\Model|null getApplicationTenant()
  *
  * @see \Dcodegroup\XeroIntegration\XeroIntegrationService
  */

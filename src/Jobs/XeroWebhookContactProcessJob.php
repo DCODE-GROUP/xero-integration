@@ -9,6 +9,9 @@ use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
 use Dcodegroup\XeroIntegration\Facades\XeroIntegration;
 use XeroPHP\Models\Accounting\Contact;
 
+/**
+ * {@inheritDoc}
+ */
 class XeroWebhookContactProcessJob extends AbstractXeroWebhookEventJob
 {
     public function handleEvent(): void

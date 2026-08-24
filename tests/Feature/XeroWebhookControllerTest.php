@@ -9,9 +9,7 @@ use Dcodegroup\XeroIntegration\Jobs\AbstractXeroWebhookEventJob;
 use Dcodegroup\XeroIntegration\Jobs\XeroWebhookProcessJob;
 use Dcodegroup\XeroIntegration\Models\XeroToken;
 use Dcodegroup\XeroIntegration\Models\XeroWebhook;
-use Dcodegroup\XeroIntegration\XeroApp;
 use Illuminate\Support\Facades\Queue;
-use Mockery\MockInterface;
 use Workbench\App\Models\Tenant;
 
 beforeEach(function () {
@@ -19,11 +17,7 @@ beforeEach(function () {
     config()->set('xero-integration.tenancy.session_name', 'xero_current_tenant_id');
 
     $this->webhookSecret = 'webhook-test-secret';
-    $this->mock(XeroApp::class, function (MockInterface $mock) {
-        $mock->shouldReceive('getConfigOption')
-            ->with('webhook', 'signing_key')
-            ->andReturn($this->webhookSecret);
-    });
+    config()->set('xero-integration.webhooks.secret', $this->webhookSecret);
 });
 
 function webhookPayload(): array
@@ -127,6 +121,13 @@ test('persists a webhook for the current tenant when tenancy is enabled', functi
 });
 
 test('event processing moves the event and webhook from pending to successful', function () {
+    XeroToken::create([
+        'id_token' => fake()->text(),
+        'access_token' => fake()->text(),
+        'current_tenant_id' => 'xero-tenant-1',
+        'expires' => now()->addHour(),
+    ]);
+
     $webhook = XeroWebhook::create(['payload' => webhookPayload()]);
     $event = $webhook->events->first();
 
@@ -141,6 +142,12 @@ test('event processing moves the event and webhook from pending to successful', 
 });
 
 test('failed event processing marks the webhook as failed', function () {
+    XeroToken::create([
+        'id_token' => fake()->text(),
+        'access_token' => fake()->text(),
+        'current_tenant_id' => 'xero-tenant-1',
+        'expires' => now()->addHour(),
+    ]);
     $webhook = XeroWebhook::create(['payload' => webhookPayload()]);
     $event = $webhook->events->first();
     $job = new TestWebhookEventJob($event);

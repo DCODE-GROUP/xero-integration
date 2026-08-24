@@ -14,7 +14,10 @@ use XeroPHP\Remote\Model as XeroModel;
  */
 class XeroTaxRateData extends AbstractXeroData
 {
-    protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::TAX_RATE;
+    public static function getXeroRelationship(): XeroRelationshipsEnum
+    {
+        return XeroRelationshipsEnum::TAX_RATE;
+    }
 
     protected array $searchFields = [
         'Name',

@@ -2,6 +2,7 @@
 
 namespace Dcodegroup\XeroIntegration\Data\Traits;
 
+use Dcodegroup\XeroIntegration\Contracts\XeroDataFinder;
 use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
 use Dcodegroup\XeroIntegration\Exceptions\XeroValidationException;
 use Dcodegroup\XeroIntegration\XeroApp;
@@ -19,7 +20,7 @@ trait XeroSyncTrait
     {
         $xeroApp = $this->getXeroApp();
 
-        $xeroModel = $this->xeroRelationship->getModelClass();
+        $xeroModel = static::getXeroRelationship()->getModelClass();
 
         $queryModel = $xeroApp->load($xeroModel);
 
@@ -47,7 +48,7 @@ trait XeroSyncTrait
     protected function searchForRecordInXero(?XeroQuery $query = null): ?XeroModel
     {
         if (empty($query)) {
-            $query = app(XeroApp::class)->load($this->xeroRelationship->getModelClass());
+            $query = app(XeroApp::class)->load(static::getXeroRelationship()->getModelClass());
         }
 
         foreach ($this->searchFields as $index => $field) {
@@ -159,5 +160,10 @@ trait XeroSyncTrait
                 $related->saveXeroRecord($relXeroRecord, true);
             }
         }
+    }
+
+    public static function find(string $xeroId)
+    {
+        return app(XeroDataFinder::class)->find(static::class, $xeroId);
     }
 }

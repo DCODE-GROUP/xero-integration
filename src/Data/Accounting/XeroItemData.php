@@ -13,7 +13,10 @@ use XeroPHP\Remote\Model as XeroModel;
  */
 class XeroItemData extends AbstractXeroData
 {
-    protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::ITEM;
+    public static function getXeroRelationship(): XeroRelationshipsEnum
+    {
+        return XeroRelationshipsEnum::ITEM;
+    }
 
     protected string $key = 'LineItemID';
 

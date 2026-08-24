@@ -15,7 +15,10 @@ use XeroPHP\Remote\Model as XeroModel;
 
 class XeroLeavePeriodData extends AbstractXeroData
 {
-    protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::LEAVE_APPLICATION_AU;
+    public static function getXeroRelationship(): XeroRelationshipsEnum
+    {
+        return XeroRelationshipsEnum::LEAVE_APPLICATION_AU;
+    }
 
     protected array $searchFields = [
         'NumberOfUnits',

@@ -19,7 +19,10 @@ class XeroLeaveApplicationData extends AbstractXeroData
 {
     use XeroSyncTrait;
 
-    protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::LEAVE_APPLICATION_AU;
+    public static function getXeroRelationship(): XeroRelationshipsEnum
+    {
+        return XeroRelationshipsEnum::LEAVE_APPLICATION_AU;
+    }
 
     protected string $key = '';
 

@@ -13,7 +13,10 @@ use XeroPHP\Remote\Model as XeroModel;
  */
 class XeroAddressData extends AbstractXeroData
 {
-    protected XeroRelationshipsEnum $xeroRelationship = XeroRelationshipsEnum::ADDRESS;
+    public static function getXeroRelationship(): XeroRelationshipsEnum
+    {
+        return XeroRelationshipsEnum::ADDRESS;
+    }
 
     protected array $searchFields = [
         'AddressType',
