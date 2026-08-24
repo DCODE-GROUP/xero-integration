@@ -24,4 +24,12 @@ enum XeroPaymentStatusEnum: string
             self::DELETED => XeroPayment::PAYMENT_STATUS_DELETED,
         };
     }
+
+    public static function fromXero(string $xeroValue)
+    {
+        return match ($xeroValue) {
+            XeroPayment::PAYMENT_STATUS_AUTHORISED => self::AUTHORISED,
+            XeroPayment::PAYMENT_STATUS_DELETED => self::DELETED,
+        };
+    }
 }

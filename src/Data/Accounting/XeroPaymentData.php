@@ -77,7 +77,7 @@ class XeroPaymentData extends AbstractXeroData implements XeroSyncable
     {
         $paymentType = data_get($xeroPayment, 'PaymentType');
         if ($paymentType) {
-            $paymentType = XeroPaymentTypesEnum::from($paymentType);
+            $paymentType = XeroPaymentTypesEnum::fromXero($paymentType);
         }
 
         $creditNote = data_get($xeroPayment, 'CreditNote');
@@ -88,6 +88,9 @@ class XeroPaymentData extends AbstractXeroData implements XeroSyncable
 
         $overpayment = data_get($xeroPayment, 'Overpayment');
         $overpayment = $overpayment ? XeroOverpaymentData::fromXero($overpayment) : null;
+
+        $paymentStatus = data_get($xeroPayment, 'Status');
+        $paymentStatus = $paymentStatus ? XeroPaymentStatusEnum::fromXero($paymentStatus) : null;
 
         return new static(
             Invoice: XeroInvoiceData::fromXero(data_get($xeroPayment, 'Invoice')),
@@ -103,7 +106,7 @@ class XeroPaymentData extends AbstractXeroData implements XeroSyncable
             Details: data_get($xeroPayment, 'Details'),
             BatchPaymentID: data_get($xeroPayment, 'BatchPaymentID'),
             IsReconciled: data_get($xeroPayment, 'IsReconciled'),
-            Status: data_get($xeroPayment, 'Status'),
+            Status: $paymentStatus,
             UpdatedDateUTC: data_get($xeroPayment, 'UpdatedDateUTC') ? Carbon::parse(data_get($xeroPayment, 'UpdatedDateUTC')) : null,
         );
     }
