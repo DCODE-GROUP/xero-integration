@@ -5,6 +5,7 @@ namespace Dcodegroup\XeroIntegration\Data\Traits;
 use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
 use Dcodegroup\XeroIntegration\Exceptions\XeroValidationException;
 use Dcodegroup\XeroIntegration\XeroApp;
+use Dcodegroup\XeroIntegration\XeroIntegration;
 use Dcodegroup\XeroIntegration\XeroQuery;
 use Exception;
 use Illuminate\Support\Collection;

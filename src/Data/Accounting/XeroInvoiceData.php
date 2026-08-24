@@ -132,7 +132,8 @@ class XeroInvoiceData extends AbstractXeroData
         $blankXeroInvoice->fromStringArray($xeroInvoiceArray);
         foreach ($payments as $payment) {
             $payment['Invoice'] = $blankXeroInvoice;
-            $data->Payments->append(XeroPaymentData::fromXero($payment));
+            $newPayment = XeroPaymentData::fromXero($payment);
+            $data->Payments->add($newPayment);
         }
 
         return $data;

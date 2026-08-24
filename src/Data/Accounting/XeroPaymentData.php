@@ -48,7 +48,7 @@ class XeroPaymentData extends AbstractXeroData implements XeroSyncable
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         public Carbon $Date,
         public float $Amount,
-        public XeroPaymentTypesEnum $PaymentType,
+        public XeroPaymentTypesEnum|Optional|null $PaymentType,
         /** @var XeroInvoiceData|Optional|null */
         public XeroInvoiceData|Optional|null $Invoice = null,
         public string|Optional|null $Reference = null,
@@ -75,16 +75,30 @@ class XeroPaymentData extends AbstractXeroData implements XeroSyncable
      */
     public static function fromXero(XeroModel|XeroPayment $xeroPayment): self
     {
+        $paymentType = data_get($xeroPayment, 'PaymentType');
+        if ($paymentType) {
+            $paymentType = XeroPaymentTypesEnum::from($paymentType);
+        }
+
+        $creditNote = data_get($xeroPayment, 'CreditNote');
+        $creditNote = $creditNote ? XeroCreditNoteData::fromXero($creditNote) : null;
+
+        $prepayment = data_get($xeroPayment, 'Prepayment');
+        $prepayment = $prepayment ? XeroPrepaymentData::fromXero($prepayment) : null;
+
+        $overpayment = data_get($xeroPayment, 'Overpayment');
+        $overpayment = $overpayment ? XeroOverpaymentData::fromXero($overpayment) : null;
+
         return new static(
             Invoice: XeroInvoiceData::fromXero(data_get($xeroPayment, 'Invoice')),
             Date: Carbon::parse(data_get($xeroPayment, 'Date')),
             Amount: data_get($xeroPayment, 'Amount'),
             Reference: data_get($xeroPayment, 'Reference'),
-            PaymentType: XeroPaymentTypesEnum::from(data_get($xeroPayment, 'PaymentType')),
+            PaymentType: $paymentType,
             PaymentID: data_get($xeroPayment, 'PaymentID'),
-            CreditNote: XeroCreditNoteData::fromXero(data_get($xeroPayment, 'CreditNote')),
-            Prepayment: XeroPrepaymentData::fromXero(data_get($xeroPayment, 'Prepayment')),
-            Overpayment: XeroOverpaymentData::fromXero(data_get($xeroPayment, 'Overpayment')),
+            CreditNote: $creditNote,
+            Prepayment: $prepayment,
+            Overpayment: $overpayment,
             CurrencyRate: data_get($xeroPayment, 'CurrencyRate'),
             Details: data_get($xeroPayment, 'Details'),
             BatchPaymentID: data_get($xeroPayment, 'BatchPaymentID'),
