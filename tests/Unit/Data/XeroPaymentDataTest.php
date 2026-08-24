@@ -3,9 +3,12 @@
 namespace Dcodegroup\XeroIntegration\Tests\Unit\Data;
 
 use Carbon\Carbon;
+use Dcodegroup\XeroIntegration\Contracts\XeroDataFinder;
 use Dcodegroup\XeroIntegration\Data\Accounting\XeroPaymentData;
 use Dcodegroup\XeroIntegration\Enums\XeroPaymentStatusEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroPaymentTypesEnum;
+use Mockery;
+use XeroPHP\Remote\Model;
 
 test('can instantiate XeroPaymentData with required fields', function () {
     $data = new XeroPaymentData(
@@ -36,6 +39,18 @@ test('optional fields default to null', function () {
         ->and($data->Prepayment)->toBeNull()
         ->and($data->Overpayment)->toBeNull()
         ->and($data->Status)->toBeNull();
+});
+
+test('find delegates to the shared data finder', function () {
+    $xeroPayment = Mockery::mock(Model::class);
+
+    $this->mock(XeroDataFinder::class)
+        ->shouldReceive('find')
+        ->once()
+        ->with(XeroPaymentData::class, 'pay-uuid-123')
+        ->andReturn($xeroPayment);
+
+    expect(XeroPaymentData::find('pay-uuid-123'))->toBe($xeroPayment);
 });
 
 test('toXeroArray returns correct keys', function () {

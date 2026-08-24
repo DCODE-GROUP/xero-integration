@@ -2,10 +2,10 @@
 
 namespace Dcodegroup\XeroIntegration\Data\Traits;
 
+use Dcodegroup\XeroIntegration\Contracts\XeroDataFinder;
 use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
 use Dcodegroup\XeroIntegration\Exceptions\XeroValidationException;
 use Dcodegroup\XeroIntegration\XeroApp;
-use Dcodegroup\XeroIntegration\XeroIntegration;
 use Dcodegroup\XeroIntegration\XeroQuery;
 use Exception;
 use Illuminate\Support\Collection;
@@ -164,12 +164,6 @@ trait XeroSyncTrait
 
     public static function find(string $xeroId)
     {
-        $xeroApp = app(XeroApp::class);
-        $query = $xeroApp->load(static::getXeroRelationship()->getModelClass());
-
-        /** @var \Dcodegroup\XeroIntegration\XeroIntegration $xero */
-        $xero = XeroIntegration::make($xeroApp, $query);
-
-        return $xero->find($xeroId);
+        return app(XeroDataFinder::class)->find(static::class, $xeroId);
     }
 }
