@@ -3,6 +3,7 @@
 namespace Dcodegroup\XeroIntegration;
 
 use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
+use Dcodegroup\XeroIntegration\Exceptions\XeroConfigException;
 use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
 use Dcodegroup\XeroIntegration\Facades\XeroIntegrationService;
 use Dcodegroup\XeroIntegration\Models\XeroToken;
@@ -34,6 +35,10 @@ class XeroApp extends Application
     {
         $tokenModel = $this->getTokenModel();
         $oauthToken = $this->getOauthToken($tokenModel);
+
+        if (empty(config('xero-integration.webhooks.secret'))) {
+            report(new XeroConfigException('Xero webhook secret is not configured. Please set the XERO_WEBHOOK_SECRET environment variable.'));
+        }
 
         parent::__construct($oauthToken, $tokenModel->current_tenant_id);
 
