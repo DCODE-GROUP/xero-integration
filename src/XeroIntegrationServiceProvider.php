@@ -16,25 +16,21 @@ class XeroIntegrationServiceProvider extends PackageServiceProvider
     {
         parent::boot();
 
-        if (empty(config('xero-integration.oauth.client_id'))) {
-            report(new XeroConfigException('Xero Client ID is required. Please set the XERO_CLIENT_ID environment variable.'));
-        }
-
-        if (empty(config('xero-integration.oauth.client_secret'))) {
-            report(new XeroConfigException('Xero Client Secret is required. Please set the XERO_CLIENT_SECRET environment variable.'));
-        }
-
         $this->app->singleton(Xero::class, function () {
+            if (empty(config('xero-integration.oauth.client_id'))) {
+                report(new XeroConfigException('Xero Client ID is required. Please set the XERO_CLIENT_ID environment variable.'));
+            }
+
+            if (empty(config('xero-integration.oauth.client_secret'))) {
+                report(new XeroConfigException('Xero Client Secret is required. Please set the XERO_CLIENT_SECRET environment variable.'));
+            }
+
             return new Xero([
                 'clientId' => config('xero-integration.oauth.client_id'),
                 'clientSecret' => config('xero-integration.oauth.client_secret'),
                 'redirectUri' => route('xero.callback'),
             ]);
         });
-
-        if (empty(config('xero-integration.webhooks.secret'))) {
-            report(new XeroConfigException('Xero webhook secret is not configured. Please set the XERO_WEBHOOK_SECRET environment variable.'));
-        }
 
         $this->app->singleton(XeroApp::class, function () {
             return new XeroApp;
