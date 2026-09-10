@@ -41,6 +41,7 @@ return [
     ],
 
     'routes' => [
+        'register' => true,
         'controllers' => [
             'auth' => env('XERO_ROUTE_CONTROLLER_AUTH', XeroAuthController::class),
             'callback' => env('XERO_ROUTE_CONTROLLER_CALLBACK', XeroCallbackController::class),
