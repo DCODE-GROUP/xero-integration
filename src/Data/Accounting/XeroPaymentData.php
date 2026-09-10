@@ -93,7 +93,7 @@ class XeroPaymentData extends AbstractXeroData implements XeroSyncable
         $paymentStatus = $paymentStatus ? XeroPaymentStatusEnum::fromXero($paymentStatus) : null;
 
         return new static(
-            Invoice: XeroInvoiceData::fromXero(data_get($xeroPayment, 'Invoice')),
+            Invoice: data_get($xeroPayment, 'Invoice') ? XeroInvoiceData::fromXero(data_get($xeroPayment, 'Invoice')) : null,
             Date: Carbon::parse(data_get($xeroPayment, 'Date')),
             Amount: data_get($xeroPayment, 'Amount'),
             Reference: data_get($xeroPayment, 'Reference'),

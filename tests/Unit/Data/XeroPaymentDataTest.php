@@ -43,6 +43,15 @@ test('optional fields default to null', function () {
 
 test('find delegates to the shared data finder', function () {
     $xeroPayment = Mockery::mock(Model::class);
+    $xeroPayment->shouldReceive('offsetExists')->andReturnUsing(
+        fn (string $key): bool => in_array($key, ['Date', 'Amount'], true)
+    );
+    $xeroPayment->shouldReceive('offsetGet')->andReturnUsing(
+        fn (string $key): string|float => match ($key) {
+            'Date' => '2024-01-15',
+            'Amount' => 115.00,
+        }
+    );
 
     $this->mock(XeroDataFinder::class)
         ->shouldReceive('find')
@@ -50,7 +59,8 @@ test('find delegates to the shared data finder', function () {
         ->with(XeroPaymentData::class, 'pay-uuid-123')
         ->andReturn($xeroPayment);
 
-    expect(XeroPaymentData::find('pay-uuid-123'))->toBe($xeroPayment);
+    expect(XeroPaymentData::find('pay-uuid-123'))
+        ->toBeInstanceOf(XeroPaymentData::class);
 });
 
 test('toXeroArray returns correct keys', function () {
