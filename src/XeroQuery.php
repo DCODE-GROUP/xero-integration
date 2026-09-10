@@ -18,12 +18,17 @@ class XeroQuery extends Query
 
     protected int $decaySeconds;
 
-    public function __construct(XeroApp $app)
+    public function __construct(XeroApp $app, protected ?string $baseModel = null)
     {
         parent::__construct($app);
 
         $this->limit = config('xero-integration.rate_limit.no');
         $this->decaySeconds = config('xero-integration.rate_limit.decay_seconds');
+    }
+
+    public function get()
+    {
+        return $this->execute();
     }
 
     /**
@@ -44,8 +49,16 @@ class XeroQuery extends Query
         if ($result == false) {
             throw new XeroRateLimitExceededException('Xero API rate limit exceeded. Please try again later.');
         }
+        if (! $this->baseModel) {
+            return $result;
+        }
+        $results = collect();
+        $baseModel = $this->baseModel;
+        foreach ($result as $row) {
+            $results->add($baseModel::fromXero($row));
+        }
 
-        return $result;
+        return $results;
     }
 
     public static function getRateLimiterKey(): string
