@@ -2,10 +2,13 @@
 
 namespace Dcodegroup\XeroIntegration\Data\Accounting;
 
+use Carbon\Carbon;
 use Dcodegroup\XeroIntegration\Data\AbstractXeroData;
 use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
+use Spatie\LaravelData\Attributes\WithCast;
+use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Optional;
-use XeroPHP\Models\Accounting\LineItem;
+use XeroPHP\Models\Accounting\Item as XeroItem;
 use XeroPHP\Remote\Model as XeroModel;
 
 /**
@@ -18,78 +21,82 @@ class XeroItemData extends AbstractXeroData
         return XeroRelationshipsEnum::ITEM;
     }
 
-    protected string $key = 'LineItemID';
+    protected string $key = 'ItemID';
 
     protected array $searchFields = [
-        'Description',
-        'Quantity',
-        'UnitAmount',
-        'LineAmount',
-        'ItemCode',
-        'AccountCode',
+        'Code',
+        'Name',
     ];
 
-    protected array $relatedFields = [];
+    protected array $relatedFields = [
+        'PurchaseDetails',
+        'SalesDetails',
+    ];
 
     public function __construct(
-        public string $Description,
-        public float $Quantity,
-        public float $LineAmount,
-        public string|Optional|null $LineItemID = null,
-        public float|Optional|null $UnitAmount = null,
-        public float|Optional|null $TaxAmount = null,
-        public float|Optional|null $DiscountAmount = null,
-        public string|Optional|null $ItemCode = null,
-        public string|Optional|null $AccountCode = null,
-        public string|Optional|null $AccountId = null,
-        public string|Optional|null $TaxType = null,
-        public string|Optional|null $DiscountRate = null,
-        public array|Optional|null $Tracking = null,
-        public string|Optional|null $RepeatingInvoiceID = null,
+        public string $Code,
+        public string|Optional|null $ItemID = null,
+        public string|Optional|null $InventoryAssetAccountCode = null,
+        public string|Optional|null $Name = null,
+        public bool|Optional|null $IsSold = null,
+        public bool|Optional|null $IsPurchased = null,
+        public string|Optional|null $Description = null,
+        public string|Optional|null $PurchaseDescription = null,
+        public XeroPurchaseOrSaleItemDetailData|Optional|null $PurchaseDetails = null,
+        public XeroPurchaseOrSaleItemDetailData|Optional|null $SalesDetails = null,
+        public bool|Optional|null $IsTrackedAsInventory = null,
+        public float|Optional|null $TotalCostPool = null,
+        public float|Optional|null $QuantityOnHand = null,
+        #[WithCast(DateTimeInterfaceCast::class, format: DATE_ATOM, setTimeZone: 'UTC')]
+        public Carbon|Optional|null $UpdatedDateUTC = null,
     ) {}
 
     public function toXeroArray(): array
     {
         return [
-            'LineItemID' => data_get($this, 'LineItemID'),
+            'ItemID' => data_get($this, 'ItemID'),
+            'Code' => data_get($this, 'Code'),
+            'InventoryAssetAccountCode' => data_get($this, 'InventoryAssetAccountCode'),
+            'Name' => data_get($this, 'Name'),
+            'IsSold' => data_get($this, 'IsSold'),
+            'IsPurchased' => data_get($this, 'IsPurchased'),
             'Description' => data_get($this, 'Description'),
-            'Quantity' => data_get($this, 'Quantity'),
-            'UnitAmount' => data_get($this, 'UnitAmount'),
-            'LineAmount' => data_get($this, 'LineAmount'),
-            'TaxAmount' => data_get($this, 'TaxAmount'),
-            'DiscountAmount' => data_get($this, 'DiscountAmount'),
-            'ItemCode' => data_get($this, 'ItemCode'),
-            'AccountCode' => data_get($this, 'AccountCode'),
-            'AccountId' => data_get($this, 'AccountId'),
-            'TaxType' => data_get($this, 'TaxType'),
-            'DiscountRate' => data_get($this, 'DiscountRate'),
-            'Tracking' => data_get($this, 'Tracking'),
-            'RepeatingInvoiceID' => data_get($this, 'RepeatingInvoiceID'),
+            'PurchaseDescription' => data_get($this, 'PurchaseDescription'),
+            'PurchaseDetails' => data_get($this, 'PurchaseDetails'),
+            'SalesDetails' => data_get($this, 'SalesDetails'),
+            'IsTrackedAsInventory' => data_get($this, 'IsTrackedAsInventory'),
+            'TotalCostPool' => data_get($this, 'TotalCostPool'),
+            'QuantityOnHand' => data_get($this, 'QuantityOnHand'),
+            'UpdatedDateUTC' => data_get($this, 'UpdatedDateUTC'),
         ];
     }
 
     /**
      * Create from Xero Model
-     *
-     * @param  LineItem  $xeroLineItem
      */
-    public static function fromXero(XeroModel|LineItem $xeroLineItem): self
+    public static function fromXero(XeroModel|XeroItem $xeroItem): self
     {
+        $updatedDate = data_get($xeroItem, 'UpdatedDateUTC');
+        $purchase = (data_get($xeroItem, 'PurchaseDetails'));
+        $purchase = $purchase ? XeroPurchaseOrSaleItemDetailData::from($purchase) : null;
+        $sales = (data_get($xeroItem, 'SalesDetails'));
+        $sales = $sales ? XeroPurchaseOrSaleItemDetailData::from($sales) : null;
+
         return new static(
-            LineItemID: data_get($xeroLineItem, 'LineItemID'),
-            Description: data_get($xeroLineItem, 'Description'),
-            Quantity: (float) data_get($xeroLineItem, 'Quantity'),
-            UnitAmount: data_get($xeroLineItem, 'UnitAmount'),
-            LineAmount: data_get($xeroLineItem, 'LineAmount'),
-            TaxAmount: data_get($xeroLineItem, 'TaxAmount'),
-            DiscountAmount: data_get($xeroLineItem, 'DiscountAmount'),
-            ItemCode: data_get($xeroLineItem, 'ItemCode'),
-            AccountCode: data_get($xeroLineItem, 'AccountCode'),
-            AccountId: data_get($xeroLineItem, 'AccountId'),
-            TaxType: data_get($xeroLineItem, 'TaxType'),
-            DiscountRate: data_get($xeroLineItem, 'DiscountRate'),
-            Tracking: data_get($xeroLineItem, 'Tracking'),
-            RepeatingInvoiceID: data_get($xeroLineItem, 'RepeatingInvoiceID'),
+            Code: data_get($xeroItem, 'Code'),
+            ItemID: data_get($xeroItem, 'ItemID'),
+            InventoryAssetAccountCode: data_get($xeroItem, 'InventoryAssetAccountCode'),
+            Name: data_get($xeroItem, 'Name'),
+            IsSold: data_get($xeroItem, 'IsSold'),
+            IsPurchased: data_get($xeroItem, 'IsPurchased'),
+            Description: data_get($xeroItem, 'Description'),
+            PurchaseDescription: data_get($xeroItem, 'PurchaseDescription'),
+            PurchaseDetails: $purchase,
+            SalesDetails: $sales,
+            IsTrackedAsInventory: data_get($xeroItem, 'IsTrackedAsInventory'),
+            TotalCostPool: data_get($xeroItem, 'TotalCostPool'),
+            QuantityOnHand: data_get($xeroItem, 'QuantityOnHand'),
+            UpdatedDateUTC: $updatedDate === null ? null : Carbon::instance($updatedDate),
         );
     }
 }

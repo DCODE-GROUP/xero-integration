@@ -12,6 +12,7 @@ use Override;
 use XeroPHP\Application;
 
 /**
+ * @method XeroIntegration account()
  * @method XeroIntegration address()
  * @method XeroIntegration contact()
  * @method XeroIntegration contactPerson()
@@ -19,6 +20,8 @@ use XeroPHP\Application;
  * @method XeroIntegration creditNote()
  * @method XeroIntegration invoice()
  * @method XeroIntegration item()
+ * @method XeroIntegration itemPurchaseOrSale()
+ * @method XeroIntegration lineItem()
  * @method XeroIntegration overpayment()
  * @method XeroIntegration payment()
  * @method XeroIntegration phone()

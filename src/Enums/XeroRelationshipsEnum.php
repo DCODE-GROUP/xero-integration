@@ -2,11 +2,14 @@
 
 namespace Dcodegroup\XeroIntegration\Enums;
 
+use XeroPHP\Models\Accounting\Account;
 use XeroPHP\Models\Accounting\Address;
 use XeroPHP\Models\Accounting\Contact;
 use XeroPHP\Models\Accounting\Contact\ContactPerson;
 use XeroPHP\Models\Accounting\CreditNote;
 use XeroPHP\Models\Accounting\Invoice;
+use XeroPHP\Models\Accounting\Item;
+use XeroPHP\Models\Accounting\Item\Purchase as ItemPurchase;
 use XeroPHP\Models\Accounting\LineItem;
 use XeroPHP\Models\Accounting\Overpayment;
 use XeroPHP\Models\Accounting\Payment;
@@ -21,12 +24,15 @@ use XeroPHP\Models\PayrollAU\Timesheet\TimesheetLine as TimesheetLineAU;
 
 enum XeroRelationshipsEnum: string
 {
+    case ACCOUNT = 'account';
     case ADDRESS = 'address';
     case CONTACT = 'contact';
     case CONTACT_PERSON = 'contactPerson';
     case CREDIT_NOTE = 'creditNote';
     case INVOICE = 'invoice';
     case ITEM = 'item';
+    case ITEM_PURCHASE_OR_SALE = 'itemPurchaseOrSale';
+    case LINE_ITEM = 'lineItem';
     case OVERPAYMENT = 'overpayment';
     case PAYMENT = 'payment';
     case PHONE = 'phone';
@@ -41,12 +47,15 @@ enum XeroRelationshipsEnum: string
     public function getModelClass(): string
     {
         return match ($this) {
+            self::ACCOUNT => Account::class,
             self::ADDRESS => Address::class,
             self::CONTACT => Contact::class,
             self::CONTACT_PERSON => ContactPerson::class,
             self::CREDIT_NOTE => CreditNote::class,
             self::INVOICE => Invoice::class,
-            self::ITEM => LineItem::class,
+            self::ITEM => Item::class,
+            self::ITEM_PURCHASE_OR_SALE => ItemPurchase::class,
+            self::LINE_ITEM => LineItem::class,
             self::OVERPAYMENT => Overpayment::class,
             self::PAYMENT => Payment::class,
             self::PHONE => Phone::class,

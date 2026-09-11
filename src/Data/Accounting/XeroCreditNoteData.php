@@ -43,7 +43,7 @@ class XeroCreditNoteData extends AbstractXeroData
 
     public function __construct(
         public XeroContactData $Contact,
-        /** @var Collection<int,XeroItemData> */
+        /** @var Collection<int,XeroLineItemData> */
         public Collection $LineItems,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         public Carbon $Date,
@@ -76,7 +76,7 @@ class XeroCreditNoteData extends AbstractXeroData
         return new static(
             CreditNoteID: data_get($xeroCreditNote, 'CreditNoteID'),
             Contact: XeroContactData::fromXero(data_get($xeroCreditNote, 'Contact')),
-            LineItems: XeroItemData::toCollection(data_get($xeroCreditNote, 'LineItems')),
+            LineItems: XeroLineItemData::toCollection(data_get($xeroCreditNote, 'LineItems')),
             Date: Carbon::instance(data_get($xeroCreditNote, 'Date')),
             Status: XeroInvoiceStatusEnum::TryFrom(data_get($xeroCreditNote, 'Status')),
             SubTotal: data_get($xeroCreditNote, 'SubTotal'),
@@ -102,7 +102,7 @@ class XeroCreditNoteData extends AbstractXeroData
         return [
             'CreditNoteID' => data_get($this, 'CreditNoteID'),
             'Contact' => data_get($this, 'Contact')?->toXeroArray(),
-            'LineItems' => XeroItemData::toXeroCollection(data_get($this, 'LineItems')),
+            'LineItems' => XeroLineItemData::toXeroCollection(data_get($this, 'LineItems')),
             'Date' => data_get($this, 'Date'),
             'Status' => data_get($this, 'Status')?->getXeroValue(),
             'SubTotal' => data_get($this, 'SubTotal'),

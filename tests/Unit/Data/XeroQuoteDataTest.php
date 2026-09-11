@@ -3,7 +3,7 @@
 namespace Dcodegroup\XeroIntegration\Tests\Unit\Data;
 
 use Carbon\Carbon;
-use Dcodegroup\XeroIntegration\Data\Accounting\XeroItemData;
+use Dcodegroup\XeroIntegration\Data\Accounting\XeroLineItemData;
 use Dcodegroup\XeroIntegration\Data\Accounting\XeroQuoteData;
 use Dcodegroup\XeroIntegration\Enums\XeroQuoteStatusEnum;
 
@@ -82,7 +82,7 @@ test('toXeroArray returns correct values', function () {
         Date: Carbon::parse('2024-01-01'),
         ExpiryDate: Carbon::parse('2024-01-31'),
         LineItems: collect([
-            new XeroItemData(LineItemID: null, Description: 'Service', Quantity: 1.0, UnitAmount: null, LineAmount: 500.00),
+            new XeroLineItemData(LineItemID: null, Description: 'Service', Quantity: 1.0, UnitAmount: null, LineAmount: 500.00),
         ]),
         SubTotal: 500.00,
         TotalTax: 75.00,
@@ -103,8 +103,8 @@ test('toXeroArray returns correct values', function () {
 
 test('can instantiate XeroQuoteData with line items', function () {
     $lineItems = collect([
-        new XeroItemData(LineItemID: null, Description: 'Consulting', Quantity: 2.0, UnitAmount: null, LineAmount: 400.00),
-        new XeroItemData(LineItemID: null, Description: 'Materials', Quantity: 1.0, UnitAmount: null, LineAmount: 150.00),
+        new XeroLineItemData(LineItemID: null, Description: 'Consulting', Quantity: 2.0, UnitAmount: null, LineAmount: 400.00),
+        new XeroLineItemData(LineItemID: null, Description: 'Materials', Quantity: 1.0, UnitAmount: null, LineAmount: 150.00),
     ]);
 
     $data = new XeroQuoteData(

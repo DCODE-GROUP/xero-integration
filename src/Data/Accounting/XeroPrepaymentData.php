@@ -42,7 +42,7 @@ class XeroPrepaymentData extends AbstractXeroData
 
     public function __construct(
         public XeroContactData $Contact,
-        /** @var Collection<int,XeroItemData> */
+        /** @var Collection<int,XeroLineItemData> */
         public Collection $LineItems,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         public Carbon $Date,
@@ -69,7 +69,7 @@ class XeroPrepaymentData extends AbstractXeroData
         return new static(
             PrepaymentID: data_get($xeroPrepayment, 'PrepaymentID'),
             Contact: XeroContactData::fromXero(data_get($xeroPrepayment, 'Contact')),
-            LineItems: XeroItemData::toCollection(data_get($xeroPrepayment, 'LineItems')),
+            LineItems: XeroLineItemData::toCollection(data_get($xeroPrepayment, 'LineItems')),
             Date: Carbon::instance(data_get($xeroPrepayment, 'Date')),
             Status: XeroPrepaymentStatusEnum::TryFrom(data_get($xeroPrepayment, 'Status')),
             SubTotal: data_get($xeroPrepayment, 'SubTotal'),
@@ -90,7 +90,7 @@ class XeroPrepaymentData extends AbstractXeroData
         return [
             'PrepaymentID' => data_get($this, 'PrepaymentID'),
             'Contact' => data_get($this, 'Contact')?->toXeroArray(),
-            'LineItems' => XeroItemData::toXeroCollection(data_get($this, 'LineItems')),
+            'LineItems' => XeroLineItemData::toXeroCollection(data_get($this, 'LineItems')),
             'Date' => data_get($this, 'Date'),
             'Status' => data_get($this, 'Status')?->getXeroValue(),
             'SubTotal' => data_get($this, 'SubTotal'),

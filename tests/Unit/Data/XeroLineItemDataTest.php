@@ -2,12 +2,12 @@
 
 namespace Dcodegroup\XeroIntegration\Tests\Unit\Data;
 
-use Dcodegroup\XeroIntegration\Data\Accounting\XeroItemData;
+use Dcodegroup\XeroIntegration\Data\Accounting\XeroLineItemData;
 use Mockery;
 use XeroPHP\Models\Accounting\LineItem;
 
-test('can instantiate XeroItemData with required fields', function () {
-    $data = new XeroItemData(
+test('can instantiate XeroLineItemData with required fields', function () {
+    $data = new XeroLineItemData(
         LineItemID: null,
         Description: 'Widget A',
         Quantity: 2.0,
@@ -20,8 +20,8 @@ test('can instantiate XeroItemData with required fields', function () {
         ->and($data->LineAmount)->toBe(100.00);
 });
 
-test('can instantiate XeroItemData with all fields', function () {
-    $data = new XeroItemData(
+test('can instantiate XeroLineItemData with all fields', function () {
+    $data = new XeroLineItemData(
         LineItemID: null,
         Description: 'Widget B',
         Quantity: 3.0,
@@ -44,7 +44,7 @@ test('can instantiate XeroItemData with all fields', function () {
 });
 
 test('optional fields default to null', function () {
-    $data = new XeroItemData(
+    $data = new XeroLineItemData(
         LineItemID: null,
         Description: 'Widget',
         Quantity: 1.0,
@@ -62,7 +62,7 @@ test('optional fields default to null', function () {
 });
 
 test('toXeroArray returns correct keys', function () {
-    $data = new XeroItemData(
+    $data = new XeroLineItemData(
         LineItemID: null,
         Description: 'Widget',
         Quantity: 1.0,
@@ -79,7 +79,7 @@ test('toXeroArray returns correct keys', function () {
 });
 
 test('toXeroArray returns correct values', function () {
-    $data = new XeroItemData(
+    $data = new XeroLineItemData(
         LineItemID: null,
         Description: 'Service Fee',
         Quantity: 1.0,
@@ -97,7 +97,7 @@ test('toXeroArray returns correct values', function () {
         ->and($array['ItemCode'])->toBe('SVC');
 });
 
-test('fromXero maps xero model to XeroItemData', function () {
+test('fromXero maps xero model to XeroLineItemData', function () {
     $lineItem = Mockery::mock(LineItem::class);
     $lineItem->shouldReceive('offsetGet')->andReturnUsing(fn ($key) => match ($key) {
         'LineItemID' => 'line-uuid-123',
@@ -118,9 +118,9 @@ test('fromXero maps xero model to XeroItemData', function () {
     });
     $lineItem->shouldReceive('offsetExists')->andReturn(true);
 
-    $data = XeroItemData::fromXero($lineItem);
+    $data = XeroLineItemData::fromXero($lineItem);
 
-    expect($data)->toBeInstanceOf(XeroItemData::class)
+    expect($data)->toBeInstanceOf(XeroLineItemData::class)
         ->and($data->Description)->toBe('Consulting')
         ->and($data->Quantity)->toBe(2.0)
         ->and($data->LineAmount)->toBe(200.00)
