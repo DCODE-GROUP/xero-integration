@@ -11,7 +11,7 @@ use XeroPHP\Remote\Model as XeroModel;
 /**
  * @phpstan-consistent-constructor
  */
-class XeroItemData extends AbstractXeroData
+class XeroLineItemData extends AbstractXeroData
 {
     public static function getXeroRelationship(): XeroRelationshipsEnum
     {

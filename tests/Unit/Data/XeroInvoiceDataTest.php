@@ -5,7 +5,7 @@ namespace Dcodegroup\XeroIntegration\Tests\Unit\Data;
 use Carbon\Carbon;
 use Dcodegroup\XeroIntegration\Data\Accounting\XeroContactData;
 use Dcodegroup\XeroIntegration\Data\Accounting\XeroInvoiceData;
-use Dcodegroup\XeroIntegration\Data\Accounting\XeroItemData;
+use Dcodegroup\XeroIntegration\Data\Accounting\XeroLineItemData;
 use Dcodegroup\XeroIntegration\Enums\XeroContactStatusEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroInvoiceStatusEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroInvoiceTypeEnum;
@@ -22,7 +22,7 @@ test('can instantiate XeroInvoiceData with required fields', function () {
     );
 
     $lineItems = collect([
-        new XeroItemData(LineItemID: null, Description: 'Widget', Quantity: 1.0, UnitAmount: null, LineAmount: 100.00),
+        new XeroLineItemData(LineItemID: null, Description: 'Widget', Quantity: 1.0, UnitAmount: null, LineAmount: 100.00),
     ]);
 
     $data = new XeroInvoiceData(

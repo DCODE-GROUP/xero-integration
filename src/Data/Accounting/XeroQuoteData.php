@@ -44,7 +44,7 @@ class XeroQuoteData extends AbstractXeroData implements XeroSyncable
         public Carbon $Date,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         public Carbon $ExpiryDate,
-        /** @var Collection<int,XeroItemData> $LineItems */
+        /** @var Collection<int,XeroLineItemData> $LineItems */
         public Collection $LineItems,
         #[WithCast(DateTimeInterfaceCast::class, format: DATE_ATOM, setTimeZone: 'UTC')]
         public Carbon $UpdatedDateUTC,
@@ -75,7 +75,7 @@ class XeroQuoteData extends AbstractXeroData implements XeroSyncable
             'Status' => data_get($this, 'Status')?->getXeroValue(),
             'Date' => data_get($this, 'Date'),
             'ExpiryDate' => data_get($this, 'ExpiryDate'),
-            'LineItems' => XeroItemData::toXeroCollection(data_get($this, 'LineItems')),
+            'LineItems' => XeroLineItemData::toXeroCollection(data_get($this, 'LineItems')),
             'LineAmountTypes' => data_get($this, 'LineAmountTypes')?->getXeroValue(),
             'SubTotal' => data_get($this, 'SubTotal'),
             'TotalTax' => data_get($this, 'TotalTax'),
@@ -105,7 +105,7 @@ class XeroQuoteData extends AbstractXeroData implements XeroSyncable
             Status: XeroQuoteStatusEnum::TryFrom(data_get($xeroObject, 'Status')),
             Date: Carbon::instance(data_get($xeroObject, 'Date')),
             ExpiryDate: Carbon::instance(data_get($xeroObject, 'ExpiryDate')),
-            LineItems: collect(data_get($xeroObject, 'LineItems'))->map(fn ($item) => XeroItemData::fromXero($item)),
+            LineItems: collect(data_get($xeroObject, 'LineItems'))->map(fn ($item) => XeroLineItemData::fromXero($item)),
             SubTotal: data_get($xeroObject, 'SubTotal'),
             TotalTax: data_get($xeroObject, 'TotalTax'),
             Total: data_get($xeroObject, 'Total'),

@@ -42,7 +42,7 @@ class XeroInvoiceData extends AbstractXeroData
 
     public function __construct(
         public XeroContactData $Contact,
-        /** @var Collection<int,XeroItemData> */
+        /** @var Collection<int,XeroLineItemData> */
         public Collection $LineItems,
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
         public Carbon $InvoiceDate,
@@ -93,7 +93,7 @@ class XeroInvoiceData extends AbstractXeroData
         $data = new static(
             InvoiceID: data_get($xeroInvoice, 'InvoiceID'),
             Contact: XeroContactData::fromXero(data_get($xeroInvoice, 'Contact')),
-            LineItems: XeroItemData::toCollection(data_get($xeroInvoice, 'LineItems')),
+            LineItems: XeroLineItemData::toCollection(data_get($xeroInvoice, 'LineItems')),
             InvoiceDate: Carbon::instance(data_get($xeroInvoice, 'Date')),
             DueDate: Carbon::instance(data_get($xeroInvoice, 'DueDate')),
             InvoiceNumber: data_get($xeroInvoice, 'InvoiceNumber'),
@@ -144,7 +144,7 @@ class XeroInvoiceData extends AbstractXeroData
         return [
             'Type' => data_get($this, 'Type')?->getXeroValue(),
             'Contact' => data_get($this, 'Contact')?->toXeroArray(),
-            'LineItems' => XeroItemData::toXeroCollection(data_get($this, 'LineItems', collect())),
+            'LineItems' => XeroLineItemData::toXeroCollection(data_get($this, 'LineItems', collect())),
             'Date' => $this->InvoiceDate->format('Y-m-d'),
             'DueDate' => $this->DueDate->format('Y-m-d'),
             'InvoiceNumber' => data_get($this, 'InvoiceNumber'),
