@@ -53,6 +53,7 @@ class XeroTrackingCategoryOptionData extends AbstractXeroData
     public static function fromXero(XeroModel|array $xeroTrackingCategoryOption): self
     {
         return new static(
+            TrackingOptionID: data_get($xeroTrackingCategoryOption, 'TrackingOptionID'),
             Name: data_get($xeroTrackingCategoryOption, 'Name'),
             HasValidationErrors: data_get($xeroTrackingCategoryOption, 'HasValidationErrors', false),
             Status: data_get($xeroTrackingCategoryOption, 'Status'),
