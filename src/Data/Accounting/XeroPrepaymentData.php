@@ -63,8 +63,6 @@ class XeroPrepaymentData extends AbstractXeroData
 
     /**
      * Create from Xero Model
-     *
-     * @param  XeroPrepayment  $xeroPrepayment
      */
     public static function fromXero(XeroModel|XeroPrepayment $xeroPrepayment): self
     {

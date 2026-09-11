@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static \Dcodegroup\XeroIntegration\XeroIntegration limit(int $limit)
  * @method static \Illuminate\Support\Collection|\XeroPHP\Remote\Model[] get()
  * @method static void firstOrFail()
+ * @method static \XeroPHP\Remote\Collection|\Illuminate\Support\Collection execute()
  *
  * @see \Dcodegroup\XeroIntegration\XeroIntegration
  */

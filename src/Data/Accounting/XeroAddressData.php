@@ -59,8 +59,6 @@ class XeroAddressData extends AbstractXeroData
 
     /**
      * Create from Xero Model
-     *
-     * @param  XeroAddress  $xeroAddress
      */
     public static function fromXero(XeroModel|XeroAddress $xeroAddress): self
     {

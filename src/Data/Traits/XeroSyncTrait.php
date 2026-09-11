@@ -162,8 +162,10 @@ trait XeroSyncTrait
         }
     }
 
-    public static function find(string $xeroId)
+    public static function find(string $xeroId): ?self
     {
-        return app(XeroDataFinder::class)->find(static::class, $xeroId);
+        $xeroModel = app(XeroDataFinder::class)->find(static::class, $xeroId);
+
+        return $xeroModel ? static::fromXero($xeroModel) : null;
     }
 }

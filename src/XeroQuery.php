@@ -5,6 +5,7 @@ namespace Dcodegroup\XeroIntegration;
 use Dcodegroup\XeroIntegration\Exceptions\XeroConfigException;
 use Dcodegroup\XeroIntegration\Exceptions\XeroRateLimitExceededException;
 use Dcodegroup\XeroIntegration\Facades\XeroIntegrationService;
+use Illuminate\Support\Collection as LaravelCollection;
 use Illuminate\Support\Facades\RateLimiter;
 use Override;
 use XeroPHP\Remote\Collection;
@@ -18,7 +19,7 @@ class XeroQuery extends Query
 
     protected int $decaySeconds;
 
-    public function __construct(XeroApp $app)
+    public function __construct(XeroApp $app, protected ?string $baseModel = null)
     {
         parent::__construct($app);
 
@@ -26,8 +27,13 @@ class XeroQuery extends Query
         $this->decaySeconds = config('xero-integration.rate_limit.decay_seconds');
     }
 
+    public function get()
+    {
+        return $this->execute();
+    }
+
     /**
-     * @return Collection
+     * @return Collection|LaravelCollection
      *
      * @throws XeroRateLimitExceededException
      */
@@ -44,8 +50,16 @@ class XeroQuery extends Query
         if ($result == false) {
             throw new XeroRateLimitExceededException('Xero API rate limit exceeded. Please try again later.');
         }
+        if (! $this->baseModel) {
+            return $result;
+        }
+        $results = collect();
+        $baseModel = $this->baseModel;
+        foreach ($result as $row) {
+            $results->add($baseModel::fromXero($row));
+        }
 
-        return $result;
+        return $results;
     }
 
     public static function getRateLimiterKey(): string

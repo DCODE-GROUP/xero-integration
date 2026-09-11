@@ -5,6 +5,8 @@ namespace Dcodegroup\XeroIntegration\Data;
 use Dcodegroup\XeroIntegration\Data\Contracts\HasXeroData;
 use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
 use Dcodegroup\XeroIntegration\Models\XeroRecord;
+use Dcodegroup\XeroIntegration\Services\XeroDataQueryService;
+use Dcodegroup\XeroIntegration\XeroQuery;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Data;
@@ -80,4 +82,9 @@ abstract class AbstractXeroData extends Data implements HasXeroData
     abstract public function toXeroArray(): array;
 
     abstract public static function fromXero(XeroModel $xeroObject): self;
+
+    public static function query(): XeroQuery
+    {
+        return app(XeroDataQueryService::class)->query(static::getXeroRelationship()->getModelClass(), static::class);
+    }
 }

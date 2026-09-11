@@ -4,6 +4,7 @@ namespace Dcodegroup\XeroIntegration\Models;
 
 use Dcodegroup\XeroIntegration\Enums\XeroWebhookStatusEnum;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
@@ -60,7 +61,10 @@ class XeroWebhookEvent extends Model
         });
     }
 
-    public function xeroWebhook()
+    /**
+     * @return BelongsTo<XeroWebhook, $this>
+     */
+    public function xeroWebhook(): BelongsTo
     {
         return $this->belongsTo(XeroWebhook::class);
     }
