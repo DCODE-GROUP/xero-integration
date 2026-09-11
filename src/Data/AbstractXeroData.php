@@ -6,6 +6,7 @@ use Dcodegroup\XeroIntegration\Data\Contracts\HasXeroData;
 use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
 use Dcodegroup\XeroIntegration\Models\XeroRecord;
 use Dcodegroup\XeroIntegration\Services\XeroDataQueryService;
+use Dcodegroup\XeroIntegration\XeroApp;
 use Dcodegroup\XeroIntegration\XeroQuery;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -26,6 +27,10 @@ abstract class AbstractXeroData extends Data implements HasXeroData
         }
 
         if (! property_exists($this, 'key') || empty($this->key)) {
+            return null;
+        }
+
+        if (empty($this->{$this->key})) {
             return null;
         }
 
@@ -80,6 +85,17 @@ abstract class AbstractXeroData extends Data implements HasXeroData
     }
 
     abstract public function toXeroArray(): array;
+
+    /**
+     * Convert this data object into the package's underlying Xero model.
+     */
+    public function toXeroModel(?XeroApp $xeroApp = null): XeroModel
+    {
+        $xeroModel = new (static::getXeroRelationship()->getModelClass())($xeroApp);
+        $xeroModel->fromStringArray($this->toXeroArray(), true);
+
+        return $xeroModel;
+    }
 
     abstract public static function fromXero(XeroModel $xeroObject): self;
 

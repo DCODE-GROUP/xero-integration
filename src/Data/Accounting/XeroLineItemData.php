@@ -63,7 +63,13 @@ class XeroLineItemData extends AbstractXeroData
             'AccountId' => data_get($this, 'AccountId'),
             'TaxType' => data_get($this, 'TaxType'),
             'DiscountRate' => data_get($this, 'DiscountRate'),
-            'Tracking' => data_get($this, 'Tracking'),
+            'Tracking' => collect(data_get($this, 'Tracking', []))
+                ->map(fn (array $tracking): array => [
+                    'Name' => data_get($tracking, 'Name', data_get($tracking, 'TrackingCategoryName')),
+                    'Option' => data_get($tracking, 'Option', data_get($tracking, 'TrackingOptionName')),
+                ])
+                ->values()
+                ->all(),
             'RepeatingInvoiceID' => data_get($this, 'RepeatingInvoiceID'),
         ];
     }
@@ -75,6 +81,13 @@ class XeroLineItemData extends AbstractXeroData
      */
     public static function fromXero(XeroModel|LineItem $xeroLineItem): self
     {
+        $tracking = data_get($xeroLineItem, 'Tracking');
+        $tracking = $tracking ? collect($tracking)->map(fn (XeroModel $item): array => [
+            'TrackingCategoryName' => data_get($item, 'TrackingCategoryName', data_get($item, 'Name')),
+            'TrackingOptionID' => data_get($item, 'TrackingOptionID'),
+            'TrackingOptionName' => data_get($item, 'TrackingOptionName', data_get($item, 'Option')),
+        ])->values()->all() : null;
+
         return new static(
             LineItemID: data_get($xeroLineItem, 'LineItemID'),
             Description: data_get($xeroLineItem, 'Description'),
@@ -88,7 +101,7 @@ class XeroLineItemData extends AbstractXeroData
             AccountId: data_get($xeroLineItem, 'AccountId'),
             TaxType: data_get($xeroLineItem, 'TaxType'),
             DiscountRate: data_get($xeroLineItem, 'DiscountRate'),
-            Tracking: data_get($xeroLineItem, 'Tracking'),
+            Tracking: $tracking,
             RepeatingInvoiceID: data_get($xeroLineItem, 'RepeatingInvoiceID'),
         );
     }

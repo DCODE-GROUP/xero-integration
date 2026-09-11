@@ -10,13 +10,16 @@ use Dcodegroup\XeroIntegration\XeroQuery;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use XeroPHP\Models\Accounting\Attachment;
 use XeroPHP\Remote\Model as XeroModel;
 
 trait XeroSyncTrait
 {
     protected ?XeroApp $xeroApp = null;
 
-    public function sendToXero(): void
+    protected ?XeroModel $xeroRecord = null;
+
+    public function sendToXero(bool $syncRelated = true): void
     {
         $xeroApp = $this->getXeroApp();
 
@@ -42,7 +45,20 @@ trait XeroSyncTrait
 
         $xeroRecord = $this->buildXeroRecord($xeroRecord);
 
-        $this->saveXeroRecord($xeroRecord, true);
+        $this->saveXeroRecord($xeroRecord, $syncRelated);
+    }
+
+    /**
+     * Attach binary content to the record most recently synchronized to Xero.
+     */
+    public function attachBinary(string $content, string $fileName, string $mimeType): void
+    {
+        if (! $this->xeroRecord || ! method_exists($this->xeroRecord, 'addAttachment')) {
+            throw new XeroIntegrationException('A Xero record must be synchronized before attaching files');
+        }
+
+        $attachment = Attachment::createFromBinary($content, $fileName, $mimeType);
+        $this->xeroRecord->addAttachment($attachment);
     }
 
     protected function searchForRecordInXero(?XeroQuery $query = null): ?XeroModel
@@ -115,6 +131,8 @@ trait XeroSyncTrait
 
     protected function saveXeroRecord(XeroModel $xeroRecord, bool $related = false): void
     {
+        $localModel = $this->getLocalModel();
+
         try {
             $this->xeroApp->save($xeroRecord, true);
         } catch (Exception $e) {
@@ -133,7 +151,15 @@ trait XeroSyncTrait
             throw new XeroIntegrationException('Failed to retrieve GUID from Xero Record after saving');
         }
 
-        $this->updateXeroRecord($xeroId);
+        if (property_exists($this, 'key')) {
+            $this->{$this->key} = $xeroId;
+        }
+
+        $this->xeroRecord = $xeroRecord;
+
+        if (! empty($localModel)) {
+            $this->updateXeroRecord($xeroId);
+        }
 
         if ($related && ! empty($this->relatedFields)) {
             $this->updateRelatedXeroRecords($xeroRecord);
