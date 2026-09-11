@@ -7,6 +7,7 @@ use XeroPHP\Models\Accounting\Contact;
 use XeroPHP\Models\Accounting\Contact\ContactPerson;
 use XeroPHP\Models\Accounting\CreditNote;
 use XeroPHP\Models\Accounting\Invoice;
+use XeroPHP\Models\Accounting\Item;
 use XeroPHP\Models\Accounting\LineItem;
 use XeroPHP\Models\Accounting\Overpayment;
 use XeroPHP\Models\Accounting\Payment;
@@ -27,6 +28,7 @@ enum XeroRelationshipsEnum: string
     case CREDIT_NOTE = 'creditNote';
     case INVOICE = 'invoice';
     case ITEM = 'item';
+    case LINE_ITEM = 'lineItem';
     case OVERPAYMENT = 'overpayment';
     case PAYMENT = 'payment';
     case PHONE = 'phone';
@@ -46,7 +48,8 @@ enum XeroRelationshipsEnum: string
             self::CONTACT_PERSON => ContactPerson::class,
             self::CREDIT_NOTE => CreditNote::class,
             self::INVOICE => Invoice::class,
-            self::ITEM => LineItem::class,
+            self::ITEM => Item::class,
+            self::LINE_ITEM => LineItem::class,
             self::OVERPAYMENT => Overpayment::class,
             self::PAYMENT => Payment::class,
             self::PHONE => Phone::class,

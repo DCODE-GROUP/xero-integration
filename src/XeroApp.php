@@ -19,6 +19,7 @@ use XeroPHP\Application;
  * @method XeroIntegration creditNote()
  * @method XeroIntegration invoice()
  * @method XeroIntegration item()
+ * @method XeroIntegration lineItem()
  * @method XeroIntegration overpayment()
  * @method XeroIntegration payment()
  * @method XeroIntegration phone()

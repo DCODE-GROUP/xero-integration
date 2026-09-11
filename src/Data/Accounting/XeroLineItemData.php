@@ -15,7 +15,7 @@ class XeroLineItemData extends AbstractXeroData
 {
     public static function getXeroRelationship(): XeroRelationshipsEnum
     {
-        return XeroRelationshipsEnum::ITEM;
+        return XeroRelationshipsEnum::LINE_ITEM;
     }
 
     protected string $key = 'LineItemID';
