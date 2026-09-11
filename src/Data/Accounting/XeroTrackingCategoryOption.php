@@ -49,8 +49,6 @@ class XeroTrackingCategoryOption extends AbstractXeroData
 
     /**
      * Create from Xero Model
-     *
-     * @param  array  $xeroTrackingCategoryOption
      */
     public static function fromXero(XeroModel|array $xeroTrackingCategoryOption): self
     {

@@ -49,10 +49,8 @@ class XeroTrackingCategory extends AbstractXeroData
 
     /**
      * Create from Xero Model
-     *
-     * @param  array  $xeroTrackingCategory
      */
-    public static function fromXero(XeroModel|array $xeroTrackingCategory): self
+    public static function fromXero(XeroModel $xeroTrackingCategory): self
     {
         return new static(
             TrackingCategoryID: data_get($xeroTrackingCategory, 'TrackingCategoryID'),
