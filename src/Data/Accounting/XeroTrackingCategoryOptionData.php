@@ -10,7 +10,7 @@ use XeroPHP\Remote\Model as XeroModel;
 /**
  * @phpstan-consistent-constructor
  */
-class XeroTrackingCategoryOption extends AbstractXeroData
+class XeroTrackingCategoryOptionData extends AbstractXeroData
 {
     public static function getXeroRelationship(): XeroRelationshipsEnum
     {

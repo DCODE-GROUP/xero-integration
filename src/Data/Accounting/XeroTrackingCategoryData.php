@@ -11,7 +11,7 @@ use XeroPHP\Remote\Model as XeroModel;
 /**
  * @phpstan-consistent-constructor
  */
-class XeroTrackingCategory extends AbstractXeroData
+class XeroTrackingCategoryData extends AbstractXeroData
 {
     public static function getXeroRelationship(): XeroRelationshipsEnum
     {
@@ -30,7 +30,7 @@ class XeroTrackingCategory extends AbstractXeroData
         public string|Optional|null $TrackingCategoryID = null,
         public string|Optional|null $Name = null,
         public string|Optional|null $Status = null,
-        /** @var Collection<int|string, XeroTrackingCategoryOption> */
+        /** @var Collection<int|string, XeroTrackingCategoryOptionData> */
         public Collection|Optional|null $Options = null,
     ) {
         if ($Options === null || $Options instanceof Optional) {
@@ -57,7 +57,7 @@ class XeroTrackingCategory extends AbstractXeroData
             Name: data_get($xeroTrackingCategory, 'Name'),
             Status: data_get($xeroTrackingCategory, 'Status'),
             Options: collect(data_get($xeroTrackingCategory, 'Options', []))
-                ->map(fn (XeroModel $option) => XeroTrackingCategoryOption::fromXero($option)),
+                ->map(fn (XeroModel $option) => XeroTrackingCategoryOptionData::fromXero($option)),
         );
     }
 }
