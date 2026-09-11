@@ -36,7 +36,7 @@ enum XeroRelationshipsEnum: string
     case TIMESHEET_LINE_AU = 'timesheet_line_au';
     case TAX_RATE = 'taxRate';
     case LEAVE_APPLICATION_AU = 'leave_application_au';
-    case ITEM_TRACKING_CATEGORY = 'tracking_category';
+    case ITEM_TRACKING_CATEGORY = 'trackingCategory';
 
     public function getModelClass(): string
     {

@@ -5,6 +5,7 @@ namespace Dcodegroup\XeroIntegration;
 use Dcodegroup\XeroIntegration\Exceptions\XeroConfigException;
 use Dcodegroup\XeroIntegration\Exceptions\XeroRateLimitExceededException;
 use Dcodegroup\XeroIntegration\Facades\XeroIntegrationService;
+use Illuminate\Support\Collection as LaravelCollection;
 use Illuminate\Support\Facades\RateLimiter;
 use Override;
 use XeroPHP\Remote\Collection;
@@ -32,7 +33,7 @@ class XeroQuery extends Query
     }
 
     /**
-     * @return Collection
+     * @return Collection|LaravelCollection
      *
      * @throws XeroRateLimitExceededException
      */

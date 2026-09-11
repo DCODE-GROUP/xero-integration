@@ -15,6 +15,7 @@ use XeroPHP\Application;
  * @method XeroIntegration address()
  * @method XeroIntegration contact()
  * @method XeroIntegration contactPerson()
+ * @method XeroIntegration trackingCategory()
  * @method XeroIntegration creditNote()
  * @method XeroIntegration invoice()
  * @method XeroIntegration item()

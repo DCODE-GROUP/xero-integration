@@ -41,8 +41,6 @@ class XeroTaxComponentData extends AbstractXeroData
 
     /**
      * Create from Xero Model
-     *
-     * @param  XeroTaxComponent  $xeroTaxComponent
      */
     public static function fromXero(XeroModel|XeroTaxComponent $xeroTaxComponent): self
     {

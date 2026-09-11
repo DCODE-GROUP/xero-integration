@@ -80,10 +80,7 @@ abstract class AbstractXeroData extends Data implements HasXeroData
 
     abstract public function toXeroArray(): array;
 
-    public static function fromXero(XeroModel $xeroModel): self
-    {
-        return static::from($xeroModel->toStringArray());
-    }
+    abstract public static function fromXero(XeroModel $xeroObject): self;
 
     public static function query()
     {

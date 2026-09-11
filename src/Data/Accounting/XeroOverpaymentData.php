@@ -67,8 +67,6 @@ class XeroOverpaymentData extends AbstractXeroData
 
     /**
      * Create from Xero Model
-     *
-     * @param  XeroOverpayment  $xeroOverpayment
      */
     public static function fromXero(XeroModel|XeroOverpayment $xeroOverpayment): self
     {

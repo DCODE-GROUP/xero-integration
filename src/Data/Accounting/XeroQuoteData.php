@@ -97,8 +97,6 @@ class XeroQuoteData extends AbstractXeroData implements XeroSyncable
 
     /**
      * Create from Xero Model
-     *
-     * @param  XeroQuote  $xeroObject
      */
     public static function fromXero(XeroModel|XeroQuote $xeroObject): self
     {

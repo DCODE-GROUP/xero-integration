@@ -63,8 +63,6 @@ class XeroTaxRateData extends AbstractXeroData
 
     /**
      * Create from Xero Model
-     *
-     * @param  XeroTaxRate  $xeroTaxRate
      */
     public static function fromXero(XeroModel|XeroTaxRate $xeroTaxRate): self
     {
