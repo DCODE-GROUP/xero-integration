@@ -151,7 +151,7 @@ trait XeroSyncTrait
             throw new XeroIntegrationException('Failed to retrieve GUID from Xero Record after saving');
         }
 
-        if (property_exists($this, 'key')) {
+        if (! empty($this->key)) {
             $this->{$this->key} = $xeroId;
         }
 
