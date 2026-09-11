@@ -6,6 +6,9 @@ use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
 use Illuminate\Support\Collection;
 use XeroPHP\Remote\Model;
 
+/**
+ * @method \XeroPHP\Remote\Collection|\Illuminate\Support\Collection execute()
+ */
 class XeroIntegration
 {
     public function __construct(

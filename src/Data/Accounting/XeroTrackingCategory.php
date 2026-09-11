@@ -30,7 +30,7 @@ class XeroTrackingCategory extends AbstractXeroData
         public string|Optional|null $TrackingCategoryID = null,
         public string|Optional|null $Name = null,
         public string|Optional|null $Status = null,
-        /** @var Collection<int,XeroItemData> */
+        /** @var Collection<int|string, XeroTrackingCategoryOption> */
         public Collection|Optional|null $Options = null,
     ) {
         if ($Options === null || $Options instanceof Optional) {
