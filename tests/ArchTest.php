@@ -11,13 +11,17 @@ arch('it will not use debugging functions')
 arch('all data classes will be suffixed with Data')
     ->expect('Dcodegroup\XeroIntegration\Data')
     ->classes()
-    ->toHaveSuffix('Data');
+    ->toHaveSuffix('Data')
+    ->ignoring('Dcodegroup\XeroIntegration\Data\Normalizers');
 
 arch('all data classes to extend AbstractXeroData')
     ->expect('Dcodegroup\XeroIntegration\Data')
     ->classes()
     ->toExtend('Dcodegroup\XeroIntegration\Data\AbstractXeroData')
-    ->ignoring('Dcodegroup\XeroIntegration\Data\AbstractXeroData');
+    ->ignoring([
+        'Dcodegroup\XeroIntegration\Data\AbstractXeroData',
+        'Dcodegroup\XeroIntegration\Data\Normalizers',
+    ]);
 
 arch('all files in Enum folder are string backed enums')
     ->expect('Dcodegroup\XeroIntegration\Enums')

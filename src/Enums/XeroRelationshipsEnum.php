@@ -9,6 +9,7 @@ use XeroPHP\Models\Accounting\Contact\ContactPerson;
 use XeroPHP\Models\Accounting\CreditNote;
 use XeroPHP\Models\Accounting\Invoice;
 use XeroPHP\Models\Accounting\Item;
+use XeroPHP\Models\Accounting\Item\Purchase as ItemPurchase;
 use XeroPHP\Models\Accounting\LineItem;
 use XeroPHP\Models\Accounting\Overpayment;
 use XeroPHP\Models\Accounting\Payment;
@@ -30,6 +31,7 @@ enum XeroRelationshipsEnum: string
     case CREDIT_NOTE = 'creditNote';
     case INVOICE = 'invoice';
     case ITEM = 'item';
+    case ITEM_PURCHASE_OR_SALE = 'itemPurchaseOrSale';
     case LINE_ITEM = 'lineItem';
     case OVERPAYMENT = 'overpayment';
     case PAYMENT = 'payment';
@@ -52,6 +54,7 @@ enum XeroRelationshipsEnum: string
             self::CREDIT_NOTE => CreditNote::class,
             self::INVOICE => Invoice::class,
             self::ITEM => Item::class,
+            self::ITEM_PURCHASE_OR_SALE => ItemPurchase::class,
             self::LINE_ITEM => LineItem::class,
             self::OVERPAYMENT => Overpayment::class,
             self::PAYMENT => Payment::class,
