@@ -12,6 +12,7 @@ use Override;
 use XeroPHP\Application;
 
 /**
+ * @method XeroIntegration account()
  * @method XeroIntegration address()
  * @method XeroIntegration contact()
  * @method XeroIntegration contactPerson()

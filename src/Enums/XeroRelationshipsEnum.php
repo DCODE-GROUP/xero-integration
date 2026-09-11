@@ -2,6 +2,7 @@
 
 namespace Dcodegroup\XeroIntegration\Enums;
 
+use XeroPHP\Models\Accounting\Account;
 use XeroPHP\Models\Accounting\Address;
 use XeroPHP\Models\Accounting\Contact;
 use XeroPHP\Models\Accounting\Contact\ContactPerson;
@@ -22,6 +23,7 @@ use XeroPHP\Models\PayrollAU\Timesheet\TimesheetLine as TimesheetLineAU;
 
 enum XeroRelationshipsEnum: string
 {
+    case ACCOUNT = 'account';
     case ADDRESS = 'address';
     case CONTACT = 'contact';
     case CONTACT_PERSON = 'contactPerson';
@@ -43,6 +45,7 @@ enum XeroRelationshipsEnum: string
     public function getModelClass(): string
     {
         return match ($this) {
+            self::ACCOUNT => Account::class,
             self::ADDRESS => Address::class,
             self::CONTACT => Contact::class,
             self::CONTACT_PERSON => ContactPerson::class,

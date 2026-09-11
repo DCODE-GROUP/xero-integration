@@ -42,8 +42,8 @@ class XeroItemData extends AbstractXeroData
         public bool|Optional|null $IsPurchased = null,
         public string|Optional|null $Description = null,
         public string|Optional|null $PurchaseDescription = null,
-        public array|Optional|null $PurchaseDetails = null,
-        public array|Optional|null $SalesDetails = null,
+        public XeroPurchaseOrSaleItemDetailData|Optional|null $PurchaseDetails = null,
+        public XeroPurchaseOrSaleItemDetailData|Optional|null $SalesDetails = null,
         public bool|Optional|null $IsTrackedAsInventory = null,
         public float|Optional|null $TotalCostPool = null,
         public float|Optional|null $QuantityOnHand = null,
@@ -77,6 +77,10 @@ class XeroItemData extends AbstractXeroData
     public static function fromXero(XeroModel|XeroItem $xeroItem): self
     {
         $updatedDate = data_get($xeroItem, 'UpdatedDateUTC');
+        $purchase = (data_get($xeroItem, 'PurchaseDetails'));
+        $purchase = $purchase ? XeroPurchaseOrSaleItemDetailData::from($purchase) : null;
+        $sales = (data_get($xeroItem, 'SalesDetails'));
+        $sales = $sales ? XeroPurchaseOrSaleItemDetailData::from($sales) : null;
 
         return new static(
             Code: data_get($xeroItem, 'Code'),
@@ -87,8 +91,8 @@ class XeroItemData extends AbstractXeroData
             IsPurchased: data_get($xeroItem, 'IsPurchased'),
             Description: data_get($xeroItem, 'Description'),
             PurchaseDescription: data_get($xeroItem, 'PurchaseDescription'),
-            PurchaseDetails: data_get($xeroItem, 'PurchaseDetails'),
-            SalesDetails: data_get($xeroItem, 'SalesDetails'),
+            PurchaseDetails: $purchase,
+            SalesDetails: $sales,
             IsTrackedAsInventory: data_get($xeroItem, 'IsTrackedAsInventory'),
             TotalCostPool: data_get($xeroItem, 'TotalCostPool'),
             QuantityOnHand: data_get($xeroItem, 'QuantityOnHand'),
