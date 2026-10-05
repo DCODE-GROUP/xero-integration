@@ -12,7 +12,7 @@ An opininated Xero integration package for Laravel that allows for fluent querin
 You can install the package via composer:
 
 ```bash
-composer require dcode-group/xero-integration
+composer require dcodegroup/xero-integration
 ```
 
 You can publish and run the migrations with:

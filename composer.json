@@ -24,7 +24,7 @@
     "require": {
         "php": "^8.3",
         "calcinai/xero-php": "^2.8",
-        "laravel/framework": "^11.0||^12.0||^13.0",
+        "laravel/framework": "^10.0||^11.0||^12.0||^13.0",
         "laravel/prompts": "^0.2||^0.3",
         "league/oauth2-client": "^2.9",
         "spatie/laravel-data": "^4.23",
@@ -36,10 +36,10 @@
         "laravel/boost": "^2.5",
         "laravel/pint": "^1.14",
         "nunomaduro/collision": "^8.8",
-        "orchestra/testbench": "^9.0.0||^10.0.0||^11.0.0",
+        "orchestra/testbench": "^8.0.0||^9.0.0||^10.0.0||^11.0.0",
         "pestphp/pest": "^4.0",
         "pestphp/pest-plugin-arch": "^4.0",
-        "pestphp/pest-plugin-laravel": "^4.0",
+        "pestphp/pest-plugin-laravel": "^3.0||^4.0",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0",
@@ -134,7 +134,7 @@
             ],
             "post-merge": [
                 ".dev/post-merge"
-            ]     
+            ]
         }
     },
     "minimum-stability": "dev",
