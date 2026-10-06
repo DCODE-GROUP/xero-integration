@@ -5,7 +5,6 @@ namespace Dcodegroup\XeroIntegration\Models;
 use Carbon\Carbon;
 use Dcodegroup\XeroIntegration\Database\Factories\XeroTokenFactory;
 use Dcodegroup\XeroIntegration\Facades\XeroIntegrationService;
-use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -28,7 +27,6 @@ use League\OAuth2\Client\Token\AccessTokenInterface;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[UseFactory(XeroTokenFactory::class)]
 class XeroToken extends Model
 {
     use HasFactory;
@@ -39,6 +37,14 @@ class XeroToken extends Model
      * @var array<string>
      */
     protected $guarded = ['id'];
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory(): XeroTokenFactory
+    {
+        return XeroTokenFactory::new();
+    }
 
     public static function latestToken(): ?XeroToken
     {
