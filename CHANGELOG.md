@@ -2,6 +2,14 @@
 
 All notable changes to `xero-integration` will be documented in this file.
 
+## v0.0.8 - 2026-10-06
+
+### What's Changed
+
+* fix/laravel-10-compat by @Gavindecode in https://github.com/DCODE-GROUP/xero-integration/pull/16
+
+**Full Changelog**: https://github.com/DCODE-GROUP/xero-integration/compare/v0.0.6...v0.0.8
+
 ## v0.0.7 - 2026-10-06
 
 ### What's Changed
