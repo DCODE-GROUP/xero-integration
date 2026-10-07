@@ -2,6 +2,14 @@
 
 All notable changes to `xero-integration` will be documented in this file.
 
+## v0.0.9 - 2026-10-07
+
+### What's Changed
+
+* Add DTOs for purchase orders by @kathdcode in https://github.com/DCODE-GROUP/xero-integration/pull/17
+
+**Full Changelog**: https://github.com/DCODE-GROUP/xero-integration/compare/v0.0.8...v0.0.9
+
 ## v0.0.8 - 2026-10-06
 
 ### What's Changed
