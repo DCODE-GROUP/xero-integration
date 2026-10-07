@@ -15,6 +15,7 @@ use XeroPHP\Models\Accounting\Overpayment;
 use XeroPHP\Models\Accounting\Payment;
 use XeroPHP\Models\Accounting\Phone;
 use XeroPHP\Models\Accounting\Prepayment;
+use XeroPHP\Models\Accounting\PurchaseOrder;
 use XeroPHP\Models\Accounting\Quote;
 use XeroPHP\Models\Accounting\TaxRate;
 use XeroPHP\Models\Accounting\TrackingCategory;
@@ -37,6 +38,7 @@ enum XeroRelationshipsEnum: string
     case PAYMENT = 'payment';
     case PHONE = 'phone';
     case PREPAYMENT = 'prepayment';
+    case PURCHASE_ORDER = 'purchaseOrder';
     case QUOTE = 'quote';
     case TIMESHEET_AU = 'timesheet_au';
     case TIMESHEET_LINE_AU = 'timesheet_line_au';
@@ -60,6 +62,7 @@ enum XeroRelationshipsEnum: string
             self::PAYMENT => Payment::class,
             self::PHONE => Phone::class,
             self::PREPAYMENT => Prepayment::class,
+            self::PURCHASE_ORDER => PurchaseOrder::class,
             self::QUOTE => Quote::class,
             self::TIMESHEET_AU => TimesheetAU::class,
             self::TIMESHEET_LINE_AU => TimesheetLineAU::class,

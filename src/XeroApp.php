@@ -26,6 +26,7 @@ use XeroPHP\Application;
  * @method XeroIntegration payment()
  * @method XeroIntegration phone()
  * @method XeroIntegration prepayment()
+ * @method XeroIntegration purchaseOrder()
  * @method XeroIntegration quote()
  * @method XeroIntegration timesheet_au()
  * @method XeroIntegration timesheet_line_au()
