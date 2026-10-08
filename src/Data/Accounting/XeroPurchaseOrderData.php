@@ -4,6 +4,7 @@ namespace Dcodegroup\XeroIntegration\Data\Accounting;
 
 use Carbon\Carbon;
 use Dcodegroup\XeroIntegration\Data\AbstractXeroData;
+use Dcodegroup\XeroIntegration\Data\Contracts\XeroSyncable;
 use Dcodegroup\XeroIntegration\Data\Traits\XeroSyncTrait;
 use Dcodegroup\XeroIntegration\Enums\XeroLineAmountTypeEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroPurchaseOrderStatusEnum;
@@ -18,7 +19,7 @@ use XeroPHP\Remote\Model as XeroModel;
 /**
  * @phpstan-consistent-constructor
  */
-class XeroPurchaseOrderData extends AbstractXeroData
+class XeroPurchaseOrderData extends AbstractXeroData implements XeroSyncable
 {
     use XeroSyncTrait;
 
@@ -71,6 +72,7 @@ class XeroPurchaseOrderData extends AbstractXeroData
 
     public static function fromXero(XeroModel|XeroPurchaseOrder $xeroPurchaseOrder): self
     {
+        $lineAmountTypes = data_get($xeroPurchaseOrder, 'LineAmountTypes');
         $updatedDate = data_get($xeroPurchaseOrder, 'UpdatedDateUTC');
 
         return new static(
@@ -78,7 +80,7 @@ class XeroPurchaseOrderData extends AbstractXeroData
             LineItems: XeroLineItemData::toCollection(data_get($xeroPurchaseOrder, 'LineItems')) ?? collect(),
             Date: Carbon::instance(data_get($xeroPurchaseOrder, 'Date')),
             DeliveryDate: data_get($xeroPurchaseOrder, 'DeliveryDate') ? Carbon::instance(data_get($xeroPurchaseOrder, 'DeliveryDate')) : null,
-            LineAmountTypes: ($lineAmountTypes = data_get($xeroPurchaseOrder, 'LineAmountTypes')) === null
+            LineAmountTypes: $lineAmountTypes === null
                 ? null
                 : XeroLineAmountTypeEnum::tryFrom(strtolower($lineAmountTypes)),
             PurchaseOrderNumber: data_get($xeroPurchaseOrder, 'PurchaseOrderNumber'),
