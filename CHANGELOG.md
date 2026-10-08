@@ -2,6 +2,14 @@
 
 All notable changes to `xero-integration` will be documented in this file.
 
+## v0.0.10 - 2026-10-08
+
+### What's Changed
+
+* Fix inadvertently returning the wrong Xero object to sync to by @kathdcode in https://github.com/DCODE-GROUP/xero-integration/pull/18
+
+**Full Changelog**: https://github.com/DCODE-GROUP/xero-integration/compare/v0.0.9...v0.0.10
+
 ## v0.0.9 - 2026-10-07
 
 ### What's Changed
