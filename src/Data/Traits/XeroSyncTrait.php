@@ -67,21 +67,12 @@ trait XeroSyncTrait
             $query = app(XeroApp::class)->load(static::getXeroRelationship()->getModelClass());
         }
 
-        foreach ($this->searchFields as $index => $field) {
-            $value = data_get($this, $field);
-
-            if (empty($value)) {
-                continue;
-            }
-
-            if ($index === 0) {
-                $query->where($field, $value);
-
-                continue;
-            }
-
-            $query->orWhere($field, $value);
+        $keyValue = data_get($this, $this->key);
+        if (! $keyValue) {
+            return null;
         }
+
+        $query->where($this->key, $keyValue);
 
         return $query->first();
     }
