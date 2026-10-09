@@ -68,13 +68,11 @@ trait XeroSyncTrait
         }
 
         $keyValue = data_get($this, $this->key);
-        if (! $keyValue) {
+        if (!$keyValue) {
             return null;
         }
 
-        $query->where($this->key, $keyValue);
-
-        return $query->first();
+        return app(XeroDataFinder::class)->find(static::class, $keyValue);
     }
 
     protected function getXeroApp(): XeroApp
