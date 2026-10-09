@@ -2,6 +2,14 @@
 
 All notable changes to `xero-integration` will be documented in this file.
 
+## v0.0.11 - 2026-10-09
+
+### What's Changed
+
+* Fix record identification by @kathdcode in https://github.com/DCODE-GROUP/xero-integration/pull/19
+
+**Full Changelog**: https://github.com/DCODE-GROUP/xero-integration/compare/v0.0.10...v0.0.11
+
 ## v0.0.10 - 2026-10-08
 
 ### What's Changed
