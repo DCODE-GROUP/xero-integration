@@ -68,7 +68,7 @@ trait XeroSyncTrait
         }
 
         $keyValue = data_get($this, $this->key);
-        if (!$keyValue) {
+        if (! $keyValue) {
             return null;
         }
 
