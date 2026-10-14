@@ -2,6 +2,18 @@
 
 All notable changes to `xero-integration` will be documented in this file.
 
+## v0.0.12 - 2026-10-14
+
+### What's Changed
+
+* Added employee DTO by @Barry-B-Benson6 in https://github.com/DCODE-GROUP/xero-integration/pull/20
+
+### New Contributors
+
+* @Barry-B-Benson6 made their first contribution in https://github.com/DCODE-GROUP/xero-integration/pull/20
+
+**Full Changelog**: https://github.com/DCODE-GROUP/xero-integration/compare/v0.0.11...v0.0.12
+
 ## v0.0.11 - 2026-10-09
 
 ### What's Changed
