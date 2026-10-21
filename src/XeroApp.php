@@ -7,7 +7,9 @@ use Dcodegroup\XeroIntegration\Exceptions\XeroConfigException;
 use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
 use Dcodegroup\XeroIntegration\Facades\XeroIntegrationService;
 use Dcodegroup\XeroIntegration\Models\XeroToken;
+use GuzzleHttp\Client;
 use Illuminate\Support\Str;
+use League\OAuth2\Client\Token\AccessToken;
 use Override;
 use XeroPHP\Application;
 
@@ -37,10 +39,17 @@ use XeroPHP\Application;
  */
 class XeroApp extends Application
 {
+    protected XeroToken $tokenModel;
+
+    protected AccessToken $oauthToken;
+
     public function __construct()
     {
         $tokenModel = $this->getTokenModel();
         $oauthToken = $this->getOauthToken($tokenModel);
+
+        $this->tokenModel = $tokenModel;
+        $this->oauthToken = $oauthToken;
 
         if (empty(config('xero-integration.webhooks.secret'))) {
             report(new XeroConfigException('Xero webhook secret is not configured. Please set the XERO_WEBHOOK_SECRET environment variable.'));
@@ -51,6 +60,22 @@ class XeroApp extends Application
         $this->config['webhook'] = [
             'signing_key' => config('xero-integration.webhooks.secret'),
         ];
+    }
+
+    public function refreshAfterUnauthorized(): void
+    {
+        $this->oauthToken = XeroIntegrationService::getToken(
+            $this->tokenModel,
+            true,
+            $this->oauthToken->getToken(),
+        );
+
+        $this->setTransport(new Client([
+            'headers' => [
+                'Authorization' => sprintf('Bearer %s', $this->oauthToken->getToken()),
+                'Xero-tenant-id' => $this->tokenModel->fresh()->current_tenant_id,
+            ],
+        ]));
     }
 
     public function __call(string $name, ?array $arguments)
@@ -119,10 +144,6 @@ class XeroApp extends Application
     protected function getOauthToken(?XeroToken $tokenModel = null)
     {
         $oauthToken = XeroIntegrationService::getToken($tokenModel);
-        $tokenModel->refresh_token = $oauthToken->getRefreshToken();
-        $tokenModel->access_token = $oauthToken->getToken();
-        $tokenModel->expires = $oauthToken->getExpires();
-        $tokenModel->save();
 
         if (empty($oauthToken)) {
             throw new XeroIntegrationException('Unable to retrieve a valid OAuth token for Xero integration.');

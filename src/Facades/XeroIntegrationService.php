@@ -5,7 +5,7 @@ namespace Dcodegroup\XeroIntegration\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static \League\OAuth2\Client\Token\AccessToken|null getToken(\Dcodegroup\XeroIntegration\Models\XeroToken|null $token = null)
+ * @method static \League\OAuth2\Client\Token\AccessToken|null getToken(\Dcodegroup\XeroIntegration\Models\XeroToken|null $token = null, bool $forceRefresh = false, ?string $staleAccessToken = null)
  * @method static mixed getAccessTokenFromXero(\League\OAuth2\Client\Token\AccessToken $token)
  * @method static \Dcodegroup\XeroIntegration\Models\XeroToken|null getTokenModel()
  * @method static bool setXeroTenant(\Dcodegroup\XeroIntegration\Models\XeroToken $token)

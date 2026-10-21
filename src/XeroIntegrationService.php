@@ -8,6 +8,7 @@ use Dcodegroup\XeroIntegration\Exceptions\UnauthorizedXero;
 use Dcodegroup\XeroIntegration\Exceptions\XeroIntegrationException;
 use Dcodegroup\XeroIntegration\Models\XeroToken;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
@@ -18,7 +19,7 @@ class XeroIntegrationService
     /**
      * @throws UnauthorizedXero
      */
-    public function getToken(?XeroToken $token = null): ?AccessToken
+    public function getToken(?XeroToken $token = null, bool $forceRefresh = false, ?string $staleAccessToken = null): ?AccessToken
     {
         if (empty($token)) {
             $token = $this->getTokenModel();
@@ -30,21 +31,34 @@ class XeroIntegrationService
 
         $oauth2Token = $token->toOAuth2Token();
 
-        if ($oauth2Token->hasExpired()) {
-            $oauth2Token = $this->getAccessTokenFromXero($oauth2Token);
+        if ($forceRefresh || $oauth2Token->hasExpired()) {
+            $oauth2Token = DB::transaction(function () use ($token, $forceRefresh, $staleAccessToken): AccessToken {
+                $lockedToken = XeroToken::query()->lockForUpdate()->find($token->getKey());
 
-            if (! XeroToken::isValidTokenFormat($oauth2Token)) {
-                throw new UnauthorizedXero('Token is invalid or the provided token has invalid format!');
-            }
+                if ($lockedToken === null) {
+                    throw new UnauthorizedXero('The Xero token no longer exists.');
+                }
 
-            $creationData = array_merge($oauth2Token->jsonSerialize(), [
-                'current_tenant_id' => $token->current_tenant_id,
-            ]);
-            if (config('xero-integration.tenancy.enabled')) {
-                $data['tenant_id'] = XeroIntegrationService::getApplicationTenant()?->getKey();
-            }
+                $currentToken = $lockedToken->toOAuth2Token();
 
-            XeroToken::create($creationData);
+                if ($staleAccessToken !== null && $lockedToken->access_token !== $staleAccessToken) {
+                    return $currentToken;
+                }
+
+                if (! $forceRefresh && ! $currentToken->hasExpired()) {
+                    return $currentToken;
+                }
+
+                $refreshedToken = $this->getAccessTokenFromXero($currentToken);
+
+                if (! XeroToken::isValidTokenFormat($refreshedToken)) {
+                    throw new UnauthorizedXero('Token is invalid or the provided token has invalid format!');
+                }
+
+                $lockedToken->update($refreshedToken->jsonSerialize());
+
+                return $refreshedToken;
+            });
         }
 
         return $oauth2Token;
@@ -172,7 +186,7 @@ class XeroIntegrationService
 
         if (config('xero-integration.tenancy.enabled')) {
             $currentTenant = XeroIntegrationService::getApplicationTenant()?->getKey();
-            $tenantId = $currentTenant ? $currentTenant->id : session(config('xero-integration.tenancy.session_name'));
+            $tenantId = $currentTenant ?: session(config('xero-integration.tenancy.session_name'));
             $data['tenant_id'] = $tenantId;
         }
 
