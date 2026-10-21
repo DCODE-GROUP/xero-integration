@@ -2,12 +2,29 @@
 
 namespace Dcodegroup\XeroIntegration\Tests\Unit;
 
+use Calcinai\OAuth2\Client\Provider\Xero;
 use Dcodegroup\XeroIntegration\Exceptions\XeroRateLimitExceededException;
 use Dcodegroup\XeroIntegration\Models\XeroToken;
 use Dcodegroup\XeroIntegration\XeroApp;
 use Dcodegroup\XeroIntegration\XeroQuery;
+use GuzzleHttp\Client;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\RateLimiter;
+use League\OAuth2\Client\Token\AccessToken;
+use Mockery\MockInterface;
 use Workbench\App\Services\TenantResolverService;
+
+class RefreshableTestXeroApp extends XeroApp
+{
+    public static ?MockHandler $handler = null;
+
+    public function refreshAfterUnauthorized(): void
+    {
+        parent::refreshAfterUnauthorized();
+        $this->setTransport(new Client(['handler' => self::$handler]));
+    }
+}
 
 test('rate limiter key generated without tenancy', function () {
     config(['xero-integration.tenancy.enabled' => false]);
@@ -109,4 +126,36 @@ test('rate limit decay uses configured seconds', function () {
 
     expect($remaining)->toBeLessThan(60)
         ->and($remaining)->toBeGreaterThan(0);
+});
+
+test('retries a recoverable xero 401 after refreshing the connection token', function () {
+    $token = XeroToken::factory()->create();
+
+    $this->mock(Xero::class, function (MockInterface $mock) use ($token) {
+        $mock->shouldReceive('getAccessToken')
+            ->once()
+            ->with('refresh_token', ['refresh_token' => $token->refresh_token])
+            ->andReturn(new AccessToken([
+                'access_token' => 'rotated_access_token',
+                'refresh_token' => 'rotated_refresh_token',
+                'id_token' => 'rotated_id_token',
+                'token_type' => 'Bearer',
+                'expires' => now()->addHours(1)->timestamp,
+                'scope' => 'openid email profile offline_access',
+            ]));
+    });
+
+    $handler = new MockHandler([
+        new Response(401, ['Content-Type' => 'text/html'], 'oauth_problem_advice=token_expired'),
+        new Response(200, [], '<Response><Invoices /></Response>'),
+    ]);
+    RefreshableTestXeroApp::$handler = $handler;
+    $app = new RefreshableTestXeroApp;
+    $app->setTransport(new Client(['handler' => $handler]));
+
+    $results = $app->load('XeroPHP\\Models\\Accounting\\Invoice')->execute();
+
+    expect($results)->toBeEmpty()
+        ->and($token->fresh()->access_token)->toBe('rotated_access_token')
+        ->and($token->fresh()->refresh_token)->toBe('rotated_refresh_token');
 });

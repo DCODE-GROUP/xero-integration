@@ -9,6 +9,7 @@ use Dcodegroup\XeroIntegration\Models\XeroToken;
 use Dcodegroup\XeroIntegration\XeroIntegrationService;
 use League\OAuth2\Client\Token\AccessToken;
 use Mockery\MockInterface;
+use Workbench\App\Models\Tenant;
 
 test('can get token model', function () {
     $token = XeroToken::factory()->create();
@@ -79,6 +80,62 @@ test('can refresh expired token', function () {
         ->toBeInstanceOf(AccessToken::class)
         ->and($oauthToken->getToken())->toBe('new_access_token')
         ->and($oauthToken->getRefreshToken())->toBe('new_refresh_token');
+
+    expect(XeroToken::count())->toBe(1)
+        ->and($expiredToken->fresh()->current_tenant_id)->toBe($expiredToken->current_tenant_id);
+});
+
+test('serializes refreshes and reuses the token persisted by the first worker', function () {
+    $expiredToken = XeroToken::factory()->create([
+        'expires' => now()->subHours(1)->timestamp,
+        'current_tenant_id' => 'tenant-that-must-remain-selected',
+    ]);
+
+    $this->mock(Xero::class, function (MockInterface $mock) use ($expiredToken) {
+        $mock->shouldReceive('getAccessToken')
+            ->once()
+            ->with('refresh_token', ['refresh_token' => $expiredToken->refresh_token])
+            ->andReturn(new AccessToken([
+                'access_token' => 'rotated_access_token',
+                'refresh_token' => 'rotated_refresh_token',
+                'id_token' => 'rotated_id_token',
+                'token_type' => 'Bearer',
+                'expires' => now()->addHours(1)->timestamp,
+                'scope' => 'openid email profile offline_access',
+            ]));
+    });
+
+    $service = new XeroIntegrationService;
+    $service->getToken($expiredToken);
+    $secondWorkerToken = $service->getToken($expiredToken);
+
+    expect($secondWorkerToken->getToken())->toBe('rotated_access_token')
+        ->and($secondWorkerToken->getRefreshToken())->toBe('rotated_refresh_token')
+        ->and(XeroToken::count())->toBe(1)
+        ->and($expiredToken->fresh()->current_tenant_id)->toBe('tenant-that-must-remain-selected');
+});
+
+test('assigns the resolved application tenant when saving an authorization token', function () {
+    $tenant = Tenant::factory()->create();
+    config()->set('xero-integration.tenancy.enabled', true);
+    config()->set('xero-integration.tenancy.tenant_resolver', fn () => $tenant);
+
+    $this->mock(Xero::class, function (MockInterface $mock) {
+        $mock->shouldReceive('getAccessToken')
+            ->with('authorization_code', ['code' => 'test_code'])
+            ->andReturn(new AccessToken([
+                'access_token' => 'new_access_token',
+                'refresh_token' => 'new_refresh_token',
+                'id_token' => 'new_id_token',
+                'token_type' => 'Bearer',
+                'expires' => now()->addHours(1)->timestamp,
+                'scope' => 'openid email profile offline_access',
+            ]));
+    });
+
+    $token = (new XeroIntegrationService)->saveAccessTokenFromCode('test_code');
+
+    expect($token->tenant_id)->toBe($tenant->id);
 });
 
 test('throws exception when token format is invalid', function () {

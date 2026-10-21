@@ -10,18 +10,25 @@ use Illuminate\Support\Facades\RateLimiter;
 use Override;
 use XeroPHP\Remote\Collection;
 use XeroPHP\Remote\Exception\RateLimitExceededException;
+use XeroPHP\Remote\Exception\UnauthorizedException;
 use XeroPHP\Remote\Query;
 use XeroPHP\Remote\Response;
 
 class XeroQuery extends Query
 {
+    protected XeroApp $xeroApp;
+
     protected int $limit;
 
     protected int $decaySeconds;
 
+    protected bool $retriedAfterUnauthorized = false;
+
     public function __construct(XeroApp $app, protected ?string $baseModel = null)
     {
         parent::__construct($app);
+
+        $this->xeroApp = $app;
 
         $this->limit = config('xero-integration.rate_limit.no');
         $this->decaySeconds = config('xero-integration.rate_limit.decay_seconds');
@@ -79,7 +86,18 @@ class XeroQuery extends Query
 
     protected function parentExecute()
     {
-        return parent::execute();
+        try {
+            return parent::execute();
+        } catch (UnauthorizedException $exception) {
+            if ($this->retriedAfterUnauthorized) {
+                throw $exception;
+            }
+
+            $this->retriedAfterUnauthorized = true;
+            $this->xeroApp->refreshAfterUnauthorized();
+
+            return parent::execute();
+        }
     }
 
     /**
