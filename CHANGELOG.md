@@ -2,6 +2,14 @@
 
 All notable changes to `xero-integration` will be documented in this file.
 
+## v0.0.13 - 2026-10-21
+
+### What's Changed
+
+* Fix token refresh race conditions by @kathdcode in https://github.com/DCODE-GROUP/xero-integration/pull/21
+
+**Full Changelog**: https://github.com/DCODE-GROUP/xero-integration/compare/v0.0.12...v0.0.13
+
 ## v0.0.12 - 2026-10-14
 
 ### What's Changed
