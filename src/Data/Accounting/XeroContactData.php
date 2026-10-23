@@ -13,6 +13,7 @@ use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\Contact as XeroContact;
+use XeroPHP\Models\Accounting\Organisation\PaymentTerm;
 use XeroPHP\Remote\Model as XeroModel;
 
 /**
@@ -71,7 +72,7 @@ class XeroContactData extends AbstractXeroData implements XeroSyncable
         public string|Optional|null $PurchasesDefaultAccountCode = null,
         public string|Optional|null $TrackingCategoryName = null,
         public string|Optional|null $TrackingCategoryOption = null,
-        public string|Optional|null $PaymentTerms = null,
+        public string|PaymentTerm|Optional|null $PaymentTerms = null,
         public string|Optional|null $Website = null,
         public string|Optional|null $BatchPayments = null,
         public float|Optional|null $Discount = null,
