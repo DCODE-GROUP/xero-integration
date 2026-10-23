@@ -113,9 +113,7 @@ class XeroContactData extends AbstractXeroData implements XeroSyncable
             TrackingCategoryOption: data_get($xeroContact, 'TrackingCategoryOption'),
             PaymentTerms: self::toPaymentTermsArray(data_get($xeroContact, 'PaymentTerms')),
             Website: data_get($xeroContact, 'Website'),
-            BatchPayments: data_get($xeroContact, 'BatchPayments'),
             Discount: data_get($xeroContact, 'Discount'),
-            Balances: data_get($xeroContact, 'Balances'),
             HasAttachments: data_get($xeroContact, 'HasAttachments'),
         );
     }
