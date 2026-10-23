@@ -13,6 +13,7 @@ use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Optional;
 use XeroPHP\Models\Accounting\Contact as XeroContact;
+use XeroPHP\Models\Accounting\Organisation\PaymentTerm;
 use XeroPHP\Remote\Model as XeroModel;
 
 /**
@@ -71,7 +72,7 @@ class XeroContactData extends AbstractXeroData implements XeroSyncable
         public string|Optional|null $PurchasesDefaultAccountCode = null,
         public string|Optional|null $TrackingCategoryName = null,
         public string|Optional|null $TrackingCategoryOption = null,
-        public string|Optional|null $PaymentTerms = null,
+        public array|string|PaymentTerm|Optional|null $PaymentTerms = null,
         public string|Optional|null $Website = null,
         public string|Optional|null $BatchPayments = null,
         public float|Optional|null $Discount = null,
@@ -110,7 +111,7 @@ class XeroContactData extends AbstractXeroData implements XeroSyncable
             PurchasesDefaultAccountCode: data_get($xeroContact, 'PurchasesDefaultAccountCode'),
             TrackingCategoryName: data_get($xeroContact, 'TrackingCategoryName'),
             TrackingCategoryOption: data_get($xeroContact, 'TrackingCategoryOption'),
-            PaymentTerms: data_get($xeroContact, 'PaymentTerms'),
+            PaymentTerms: self::toPaymentTermsArray(data_get($xeroContact, 'PaymentTerms')),
             Website: data_get($xeroContact, 'Website'),
             BatchPayments: data_get($xeroContact, 'BatchPayments'),
             Discount: data_get($xeroContact, 'Discount'),
@@ -149,7 +150,14 @@ class XeroContactData extends AbstractXeroData implements XeroSyncable
             'TrackingCategoryName' => data_get($this, 'TrackingCategoryName'),
             'TrackingCategoryOption' => data_get($this, 'TrackingCategoryOption'),
             'Website' => data_get($this, 'Website'),
-            'PaymentTerms' => data_get($this, 'PaymentTerms'),
+            'PaymentTerms' => self::toPaymentTermsArray(data_get($this, 'PaymentTerms')),
         ];
+    }
+
+    private static function toPaymentTermsArray(mixed $paymentTerms): mixed
+    {
+        return $paymentTerms instanceof PaymentTerm
+            ? $paymentTerms->toStringArray()
+            : $paymentTerms;
     }
 }

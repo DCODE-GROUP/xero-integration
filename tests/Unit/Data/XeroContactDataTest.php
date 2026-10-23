@@ -7,6 +7,7 @@ use Dcodegroup\XeroIntegration\Data\Accounting\XeroContactData;
 use Dcodegroup\XeroIntegration\Enums\XeroContactStatusEnum;
 use Mockery;
 use XeroPHP\Models\Accounting\Contact;
+use XeroPHP\Models\Accounting\Organisation\PaymentTerm;
 
 test('can instantiate XeroContactData with required fields', function () {
     $data = new XeroContactData(
@@ -130,4 +131,27 @@ test('fromXero maps xero model to XeroContactData', function () {
         ->and($data->Name)->toBe('Acme Corp')
         ->and($data->ContactID)->toBe('contact-uuid-123')
         ->and($data->EmailAddress)->toBe('john@acme.com');
+});
+
+test('PaymentTerm is mapped to an array in both directions', function () {
+    $paymentTerm = new PaymentTerm;
+    $paymentTerm->fromStringArray([
+        'Bills' => [],
+        'Sales' => [],
+    ], true);
+
+    $xeroContact = new Contact;
+    $xeroContact->fromStringArray([
+        'ContactStatus' => XeroContactStatusEnum::ACTIVE->value,
+        'Name' => 'Acme Corp',
+        'UpdatedDateUTC' => Carbon::now()->toAtomString(),
+    ], true);
+    $xeroContact->setPaymentTerm($paymentTerm);
+
+    $data = XeroContactData::fromXero($xeroContact);
+
+    expect($data->PaymentTerms)->toBe($paymentTerm->toStringArray())
+        ->and($data->toXeroArray()['PaymentTerms'])->toBe($paymentTerm->toStringArray())
+        ->and($data->toXeroModel()->toStringArray()['PaymentTerms'])
+        ->toBe($paymentTerm->toStringArray());
 });
