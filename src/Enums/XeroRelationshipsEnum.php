@@ -20,6 +20,7 @@ use XeroPHP\Models\Accounting\Quote;
 use XeroPHP\Models\Accounting\TaxRate;
 use XeroPHP\Models\Accounting\TrackingCategory;
 use XeroPHP\Models\PayrollAU\LeaveApplication as LeaveApplicationAU;
+use XeroPHP\Models\PayrollAU\PayItem\EarningsRate as EarningsRateAU;
 use XeroPHP\Models\PayrollAU\Timesheet as TimesheetAU;
 use XeroPHP\Models\PayrollAU\Timesheet\TimesheetLine as TimesheetLineAU;
 
@@ -45,6 +46,7 @@ enum XeroRelationshipsEnum: string
     case TAX_RATE = 'taxRate';
     case LEAVE_APPLICATION_AU = 'leave_application_au';
     case ITEM_TRACKING_CATEGORY = 'trackingCategory';
+    case EARNINGS_RATE_AU = 'earnings_rate_au';
 
     public function getModelClass(): string
     {
@@ -68,7 +70,8 @@ enum XeroRelationshipsEnum: string
             self::TIMESHEET_LINE_AU => TimesheetLineAU::class,
             self::LEAVE_APPLICATION_AU => LeaveApplicationAU::class,
             self::TAX_RATE => TaxRate::class,
-            self::ITEM_TRACKING_CATEGORY => TrackingCategory::class
+            self::ITEM_TRACKING_CATEGORY => TrackingCategory::class,
+            self::EARNINGS_RATE_AU => EarningsRateAU::class,
         };
     }
 
