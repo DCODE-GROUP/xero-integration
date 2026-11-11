@@ -3,6 +3,8 @@
 namespace Dcodegroup\XeroIntegration\Tests\Unit\Data;
 
 use Dcodegroup\XeroIntegration\Data\PayrollAU\XeroEarningsRateData;
+use Dcodegroup\XeroIntegration\Enums\XeroEarningsTypeEnum;
+use Dcodegroup\XeroIntegration\Enums\XeroRateTypeEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
 use Mockery;
 use XeroPHP\Models\PayrollAU\PayItem\EarningsRate;
@@ -15,7 +17,7 @@ function makeEarningsRateData(array $overrides = []): XeroEarningsRateData
         'TypeOfUnits' => 'Hours',
         'IsExemptFromTax' => false,
         'IsExemptFromSuper' => false,
-        'EarningsType' => 'ORDINARYTIMEEARNINGS',
+        'EarningsType' => XeroEarningsTypeEnum::ORDINARY_TIME_EARNINGS,
     ], $overrides));
 }
 
@@ -27,7 +29,7 @@ test('can instantiate XeroEarningsRateData with required fields', function () {
         ->and($data->TypeOfUnits)->toBe('Hours')
         ->and($data->IsExemptFromTax)->toBeFalse()
         ->and($data->IsExemptFromSuper)->toBeFalse()
-        ->and($data->EarningsType)->toBe('ORDINARYTIMEEARNINGS');
+        ->and($data->EarningsType)->toBe(XeroEarningsTypeEnum::ORDINARY_TIME_EARNINGS);
 });
 
 test('optional fields default to null', function () {
@@ -49,7 +51,7 @@ test('uses the earnings rate relationship', function () {
 test('toXeroArray returns correct keys and values', function () {
     $data = makeEarningsRateData([
         'EarningsRateID' => 'rate-uuid',
-        'RateType' => 'MULTIPLE',
+        'RateType' => XeroRateTypeEnum::MULTIPLE,
         'Multiplier' => 1.5,
         'AccrueLeave' => true,
     ]);
@@ -64,6 +66,7 @@ test('toXeroArray returns correct keys and values', function () {
     ])
         ->and($array['EarningsRateID'])->toBe('rate-uuid')
         ->and($array['RateType'])->toBe('MULTIPLE')
+        ->and($array['EarningsType'])->toBe('ORDINARYTIMEEARNINGS')
         ->and($array['Multiplier'])->toBe(1.5)
         ->and($array['AccrueLeave'])->toBeTrue();
 });
@@ -90,9 +93,9 @@ test('fromXero maps xero model to XeroEarningsRateData', function () {
     expect($data)->toBeInstanceOf(XeroEarningsRateData::class)
         ->and($data->Name)->toBe('Overtime')
         ->and($data->IsExemptFromSuper)->toBeTrue()
-        ->and($data->EarningsType)->toBe('OVERTIMEEARNINGS')
+        ->and($data->EarningsType)->toBe(XeroEarningsTypeEnum::OVERTIME_EARNINGS)
         ->and($data->EarningsRateID)->toBe('rate-uuid-123')
-        ->and($data->RateType)->toBe('MULTIPLE')
+        ->and($data->RateType)->toBe(XeroRateTypeEnum::MULTIPLE)
         ->and($data->Multiplier)->toBe(1.5)
         ->and($data->RatePerUnit)->toBeNull()
         ->and($data->AccrueLeave)->toBeFalse();
