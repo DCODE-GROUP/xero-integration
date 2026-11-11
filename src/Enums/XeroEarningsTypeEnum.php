@@ -19,7 +19,6 @@ enum XeroEarningsTypeEnum: string
     case DIRECTORS_FEES = 'directors_fees';
     case PAID_PARENTAL_LEAVE = 'paid_parental_leave';
     case WORKERS_COMPENSATION = 'workers_compensation';
-    case FIXED = 'fixed';
 
     public function getLabel(): string
     {
@@ -37,7 +36,6 @@ enum XeroEarningsTypeEnum: string
             self::DIRECTORS_FEES => 'Directors Fees',
             self::PAID_PARENTAL_LEAVE => 'Paid Parental Leave',
             self::WORKERS_COMPENSATION => 'Workers Compensation',
-            self::FIXED => 'Fixed',
         };
     }
 
@@ -57,7 +55,6 @@ enum XeroEarningsTypeEnum: string
             self::DIRECTORS_FEES => EarningsRate::EARNINGSTYPE_DIRECTORSFEES,
             self::PAID_PARENTAL_LEAVE => EarningsRate::EARNINGSTYPE_PAIDPARENTALLEAVE,
             self::WORKERS_COMPENSATION => EarningsRate::EARNINGSTYPE_WORKERSCOMPENSATION,
-            self::FIXED => EarningsRate::EARNINGSTYPE_FIXED,
         };
     }
 
