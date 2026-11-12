@@ -24,7 +24,6 @@ use League\OAuth2\Client\Token\AccessToken;
 use Mockery\MockInterface;
 use Saloon\Http\Faking\MockResponse;
 use Saloon\Http\PendingRequest;
-use Saloon\Laravel\Facades\Saloon;
 
 beforeEach(function () {
     $this->token = XeroToken::factory()->create(['current_tenant_id' => 'tenant-1']);
@@ -32,7 +31,7 @@ beforeEach(function () {
 });
 
 test('requests carry the bearer token, tenant id and json accept header', function () {
-    $mock = Saloon::fake([FindXeroRecordRequest::class => MockResponse::make(['Timesheets' => [['TimesheetID' => 'ts-1']]])]);
+    $mock = fakeSaloon([FindXeroRecordRequest::class => MockResponse::make(['Timesheets' => [['TimesheetID' => 'ts-1']]])]);
 
     app(XeroGateway::class)->find($this->endpoint, 'ts-1');
 
@@ -47,7 +46,7 @@ test('requests carry the bearer token, tenant id and json accept header', functi
 });
 
 test('find returns null for a missing record', function () {
-    Saloon::fake([FindXeroRecordRequest::class => MockResponse::make(['Message' => 'not found'], 404)]);
+    fakeSaloon([FindXeroRecordRequest::class => MockResponse::make(['Message' => 'not found'], 404)]);
 
     expect(app(XeroGateway::class)->find($this->endpoint, 'missing'))->toBeNull();
 });
@@ -55,7 +54,7 @@ test('find returns null for a missing record', function () {
 test('list builds a where clause with guid filters and walks every page', function () {
     $queries = [];
 
-    Saloon::fake([
+    fakeSaloon([
         ListXeroRecordsRequest::class => function (PendingRequest $request) use (&$queries) {
             $queries[] = $request->query()->all();
             $page = (int) $request->query()->get('page');
@@ -75,7 +74,7 @@ test('list builds a where clause with guid filters and walks every page', functi
 test('list escapes backslashes and quotes in string filters', function () {
     $queries = [];
 
-    Saloon::fake([
+    fakeSaloon([
         ListXeroRecordsRequest::class => function (PendingRequest $request) use (&$queries) {
             $queries[] = $request->query()->all();
 
@@ -89,13 +88,13 @@ test('list escapes backslashes and quotes in string filters', function () {
 });
 
 test('list rejects non-guid values for guid filters', function () {
-    Saloon::fake([ListXeroRecordsRequest::class => MockResponse::make(['Timesheets' => []])]);
+    fakeSaloon([ListXeroRecordsRequest::class => MockResponse::make(['Timesheets' => []])]);
 
     app(XeroGateway::class)->list($this->endpoint, ['EmployeeID' => 'x") OR (1==1']);
 })->throws(InvalidArgumentException::class, "Filter 'EmployeeID' must be a GUID.");
 
 test('list rejects invalid filter field names', function () {
-    Saloon::fake([ListXeroRecordsRequest::class => MockResponse::make(['Timesheets' => []])]);
+    fakeSaloon([ListXeroRecordsRequest::class => MockResponse::make(['Timesheets' => []])]);
 
     app(XeroGateway::class)->list($this->endpoint, ['Status=="x" OR Foo' => 'y']);
 })->throws(InvalidArgumentException::class);
@@ -103,7 +102,7 @@ test('list rejects invalid filter field names', function () {
 test('record ids are url encoded in the request path', function () {
     $paths = [];
 
-    Saloon::fake([
+    fakeSaloon([
         FindXeroRecordRequest::class => function (PendingRequest $request) use (&$paths) {
             $paths[] = $request->getUri()->getPath();
 
@@ -118,7 +117,7 @@ test('record ids are url encoded in the request path', function () {
 
 test('list makes a single call for an unpaginated endpoint', function () {
     $endpoint = new XeroEndpoint(XeroApiEnum::PAYROLL_AU, 'PayrollCalendars', 'PayrollCalendarID');
-    $mock = Saloon::fake([ListXeroRecordsRequest::class => MockResponse::make(['PayrollCalendars' => [['PayrollCalendarID' => 'c-1']]])]);
+    $mock = fakeSaloon([ListXeroRecordsRequest::class => MockResponse::make(['PayrollCalendars' => [['PayrollCalendarID' => 'c-1']]])]);
 
     $records = app(XeroGateway::class)->list($endpoint);
 
@@ -128,13 +127,13 @@ test('list makes a single call for an unpaginated endpoint', function () {
 
 test('payroll au dates are normalised to iso 8601', function () {
     $ms = Carbon::parse('2026-11-02', 'UTC')->getTimestampMs();
-    Saloon::fake([FindXeroRecordRequest::class => MockResponse::make(['Timesheets' => [['StartDate' => "/Date({$ms}+0000)/"]]])]);
+    fakeSaloon([FindXeroRecordRequest::class => MockResponse::make(['Timesheets' => [['StartDate' => "/Date({$ms}+0000)/"]]])]);
 
     expect(app(XeroGateway::class)->find($this->endpoint, 'ts-1')['StartDate'])->toBe('2026-11-02T00:00:00');
 });
 
 test('save creates with a bare array body for payroll au and updates by id', function () {
-    $mock = Saloon::fake([SaveXeroRecordRequest::class => MockResponse::make(['Timesheets' => [['TimesheetID' => 'ts-9']]])]);
+    $mock = fakeSaloon([SaveXeroRecordRequest::class => MockResponse::make(['Timesheets' => [['TimesheetID' => 'ts-9']]])]);
     $gateway = app(XeroGateway::class);
 
     $created = $gateway->save($this->endpoint, ['EmployeeID' => '11111111-1111-1111-1111-111111111111']);
@@ -167,7 +166,7 @@ test('a 401 refreshes the token once and replays the request', function () {
         ]));
     });
 
-    $mock = Saloon::fake([
+    $mock = fakeSaloon([
         MockResponse::make([], 401),
         MockResponse::make(['Timesheets' => [['TimesheetID' => 'ts-1']]]),
     ]);
@@ -190,13 +189,13 @@ test('a second 401 surfaces as UnauthorizedXero', function () {
             'scope' => 'openid',
         ]));
     });
-    Saloon::fake([FindXeroRecordRequest::class => MockResponse::make([], 401)]);
+    fakeSaloon([FindXeroRecordRequest::class => MockResponse::make([], 401)]);
 
     app(XeroGateway::class)->find($this->endpoint, 'ts-1');
 })->throws(UnauthorizedXero::class);
 
 test('a 400 becomes a validation exception carrying the xero messages', function () {
-    Saloon::fake([SaveXeroRecordRequest::class => MockResponse::make([
+    fakeSaloon([SaveXeroRecordRequest::class => MockResponse::make([
         'Timesheets' => [['ValidationErrors' => [['Message' => 'Period overlaps'], ['Message' => 'Rate not found']]]],
     ], 400)]);
 
@@ -204,7 +203,7 @@ test('a 400 becomes a validation exception carrying the xero messages', function
 })->throws(XeroValidationException::class, 'Period overlaps; Rate not found');
 
 test('a 429 becomes a rate limit exception and fills the bucket', function () {
-    Saloon::fake([FindXeroRecordRequest::class => MockResponse::make([], 429)]);
+    fakeSaloon([FindXeroRecordRequest::class => MockResponse::make([], 429)]);
 
     try {
         app(XeroGateway::class)->find($this->endpoint, 'ts-1');
@@ -219,7 +218,7 @@ test('a 429 becomes a rate limit exception and fills the bucket', function () {
 
 test('calls are refused once the local bucket is full', function () {
     config(['xero-integration.rate_limit.no' => 1]);
-    $mock = Saloon::fake([FindXeroRecordRequest::class => MockResponse::make(['Timesheets' => []])]);
+    $mock = fakeSaloon([FindXeroRecordRequest::class => MockResponse::make(['Timesheets' => []])]);
     $gateway = app(XeroGateway::class);
 
     $gateway->find($this->endpoint, 'ts-1');
@@ -231,7 +230,7 @@ test('calls are refused once the local bucket is full', function () {
 });
 
 test('other failures become an integration exception', function () {
-    Saloon::fake([FindXeroRecordRequest::class => MockResponse::make([], 500)]);
+    fakeSaloon([FindXeroRecordRequest::class => MockResponse::make([], 500)]);
 
     app(XeroGateway::class)->find($this->endpoint, 'ts-1');
 })->throws(XeroIntegrationException::class, 'status 500');
@@ -242,7 +241,7 @@ describe('payroll au 2.0', function () {
     });
 
     test('it targets the 2.0 base url and takes a single object body', function () {
-        $mock = Saloon::fake([SaveXeroRecordRequest::class => MockResponse::make(['timesheet' => ['timesheetID' => 'ts-1']])]);
+        $mock = fakeSaloon([SaveXeroRecordRequest::class => MockResponse::make(['timesheet' => ['timesheetID' => 'ts-1']])]);
 
         $saved = app(XeroGateway::class)->save($this->v2, ['employeeID' => 'e-1']);
 
@@ -254,7 +253,7 @@ describe('payroll au 2.0', function () {
     });
 
     test('find reads the single record key and list reads the lower-camel list key', function () {
-        Saloon::fake([
+        fakeSaloon([
             FindXeroRecordRequest::class => MockResponse::make(['timesheet' => ['timesheetID' => 'ts-1']]),
             ListXeroRecordsRequest::class => MockResponse::make(['pagination' => ['page' => 1, 'pageCount' => 1], 'timesheets' => [['timesheetID' => 'ts-1']]]),
         ]);
@@ -267,7 +266,7 @@ describe('payroll au 2.0', function () {
     test('list sends guid filters in the filter parameter and the rest as query parameters', function () {
         $queries = [];
 
-        Saloon::fake([
+        fakeSaloon([
             ListXeroRecordsRequest::class => function (PendingRequest $request) use (&$queries) {
                 $queries[] = $request->query()->all();
 
@@ -291,7 +290,7 @@ describe('payroll au 2.0', function () {
     });
 
     test('list stops at the reported page count', function () {
-        $mock = Saloon::fake([
+        $mock = fakeSaloon([
             ListXeroRecordsRequest::class => function (PendingRequest $request) {
                 $page = (int) $request->query()->get('page');
 
@@ -314,7 +313,7 @@ describe('payroll au 2.0', function () {
             return MockResponse::make(['timesheetLine' => ['numberOfUnits' => 3]]);
         };
 
-        Saloon::fake([XeroActionRequest::class => $record, XeroActionBodyRequest::class => $record]);
+        fakeSaloon([XeroActionRequest::class => $record, XeroActionBodyRequest::class => $record]);
         $gateway = app(XeroGateway::class);
 
         $response = $gateway->action($this->v2, 'put', ['ts-1', 'Lines', 'a/b'], ['numberOfUnits' => 3]);
@@ -328,7 +327,7 @@ describe('payroll au 2.0', function () {
     });
 
     test('a 2.0 problem response becomes a validation exception carrying the details', function () {
-        Saloon::fake([SaveXeroRecordRequest::class => MockResponse::make([
+        fakeSaloon([SaveXeroRecordRequest::class => MockResponse::make([
             'type' => 'application/problem+json',
             'title' => 'BadRequest',
             'status' => '400',
@@ -348,7 +347,7 @@ describe('payroll au 2.0', function () {
             return MockResponse::make(['timesheet' => []]);
         };
 
-        Saloon::fake([XeroActionRequest::class => $record, XeroActionBodyRequest::class => $record]);
+        fakeSaloon([XeroActionRequest::class => $record, XeroActionBodyRequest::class => $record]);
         $gateway = app(XeroGateway::class);
 
         $gateway->action($this->v2, 'POST', ['ts-1', 'Approve']);
@@ -359,25 +358,25 @@ describe('payroll au 2.0', function () {
     });
 
     test('dot and empty path segments are rejected', function (string $segment) {
-        Saloon::fake([FindXeroRecordRequest::class => MockResponse::make(['timesheet' => []])]);
+        fakeSaloon([FindXeroRecordRequest::class => MockResponse::make(['timesheet' => []])]);
 
         app(XeroGateway::class)->find($this->v2, $segment);
     })->with(['..', '.', ''])->throws(InvalidArgumentException::class, 'Invalid Xero path segment.');
 
     test('reserved query parameters cannot be passed as filter fields', function (string $field) {
-        Saloon::fake([ListXeroRecordsRequest::class => MockResponse::make(['timesheets' => []])]);
+        fakeSaloon([ListXeroRecordsRequest::class => MockResponse::make(['timesheets' => []])]);
 
         app(XeroGateway::class)->list($this->v2, [$field => 'x']);
     })->with(['filter', 'where', 'page', 'order', 'Filter'])->throws(InvalidArgumentException::class);
 
     test('a trailing newline does not pass guid validation', function () {
-        Saloon::fake([ListXeroRecordsRequest::class => MockResponse::make(['timesheets' => []])]);
+        fakeSaloon([ListXeroRecordsRequest::class => MockResponse::make(['timesheets' => []])]);
 
         app(XeroGateway::class)->list($this->v2, ['employeeId' => "11111111-1111-1111-1111-111111111111\n"]);
     })->throws(InvalidArgumentException::class, 'must be a GUID');
 
     test('validation messages are truncated', function () {
-        Saloon::fake([SaveXeroRecordRequest::class => MockResponse::make(['detail' => str_repeat('x', 2000)], 400)]);
+        fakeSaloon([SaveXeroRecordRequest::class => MockResponse::make(['detail' => str_repeat('x', 2000)], 400)]);
 
         try {
             app(XeroGateway::class)->save($this->v2, ['employeeID' => 'e-1']);

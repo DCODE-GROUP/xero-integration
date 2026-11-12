@@ -8,7 +8,6 @@ use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
 use Dcodegroup\XeroIntegration\Http\Saloon\Requests\ListXeroRecordsRequest;
 use Dcodegroup\XeroIntegration\Models\XeroToken;
 use Saloon\Http\Faking\MockResponse;
-use Saloon\Laravel\Facades\Saloon;
 use XeroPHP\Models\PayrollAU\PayItem;
 use XeroPHP\Models\PayrollAU\PayItem\EarningsRate;
 
@@ -19,7 +18,7 @@ function fakePayItems(array $rates): void
 {
     XeroToken::factory()->create(['current_tenant_id' => 'tenant-1']);
 
-    Saloon::fake([
+    fakeSaloon([
         ListXeroRecordsRequest::class => MockResponse::make(['PayItems' => ['EarningsRates' => $rates]]),
     ]);
 }

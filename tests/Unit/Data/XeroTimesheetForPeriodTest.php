@@ -16,7 +16,6 @@ use Dcodegroup\XeroIntegration\Models\XeroToken;
 use Illuminate\Support\Facades\Cache;
 use Saloon\Http\Faking\MockResponse;
 use Saloon\Http\PendingRequest;
-use Saloon\Laravel\Facades\Saloon;
 
 const EMPLOYEE = '11111111-1111-1111-1111-111111111111';
 const CALENDAR = '22222222-2222-2222-2222-222222222222';
@@ -76,7 +75,7 @@ function fakeXero(?array $existing, array &$log, ?callable $failWhen = null): vo
         return MockResponse::make(['timesheet' => $existing]);
     };
 
-    Saloon::fake([
+    fakeSaloon([
         ListXeroRecordsRequest::class => function (PendingRequest $request) use ($existing, &$log) {
             $log[] = 'LIST '.json_encode($request->query()->all());
 

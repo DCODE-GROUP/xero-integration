@@ -9,7 +9,6 @@ use Dcodegroup\XeroIntegration\Models\XeroToken;
 use Illuminate\Support\Facades\Cache;
 use Saloon\Http\Faking\MockResponse;
 use Saloon\Http\PendingRequest;
-use Saloon\Laravel\Facades\Saloon;
 
 beforeEach(function () {
     Cache::flush();
@@ -20,7 +19,7 @@ beforeEach(function () {
     $this->tenantsCalled = [];
 
     $this->mockXero = function (): void {
-        Saloon::fake([
+        fakeSaloon([
             ListXeroRecordsRequest::class => function (PendingRequest $request) {
                 $this->xeroCalls++;
                 $this->tenantsCalled[] = $request->headers()->get('Xero-tenant-id');
@@ -190,7 +189,7 @@ test('payroll calendars are cached and can be found by id', function () {
 
 test('a result fetched while the tenant changed is not cached', function () {
     $token = connectTenant('tenant-a');
-    Saloon::fake([
+    fakeSaloon([
         ListXeroRecordsRequest::class => function () use ($token) {
             $token->update(['current_tenant_id' => 'tenant-b']);
 

@@ -13,7 +13,6 @@ use Dcodegroup\XeroIntegration\Http\Saloon\Requests\ListXeroRecordsRequest;
 use Dcodegroup\XeroIntegration\Models\XeroToken;
 use Illuminate\Support\Facades\Cache;
 use Saloon\Http\Faking\MockResponse;
-use Saloon\Laravel\Facades\Saloon;
 use XeroPHP\Models\PayrollAU\PayrollCalendar;
 
 function calendar(string $type, ?string $start = '2026-11-02', ?string $reference = null): XeroPayrollCalendarData
@@ -152,7 +151,7 @@ test('list and find read calendars through the gateway with normalised dates', f
     $ms = Carbon::parse('2026-11-02', 'UTC')->getTimestampMs();
     $record = ['PayrollCalendarID' => 'calendar-uuid', 'Name' => 'Weekly', 'CalendarType' => 'WEEKLY', 'StartDate' => "/Date({$ms}+0000)/"];
 
-    Saloon::fake([
+    fakeSaloon([
         ListXeroRecordsRequest::class => MockResponse::make(['PayrollCalendars' => [$record]]),
         FindXeroRecordRequest::class => MockResponse::make(['PayrollCalendars' => [$record]]),
     ]);
@@ -163,7 +162,7 @@ test('list and find read calendars through the gateway with normalised dates', f
 
 test('find returns null for an unknown calendar', function () {
     XeroToken::factory()->create(['current_tenant_id' => 'tenant-1']);
-    Saloon::fake([FindXeroRecordRequest::class => MockResponse::make(['Message' => 'not found'], 404)]);
+    fakeSaloon([FindXeroRecordRequest::class => MockResponse::make(['Message' => 'not found'], 404)]);
 
     expect(XeroPayrollCalendarData::find('missing'))->toBeNull();
 });
@@ -171,7 +170,7 @@ test('find returns null for an unknown calendar', function () {
 test('employee payrollCalendar loads the assigned calendar from the cached list', function () {
     Cache::flush();
     XeroToken::factory()->create(['current_tenant_id' => 'tenant-a']);
-    Saloon::fake([
+    fakeSaloon([
         ListXeroRecordsRequest::class => MockResponse::make(['PayrollCalendars' => [
             ['PayrollCalendarID' => 'calendar-uuid', 'Name' => 'Weekly', 'CalendarType' => 'WEEKLY', 'StartDate' => '2026-11-02T00:00:00'],
         ]]),
