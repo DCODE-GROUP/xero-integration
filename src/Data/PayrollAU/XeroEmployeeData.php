@@ -63,7 +63,7 @@ class XeroEmployeeData extends AbstractXeroData
 
     public static function getXeroRelationship(): XeroRelationshipsEnum
     {
-        return XeroRelationshipsEnum::TIMESHEET_AU;
+        return XeroRelationshipsEnum::EMPLOYEE_AU;
     }
 
     public function toXeroArray(): array
@@ -74,6 +74,18 @@ class XeroEmployeeData extends AbstractXeroData
     public static function fromXero(XeroModel|XeroEmployee $xeroEmployee): self
     {
         return static::from($xeroEmployee->toStringArray());
+    }
+
+    /**
+     * The employee's payroll calendar, or null when none is assigned.
+     */
+    public function payrollCalendar(): ?XeroPayrollCalendarData
+    {
+        if (empty($this->PayrollCalendarID)) {
+            return null;
+        }
+
+        return XeroPayrollCalendarData::findCached($this->PayrollCalendarID);
     }
 
     public static function list()
