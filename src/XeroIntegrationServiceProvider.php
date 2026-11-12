@@ -5,7 +5,9 @@ namespace Dcodegroup\XeroIntegration;
 use Calcinai\OAuth2\Client\Provider\Xero;
 use Dcodegroup\XeroIntegration\Commands\MakeXeroDataCommand;
 use Dcodegroup\XeroIntegration\Contracts\XeroDataFinder;
+use Dcodegroup\XeroIntegration\Contracts\XeroGateway;
 use Dcodegroup\XeroIntegration\Exceptions\XeroConfigException;
+use Dcodegroup\XeroIntegration\Services\SaloonXeroGateway;
 use Dcodegroup\XeroIntegration\Services\XeroDataFinderService;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -37,11 +39,8 @@ class XeroIntegrationServiceProvider extends PackageServiceProvider
         });
 
         $this->app->singleton(XeroDataFinder::class, XeroDataFinderService::class);
-    }
 
-    public function register()
-    {
-        parent::register();
+        $this->app->bind(XeroGateway::class, SaloonXeroGateway::class);
     }
 
     public function configurePackage(Package $package): void

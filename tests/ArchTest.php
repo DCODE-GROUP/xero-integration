@@ -1,8 +1,11 @@
 <?php
 
-arch()->preset()->php();
-arch()->preset()->laravel();
-arch()->preset()->security();
+// Arch presets require Pest 3+; Pest 2 is only used for the Laravel 10 test job.
+if (version_compare(\Pest\version(), '3.0.0', '>=')) {
+    arch()->preset()->php();
+    arch()->preset()->laravel();
+    arch()->preset()->security();
+}
 
 arch('it will not use debugging functions')
     ->expect(['dd', 'dump', 'ray'])
