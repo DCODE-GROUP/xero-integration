@@ -2,6 +2,30 @@
 
 All notable changes to `xero-integration` will be documented in this file.
 
+## v0.0.16 - 2026-11-16
+
+### What's Changed
+
+* feat: add Payroll AU 2.0 timesheets, earnings rates and payroll calendars by @jny986 in https://github.com/DCODE-GROUP/xero-integration/pull/25
+  * Sync payroll timesheets to Xero AU via a new Saloon gateway (Payroll AU 2.0)
+  * New `XeroEarningsRateData` and `XeroPayrollCalendarData` with per-tenant caching (`xero-integration.cache.*`)
+  * Fix `XeroEmployeeData` mapping to `EMPLOYEE_AU`
+  * Add Laravel 10 support
+  * CI: ignore specific Laravel 11 advisories instead of disabling audit blocking
+  
+* Update CHANGELOG
+
+#### Breaking changes
+
+* `XeroTimesheetData` and `XeroTimesheetLineData` properties renamed to the 2.0 camelCase names
+* `forPeriod()` now takes a `payrollCalendarId`
+* `fromXero()` now throws for timesheets, lines, earnings rates and calendars
+* `attachBinary()` and the xero-php `list()`/`$searchFields` dedupe no longer apply to timesheets
+* Updating changed lines on an Approved timesheet reverts it to Draft unless `status` is explicitly Approved
+* Adds `saloonphp/saloon` and `saloonphp/laravel-plugin` dependencies
+
+**Full Changelog**: https://github.com/DCODE-GROUP/xero-integration/compare/v0.0.15...v0.0.16
+
 ## v0.0.15 - 2026-10-23
 
 ### What's Changed
