@@ -55,7 +55,7 @@ class XeroQuery extends Query
         );
 
         if ($result == false) {
-            throw new XeroRateLimitExceededException('Xero API rate limit exceeded. Please try again later.');
+            throw XeroRateLimitExceededException::exceeded();
         }
         if (! $this->baseModel) {
             return $result;
@@ -141,6 +141,6 @@ class XeroQuery extends Query
             amount: $this->limit
         );
 
-        throw new XeroRateLimitExceededException('Xero API rate limit exceeded. Please try again later.');
+        throw XeroRateLimitExceededException::exceeded();
     }
 }

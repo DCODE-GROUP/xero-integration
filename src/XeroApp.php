@@ -36,6 +36,8 @@ use XeroPHP\Application;
  * @method XeroIntegration leave_application_au()
  * @method XeroIntegration leave_period_au()
  * @method XeroIntegration taxRate()
+ * @method XeroIntegration earnings_rate_au()
+ * @method XeroIntegration payroll_calendar_au()
  */
 class XeroApp extends Application
 {

@@ -3,6 +3,7 @@
 namespace Dcodegroup\XeroIntegration\Tests\Unit\Data;
 
 use Dcodegroup\XeroIntegration\Data\PayrollAU\XeroEmployeeData;
+use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
 use Illuminate\Support\Carbon;
 use XeroPHP\Models\PayrollAU\Employee;
 
@@ -19,6 +20,11 @@ test('can instantiate XeroEmployeeData with required fields', function () {
         ->and($data->LastName)->toBe('Doe')
         ->and($data->DateOfBirth->format('Y-m-d'))->toBe('1990-05-15')
         ->and($data->EmployeeID)->toBeNull();
+});
+
+test('maps to the Employees resource', function () {
+    expect(XeroEmployeeData::getXeroRelationship())->toBe(XeroRelationshipsEnum::EMPLOYEE_AU)
+        ->and(XeroRelationshipsEnum::EMPLOYEE_AU->getModelClass())->toBe(Employee::class);
 });
 
 test('optional fields default to null', function () {

@@ -5,6 +5,7 @@ namespace Dcodegroup\XeroIntegration\Tests;
 use Dcodegroup\XeroIntegration\XeroIntegrationServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
+use Saloon\Http\Faking\MockClient;
 
 class TestCase extends Orchestra
 {
@@ -18,6 +19,13 @@ class TestCase extends Orchestra
                 default => 'Dcodegroup\\XeroIntegration\\Database\\Factories\\'.class_basename($modelName).'Factory'
             }
         );
+    }
+
+    protected function tearDown(): void
+    {
+        MockClient::destroyGlobal();
+
+        parent::tearDown();
     }
 
     protected function getPackageProviders($app)

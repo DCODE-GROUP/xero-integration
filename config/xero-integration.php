@@ -1,5 +1,7 @@
 <?php
 
+use Dcodegroup\XeroIntegration\Data\PayrollAU\XeroEarningsRateData;
+use Dcodegroup\XeroIntegration\Data\PayrollAU\XeroPayrollCalendarData;
 use Dcodegroup\XeroIntegration\Http\Controllers\XeroAuthController;
 use Dcodegroup\XeroIntegration\Http\Controllers\XeroCallbackController;
 
@@ -57,6 +59,17 @@ return [
         'middleware' => env('XERO_WEBHOOK_MIDDLEWARE', ['guest']),
         'queue' => env('XERO_WEBHOOK_QUEUE', 'default'),
         'backoffs' => env('XERO_WEBHOOK_BACKOFFS', [10, 30, 60, 120, 300]),
+    ],
+    // Per-tenant caching of rarely-changing lookups (data types using CachesXeroLookups).
+    'cache' => [
+        'enabled' => env('XERO_CACHE_ENABLED', true),
+        // Seconds.
+        'ttl' => env('XERO_CACHE_TTL', 3600),
+        // Per data type overrides. Omit a key, or leave it null, to inherit the values above.
+        'types' => [
+            XeroEarningsRateData::class => ['enabled' => null, 'ttl' => env('XERO_CACHE_TTL_EARNINGS_RATES')],
+            XeroPayrollCalendarData::class => ['enabled' => null, 'ttl' => env('XERO_CACHE_TTL_PAYROLL_CALENDARS')],
+        ],
     ],
     'rate_limit' => [
         'no' => env('XERO_RATE_LIMIT_NO', 60),
