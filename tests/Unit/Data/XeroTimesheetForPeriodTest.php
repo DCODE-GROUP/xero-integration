@@ -32,6 +32,14 @@ function periodTimesheet(array $hoursByDate): XeroTimesheetData
  */
 function xeroTimesheet(string $status, array $lines = [], string $id = EXISTING_ID, string $employee = EMPLOYEE, string $start = '2026-11-02', string $end = '2026-11-08'): array
 {
+    $given = collect($lines)->map(fn (array $line): string => substr($line['date'], 0, 10) . '|' . $line['earningsRateID'])->all();
+
+    for ($day = Carbon::parse($start); $day->lte(Carbon::parse($end)); $day->addDay()) {
+        if (! in_array($day->toDateString() . '|rate-1', $given, true) && $lines !== []) {
+            $lines[] = xeroLine('z-' . $day->toDateString(), $day->toDateString(), 0);
+        }
+    }
+
     return [
         'timesheetID' => $id,
         'payrollCalendarID' => CALENDAR,
@@ -113,20 +121,34 @@ test('forPeriod builds one line per day with hours, in date order', function () 
         ->and($timesheet->startDate->toDateString())->toBe('2026-11-02')
         ->and($timesheet->endDate->toDateString())->toBe('2026-11-08')
         ->and($timesheet->timesheetLines->map(fn ($line) => [$line->date->toDateString(), $line->earningsRateID, $line->numberOfUnits])->all())
-        ->toBe([['2026-11-03', 'rate-1', 7.5], ['2026-11-05', 'rate-1', 6.0]]);
+        ->toBe([
+            ['2026-11-02', 'rate-1', 0.0],
+            ['2026-11-03', 'rate-1', 7.5],
+            ['2026-11-04', 'rate-1', 0.0],
+            ['2026-11-05', 'rate-1', 6.0],
+            ['2026-11-06', 'rate-1', 0.0],
+            ['2026-11-07', 'rate-1', 0.0],
+            ['2026-11-08', 'rate-1', 0.0],
+        ]);
 });
 
 test('forPeriod rounds hours to 2 decimals and totals hours given for the same day', function () {
     $timesheet = periodTimesheet(['2026-11-03 08:00' => 1.005, '2026-11-03 13:00' => 2.1234]);
 
-    expect($timesheet->timesheetLines)->toHaveCount(1)
-        ->and($timesheet->timesheetLines->first()->numberOfUnits)->toBe(3.13);
+    expect($timesheet->timesheetLines)->toHaveCount(7)
+        ->and($timesheet->timesheetLines[1]->numberOfUnits)->toBe(3.13);
 });
 
-test('forPeriod skips days with no hours', function () {
+test('forPeriod sets days with no hours to 0', function () {
     $timesheet = periodTimesheet(['2026-11-03' => 0, '2026-11-04' => 4]);
 
-    expect($timesheet->timesheetLines->pluck('numberOfUnits')->all())->toBe([4.0]);
+    expect($timesheet->timesheetLines->pluck('numberOfUnits')->all())->toBe([0.0, 0.0, 4.0, 0.0, 0.0, 0.0, 0.0]);
+});
+
+test('forPeriod sets negative hours to 0', function () {
+    $timesheet = periodTimesheet(['2026-11-03' => -2, '2026-11-04' => 4]);
+
+    expect($timesheet->timesheetLines->pluck('numberOfUnits')->all())->toBe([0.0, 0.0, 4.0, 0.0, 0.0, 0.0, 0.0]);
 });
 
 test('forPeriod rejects dates outside the period', function (string $date) {
@@ -159,7 +181,7 @@ test('a new period is created in one call and adopts the saved values', function
         ->and($log[0])->toStartWith('LIST ')
         ->and($log[0])->toContain('"filter":"employeeId==11111111-1111-1111-1111-111111111111,payrollCalendarId==22222222-2222-2222-2222-222222222222"')
         ->and($log[0])->toContain('"startDate":"2026-11-02"')
-        ->and($log[1])->toBe('CREATE {"payrollCalendarID":"'.CALENDAR.'","employeeID":"'.EMPLOYEE.'","startDate":"2026-11-02","endDate":"2026-11-08","timesheetLines":[{"date":"2026-11-03","earningsRateID":"rate-1","numberOfUnits":7.5}]}');
+        ->and($log[1])->toBe('CREATE {"payrollCalendarID":"'.CALENDAR.'","employeeID":"'.EMPLOYEE.'","startDate":"2026-11-02","endDate":"2026-11-08","timesheetLines":[{"date":"2026-11-02","earningsRateID":"rate-1","numberOfUnits":0},{"date":"2026-11-03","earningsRateID":"rate-1","numberOfUnits":7.5},{"date":"2026-11-04","earningsRateID":"rate-1","numberOfUnits":0},{"date":"2026-11-05","earningsRateID":"rate-1","numberOfUnits":0},{"date":"2026-11-06","earningsRateID":"rate-1","numberOfUnits":0},{"date":"2026-11-07","earningsRateID":"rate-1","numberOfUnits":0},{"date":"2026-11-08","earningsRateID":"rate-1","numberOfUnits":0}]}');
 });
 
 test('a new period with an explicit Approved status is approved after creation', function () {
@@ -190,10 +212,10 @@ test('re-sending a draft period reconciles lines without reverting or approving'
         ->and($log)->not->toContain('POST {id}/RevertToDraft')
         ->and($log)->not->toContain('POST {id}/Approve')
         ->and($log)->toContain('PUT {id}/Lines/l-change {"date":"2026-11-04","earningsRateID":"rate-1","numberOfUnits":3}')
-        ->and($log)->toContain('DELETE {id}/Lines/l-remove')
+        ->and($log)->toContain('PUT {id}/Lines/l-remove {"date":"2026-11-06","earningsRateID":"rate-1","numberOfUnits":0}')
         ->and($log)->toContain('DELETE {id}/Lines/l-duplicate')
-        ->and($log)->toContain('POST {id}/Lines {"date":"2026-11-05","earningsRateID":"rate-1","numberOfUnits":6}')
-        ->and(collect($log)->filter(fn ($entry) => str_starts_with($entry, 'PUT '))->count())->toBe(1)
+        ->and($log)->toContain('PUT {id}/Lines/z-2026-11-05 {"date":"2026-11-05","earningsRateID":"rate-1","numberOfUnits":6}')
+        ->and(collect($log)->filter(fn ($entry) => str_starts_with($entry, 'PUT '))->count())->toBe(3)
         ->and(collect($log)->filter(fn ($entry) => str_starts_with($entry, 'CREATE'))->count())->toBe(0);
 });
 
@@ -253,7 +275,7 @@ test('lines on another earnings rate are removed', function () {
     periodTimesheet(['2026-11-03' => 8])->sendToXero();
 
     expect($log)->toContain('DELETE {id}/Lines/l-old')
-        ->and($log)->toContain('POST {id}/Lines {"date":"2026-11-03","earningsRateID":"rate-1","numberOfUnits":8}');
+        ->and($log)->toContain('PUT {id}/Lines/z-2026-11-03 {"date":"2026-11-03","earningsRateID":"rate-1","numberOfUnits":8}');
 });
 
 test('sending a completed period throws a readable exception and changes nothing', function () {
@@ -294,13 +316,13 @@ test('a timesheet that already has an id is looked up directly', function () {
 
 test('lines are created and updated before any are deleted', function () {
     $log = [];
-    fakeXero(xeroTimesheet('Draft', [xeroLine('l-remove', '2026-11-06', 5), xeroLine('l-change', '2026-11-04', 2)]), $log);
+    fakeXero(xeroTimesheet('Draft', [xeroLine('l-duplicate', '2026-11-04', 1), xeroLine('l-change', '2026-11-04', 2)]), $log);
 
     periodTimesheet(['2026-11-04' => 3, '2026-11-05' => 6])->sendToXero();
 
     $actions = collect($log)->filter(fn ($entry) => preg_match('/^(PUT|POST|DELETE) /', $entry))->map(fn ($entry) => explode(' ', $entry)[0])->values()->all();
 
-    expect($actions)->toBe(['PUT', 'POST', 'DELETE']);
+    expect($actions)->toBe(['PUT', 'PUT', 'DELETE']);
 });
 
 test('an unchanged re-send leaves an approved timesheet approved and sends nothing', function () {
