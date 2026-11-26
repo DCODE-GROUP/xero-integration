@@ -32,11 +32,11 @@ function periodTimesheet(array $hoursByDate): XeroTimesheetData
  */
 function xeroTimesheet(string $status, array $lines = [], string $id = EXISTING_ID, string $employee = EMPLOYEE, string $start = '2026-11-02', string $end = '2026-11-08'): array
 {
-    $given = collect($lines)->map(fn (array $line): string => substr($line['date'], 0, 10) . '|' . $line['earningsRateID'])->all();
+    $given = collect($lines)->map(fn (array $line): string => substr($line['date'], 0, 10).'|'.$line['earningsRateID'])->all();
 
     for ($day = Carbon::parse($start); $day->lte(Carbon::parse($end)); $day->addDay()) {
-        if (! in_array($day->toDateString() . '|rate-1', $given, true) && $lines !== []) {
-            $lines[] = xeroLine('z-' . $day->toDateString(), $day->toDateString(), 0);
+        if (! in_array($day->toDateString().'|rate-1', $given, true) && $lines !== []) {
+            $lines[] = xeroLine('z-'.$day->toDateString(), $day->toDateString(), 0);
         }
     }
 
