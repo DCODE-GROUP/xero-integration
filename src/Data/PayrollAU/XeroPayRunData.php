@@ -3,8 +3,6 @@
 namespace Dcodegroup\XeroIntegration\Data\PayrollAU;
 
 use Carbon\Carbon;
-use DateTimeImmutable;
-use DateTimeInterface;
 use Dcodegroup\XeroIntegration\Data\AbstractXeroData;
 use Dcodegroup\XeroIntegration\Data\Contracts\HasXeroEndpoint;
 use Dcodegroup\XeroIntegration\Data\Contracts\ListsXeroRecords;
@@ -28,11 +26,11 @@ class XeroPayRunData extends AbstractXeroData implements HasXeroEndpoint, ListsX
         public string $PayRunID,
         public string $PayrollCalendarID,
         public ?string $PayRunStatus = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
+        #[WithCast(DateTimeInterfaceCast::class, format: ['Y-m-d\TH:i:s', 'Y-m-d'], timeZone: 'UTC')]
         public ?Carbon $PayRunPeriodStartDate = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
+        #[WithCast(DateTimeInterfaceCast::class, format: ['Y-m-d\TH:i:s', 'Y-m-d'], timeZone: 'UTC')]
         public ?Carbon $PayRunPeriodEndDate = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
+        #[WithCast(DateTimeInterfaceCast::class, format: ['Y-m-d\TH:i:s', 'Y-m-d'], timeZone: 'UTC')]
         public ?Carbon $PaymentDate = null,
         public ?string $PayslipMessage = null,
         /** @var array<int, array<string, mixed>>|null */
@@ -43,7 +41,7 @@ class XeroPayRunData extends AbstractXeroData implements HasXeroEndpoint, ListsX
         public ?float $Super = null,
         public ?float $Reimbursement = null,
         public ?float $NetPay = null,
-        #[WithCast(DateTimeInterfaceCast::class, format: DATE_ATOM, setTimeZone: 'UTC')]
+        #[WithCast(DateTimeInterfaceCast::class, format: ['Y-m-d\TH:i:s', 'Y-m-d'], timeZone: 'UTC', setTimeZone: 'UTC')]
         public ?Carbon $UpdatedDateUTC = null,
     ) {}
 
@@ -79,41 +77,8 @@ class XeroPayRunData extends AbstractXeroData implements HasXeroEndpoint, ListsX
         throw new LogicException('Pay runs are read-only and cannot be sent to Xero.');
     }
 
-    /**
-     * @param  array<string, mixed>  $payload
-     */
-    public static function fromXeroArray(array $payload): self
-    {
-        return new self(
-            PayRunID: $payload['PayRunID'],
-            PayrollCalendarID: $payload['PayrollCalendarID'],
-            PayRunStatus: $payload['PayRunStatus'] ?? null,
-            PayRunPeriodStartDate: static::toCarbon($payload['PayRunPeriodStartDate'] ?? null),
-            PayRunPeriodEndDate: static::toCarbon($payload['PayRunPeriodEndDate'] ?? null),
-            PaymentDate: static::toCarbon($payload['PaymentDate'] ?? null),
-            PayslipMessage: $payload['PayslipMessage'] ?? null,
-            Payslips: $payload['Payslips'] ?? null,
-            Wages: isset($payload['Wages']) ? (float) $payload['Wages'] : null,
-            Deductions: isset($payload['Deductions']) ? (float) $payload['Deductions'] : null,
-            Tax: isset($payload['Tax']) ? (float) $payload['Tax'] : null,
-            Super: isset($payload['Super']) ? (float) $payload['Super'] : null,
-            Reimbursement: isset($payload['Reimbursement']) ? (float) $payload['Reimbursement'] : null,
-            NetPay: isset($payload['NetPay']) ? (float) $payload['NetPay'] : null,
-            UpdatedDateUTC: static::toCarbon($payload['UpdatedDateUTC'] ?? null),
-        );
-    }
-
     public function payrollCalendar(): ?XeroPayrollCalendarData
     {
         return XeroPayrollCalendarData::findCached($this->PayrollCalendarID);
-    }
-
-    protected static function toCarbon(mixed $value): ?Carbon
-    {
-        if ($value === null || $value === '') {
-            return null;
-        }
-
-        return Carbon::instance($value instanceof DateTimeInterface ? $value : new DateTimeImmutable($value));
     }
 }

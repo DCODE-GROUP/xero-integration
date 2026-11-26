@@ -37,6 +37,6 @@ trait ReadsFromXeroApi
      */
     public static function fromXeroArray(array $payload): self
     {
-        return static::from($payload);
+        return static::factory()->withoutMagicalCreation()->from($payload);
     }
 }

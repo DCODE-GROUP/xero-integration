@@ -11,6 +11,12 @@ use Illuminate\Support\Facades\Cache;
 use Saloon\Http\Faking\MockResponse;
 use XeroPHP\Models\PayrollAU\PayRun;
 
+beforeEach(function () {
+    if (! config()->has('data')) {
+        config(['data' => require __DIR__.'/../../../vendor/spatie/laravel-data/config/data.php']);
+    }
+});
+
 test('pay runs use the paginated Payroll AU endpoint and model', function () {
     $endpoint = XeroPayRunData::getXeroEndpoint();
 
@@ -27,7 +33,7 @@ test('maps pay run dates totals and payslips', function () {
         'PayRunID' => 'run-1', 'PayrollCalendarID' => '11111111-1111-4111-8111-111111111111', 'PayRunStatus' => 'POSTED',
         'PayRunPeriodStartDate' => '2026-11-02T00:00:00',
         'PayRunPeriodEndDate' => new DateTimeImmutable('2026-11-08'),
-        'PaymentDate' => '2026-11-12', 'UpdatedDateUTC' => '2026-11-12T04:00:00Z',
+        'PaymentDate' => '2026-11-12', 'UpdatedDateUTC' => '2026-11-12T04:00:00',
         'Wages' => '1000.50', 'Deductions' => 0, 'Tax' => '200', 'Super' => '120.06',
         'Reimbursement' => 10, 'NetPay' => '810.50', 'PayslipMessage' => 'Weekly pay',
         'Payslips' => [['PayslipID' => 'payslip-1']],
@@ -49,7 +55,7 @@ test('maps pay run dates totals and payslips', function () {
 });
 
 test('maps a summary with missing optional fields', function () {
-    $data = XeroPayRunData::fromXeroArray(['PayRunID' => 'run-1', 'PayrollCalendarID' => '11111111-1111-4111-8111-111111111111', 'PaymentDate' => '']);
+    $data = XeroPayRunData::fromXeroArray(['PayRunID' => 'run-1', 'PayrollCalendarID' => '11111111-1111-4111-8111-111111111111', 'PaymentDate' => null]);
 
     expect($data->PaymentDate)->toBeNull()
         ->and($data->PayRunPeriodStartDate)->toBeNull()
