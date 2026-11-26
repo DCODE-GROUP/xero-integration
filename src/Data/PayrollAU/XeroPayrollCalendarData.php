@@ -14,6 +14,7 @@ use Dcodegroup\XeroIntegration\Enums\XeroApiEnum;
 use Dcodegroup\XeroIntegration\Enums\XeroRelationshipsEnum;
 use Dcodegroup\XeroIntegration\Exceptions\XeroValidationException;
 use Dcodegroup\XeroIntegration\Http\Saloon\Endpoints\XeroEndpoint;
+use Illuminate\Support\Collection;
 use LogicException;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
@@ -94,6 +95,14 @@ class XeroPayrollCalendarData extends AbstractXeroData implements HasXeroEndpoin
     public static function findCached(string $payrollCalendarId): ?self
     {
         return static::cached()->firstWhere('PayrollCalendarID', $payrollCalendarId);
+    }
+
+    /**
+     * @return Collection<int, XeroPayRunData>
+     */
+    public function payRuns(): Collection
+    {
+        return XeroPayRunData::list(['PayrollCalendarID' => $this->PayrollCalendarID]);
     }
 
     /**
