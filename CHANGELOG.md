@@ -2,11 +2,20 @@
 
 All notable changes to `xero-integration` will be documented in this file.
 
+## v0.0.17 - 2026-11-26
+
+### What's Changed
+
+* Added Payrun object by @Barry-B-Benson6 in https://github.com/DCODE-GROUP/xero-integration/pull/26
+
+**Full Changelog**: https://github.com/DCODE-GROUP/xero-integration/compare/v0.0.16...v0.0.17
+
 ## v0.0.16 - 2026-11-16
 
 ### What's Changed
 
 * feat: add Payroll AU 2.0 timesheets, earnings rates and payroll calendars by @jny986 in https://github.com/DCODE-GROUP/xero-integration/pull/25
+  
   * Sync payroll timesheets to Xero AU via a new Saloon gateway (Payroll AU 2.0)
   * New `XeroEarningsRateData` and `XeroPayrollCalendarData` with per-tenant caching (`xero-integration.cache.*`)
   * Fix `XeroEmployeeData` mapping to `EMPLOYEE_AU`
@@ -14,6 +23,7 @@ All notable changes to `xero-integration` will be documented in this file.
   * CI: ignore specific Laravel 11 advisories instead of disabling audit blocking
   
 * Update CHANGELOG
+  
 
 #### Breaking changes
 
