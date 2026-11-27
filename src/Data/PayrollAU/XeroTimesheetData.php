@@ -73,12 +73,12 @@ class XeroTimesheetData extends AbstractXeroData implements HasXeroEndpoint
     /**
      * Build a timesheet for one pay period on the given (already resolved) earnings rate.
      *
-     * There is one line per day with hours, in date order. Hours are rounded to 2 decimals and days without
-     * hours get no line.
+     * There is one line per day of the period, in date order. Hours are rounded to 2 decimals and days without
+     * hours get a line of 0 units. Negative hours are set to 0.
      *
-     * @param  array<string, int|float>  $hoursByDate  Hours keyed by Y-m-d date.
+     * @param  array<string, int|float>  $hoursByDate  Hours keyed by Y-m-d date. Each date may appear only once.
      *
-     * @throws XeroValidationException When there are no hours, or a date falls outside the period.
+     * @throws XeroValidationException When there are no hours, a date falls outside the period, or a date is given more than once.
      */
     public static function forPeriod(
         string $employeeId,
@@ -109,23 +109,26 @@ class XeroTimesheetData extends AbstractXeroData implements HasXeroEndpoint
             }
 
             $key = $day->toDateString();
-            $hoursByDay[$key] = ($hoursByDay[$key] ?? 0) + (float) $hours;
+
+            if (array_key_exists($key, $hoursByDay)) {
+                throw new XeroValidationException("Hours for {$key} were given more than once. Only one entry per date is allowed.");
+            }
+
+            $hoursByDay[$key] = max(0.0, round((float) $hours, 2));
         }
 
-        ksort($hoursByDay);
-
-        $lines = collect($hoursByDay)
-            ->map(fn (float $hours): float => round($hours, 2))
-            ->filter(fn (float $hours): bool => $hours > 0)
-            ->map(fn (float $hours, string $date): XeroTimesheetLineData => new XeroTimesheetLineData(
-                date: Carbon::parse($date)->startOfDay(),
-                earningsRateID: $earningsRateId,
-                numberOfUnits: $hours,
-            ))
-            ->values();
-
-        if ($lines->isEmpty()) {
+        if (max($hoursByDay) <= 0) {
             throw new XeroValidationException('A timesheet needs at least one day with hours above zero.');
+        }
+
+        $lines = collect();
+
+        for ($day = $periodStart->copy(); $day->lte($periodEnd); $day->addDay()) {
+            $lines->push(new XeroTimesheetLineData(
+                date: $day->copy(),
+                earningsRateID: $earningsRateId,
+                numberOfUnits: $hoursByDay[$day->toDateString()] ?? 0.0,
+            ));
         }
 
         return new self(

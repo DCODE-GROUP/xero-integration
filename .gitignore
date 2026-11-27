@@ -32,5 +32,6 @@ testbench.yaml
 /coverage
 /.opencode
 /.omo
+/graphify-out
 **/.env.testing
 opencode.json
