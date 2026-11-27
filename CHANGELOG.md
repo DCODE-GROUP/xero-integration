@@ -2,6 +2,15 @@
 
 All notable changes to `xero-integration` will be documented in this file.
 
+## v0.0.18 - 2026-11-27
+
+### What's Changed
+
+* feat: sync a timesheet line without XeroTimesheetData by @jny986 in https://github.com/DCODE-GROUP/xero-integration/pull/28
+* feat: set timesheet days with no hours to 0 units by @jny986 in https://github.com/DCODE-GROUP/xero-integration/pull/29
+
+**Full Changelog**: https://github.com/DCODE-GROUP/xero-integration/compare/v0.0.17...v0.0.18
+
 ## v0.0.17 - 2026-11-26
 
 ### What's Changed
