@@ -74,11 +74,11 @@ class XeroTimesheetData extends AbstractXeroData implements HasXeroEndpoint
      * Build a timesheet for one pay period on the given (already resolved) earnings rate.
      *
      * There is one line per day of the period, in date order. Hours are rounded to 2 decimals and days without
-     * hours get a line of 0 units.
+     * hours get a line of 0 units. Negative hours are set to 0.
      *
-     * @param  array<string, int|float>  $hoursByDate  Hours keyed by Y-m-d date.
+     * @param  array<string, int|float>  $hoursByDate  Hours keyed by Y-m-d date. Each date may appear only once.
      *
-     * @throws XeroValidationException When there are no hours, or a date falls outside the period.
+     * @throws XeroValidationException When there are no hours, a date falls outside the period, or a date is given more than once.
      */
     public static function forPeriod(
         string $employeeId,
@@ -109,10 +109,13 @@ class XeroTimesheetData extends AbstractXeroData implements HasXeroEndpoint
             }
 
             $key = $day->toDateString();
-            $hoursByDay[$key] = ($hoursByDay[$key] ?? 0) + (float) $hours;
-        }
 
-        $hoursByDay = array_map(fn (float $hours): float => max(0.0, round($hours, 2)), $hoursByDay);
+            if (array_key_exists($key, $hoursByDay)) {
+                throw new XeroValidationException("Hours for {$key} were given more than once. Only one entry per date is allowed.");
+            }
+
+            $hoursByDay[$key] = max(0.0, round((float) $hours, 2));
+        }
 
         if (max($hoursByDay) <= 0) {
             throw new XeroValidationException('A timesheet needs at least one day with hours above zero.');
